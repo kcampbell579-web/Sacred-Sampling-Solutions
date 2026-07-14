@@ -333,6 +333,34 @@ h1, h2, h3, h4 { font-family: var(--font-disp); font-weight: 600; line-height: 1
 .compare em { font-style: normal; font-weight: 700; }
 
 /* =========================================================
+   Testing Kits page
+   ========================================================= */
+.btn--sm { padding: 8px 14px; font-size: .82rem; }
+
+/* Comparison matrix */
+.matrix { width: 100%; border-collapse: collapse; min-width: 760px; background: #fff; }
+.matrix thead th { background: var(--ink); color: #eaf0fa; font-family: var(--font-disp); font-weight: 600; font-size: 1rem; text-align: center; padding: 18px 16px; vertical-align: top; }
+.matrix thead th:first-child { text-align: left; font-family: var(--font-sans); font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; color: #9fabc2; }
+.matrix thead th.matrix__pop { background: var(--teal-600); }
+.matrix__price { display: block; font-family: var(--font-sans); font-weight: 700; font-size: .85rem; color: var(--gold); margin-top: 4px; }
+.matrix thead th.matrix__pop .matrix__price { color: #fff; }
+.matrix tbody th { text-align: left; font-family: var(--font-sans); font-weight: 600; font-size: .9rem; color: var(--text); padding: 13px 16px; border-top: 1px solid var(--line); }
+.matrix tbody td { text-align: center; padding: 13px 16px; border-top: 1px solid var(--line); font-weight: 700; }
+.matrix td.y { color: var(--ok); }
+.matrix td.n { color: var(--muted-2); font-weight: 400; }
+.matrix td.pop, .matrix tbody th + td.pop { background: var(--teal-050); }
+.matrix tbody tr:hover th, .matrix tbody tr:hover td:not(.pop) { background: var(--paper-2); }
+.matrix tfoot td { padding: 16px; border-top: 2px solid var(--line); vertical-align: top; }
+.matrix tfoot td:nth-child(3) { background: var(--teal-050); }
+
+/* Category cards (dark section) */
+.cat { background: var(--ink-2); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 30px 26px; display: flex; flex-direction: column; text-align: center; align-items: center; }
+.cat__ic { width: 54px; height: 54px; border-radius: 14px; background: rgba(201,162,75,.14); display: grid; place-items: center; margin-bottom: 18px; }
+.cat__ic svg { width: 28px; height: 28px; stroke: var(--gold); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cat h3 { color: #fff; font-size: 1.22rem; margin: 0 0 10px; }
+.cat p { color: #9fabc2; font-size: .93rem; margin: 0 0 22px; flex: 1 0 auto; }
+
+/* =========================================================
    Responsive
    ========================================================= */
 @media (max-width: 1000px) {
