@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find My Kit — Sacred Sampling Solutions</title>
+<meta name="description" content="Answer a few quick questions and we'll match you to the right certified testing panel for your water, air, and home.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230E0E0E'/%3E%3Cellipse cx='50' cy='30' rx='17' ry='6' fill='none' stroke='%236fb6ff' stroke-width='4'/%3E%3Crect x='46' y='22' width='8' height='26' fill='%236fb6ff'/%3E%3Crect x='38' y='30' width='24' height='7' fill='%236fb6ff'/%3E%3Ccircle cx='50' cy='66' r='20' fill='none' stroke='%232C94FC' stroke-width='5'/%3E%3Cpath d='M50 52 C58 64 60 70 60 74 a10 10 0 1 1 -20 0 C40 70 42 64 50 52 Z' fill='%238fc4f0'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://sacredsamplingsolutions.com/quiz.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sacred Sampling Solutions">
+<meta property="og:title" content="Find My Kit — Sacred Sampling Solutions">
+<meta property="og:description" content="Answer a few quick questions and we'll match you to the right Sacred Sampling water test kit.">
+<meta property="og:url" content="https://sacredsamplingsolutions.com/quiz.html">
+<meta property="og:image" content="https://sacredsamplingsolutions.com/assets/logo-color.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Find My Kit — Sacred Sampling Solutions">
+<meta name="twitter:description" content="Answer a few quick questions and we'll match you to the right Sacred Sampling water test kit.">
+<meta name="twitter:image" content="https://sacredsamplingsolutions.com/assets/logo-color.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .quiz-wrap{max-width:720px;margin:0 auto;padding:60px 0 96px}
+  .quiz-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-lg);padding:34px 34px 30px;position:relative;overflow:hidden}
+  @media (max-width:560px){.quiz-card{padding:26px 20px}}
+  .progress{height:6px;border-radius:999px;background:var(--panel-2);overflow:hidden;margin-bottom:26px}
+  .progress > i{display:block;height:100%;width:20%;background:linear-gradient(90deg,var(--brand),var(--brand-2));border-radius:999px;transition:width .35s ease}
+  .qstep{display:none;animation:fade .35s ease}
+  .qstep.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.qstep.on{animation:none}}
+  .qcount{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:600}
+  .qtitle{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin:10px 0 6px;text-wrap:balance}
+  .qhint{color:var(--ink-3);font-size:.9rem;margin-bottom:22px}
+  .opts{display:flex;flex-direction:column;gap:12px}
+  .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;
+    background:var(--panel);border:1px solid var(--line-strong);border-radius:13px;padding:16px 18px;
+    font-family:var(--sans);font-size:1rem;font-weight:600;color:var(--ink);transition:border-color .15s,background .15s,transform .1s}
+  .opt:hover{border-color:var(--brand);background:var(--brand-wash)}
+  .opt:active{transform:translateY(1px)}
+  .opt .tick{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-strong);flex:none;display:grid;place-items:center;color:#fff;transition:all .15s}
+  .opt.sel{border-color:var(--brand);background:var(--brand-wash)}
+  .opt.sel .tick{background:var(--brand);border-color:var(--brand)}
+  .opt .tick svg{opacity:0;transition:opacity .15s}
+  .opt.sel .tick svg{opacity:1}
+  .opt .emoji{font-size:1.25rem;flex:none;filter:saturate(1.1)}
+  .qnav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:26px}
+  .qback{background:none;border:none;color:var(--ink-3);font-family:var(--sans);font-weight:600;cursor:pointer;font-size:.92rem;padding:8px 4px}
+  .qback:hover{color:var(--ink)}
+  .qback[disabled]{opacity:.35;cursor:default}
+  /* result */
+  .result{display:none}
+  .result.on{display:block;animation:fade .4s ease}
+  .rec-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand);font-weight:700;margin-bottom:12px}
+  .rec-panel{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;
+    border:1px solid var(--brand);background:var(--brand-wash);border-radius:16px;padding:22px 24px;margin:8px 0 22px}
+  .rec-panel h3{font-size:1.5rem}
+  .rec-panel .kname{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+  .rec-panel .price{font-size:1.9rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+  .rec-panel .price span{font-size:.85rem;font-family:var(--mono);color:var(--ink-3);font-weight:400}
+  .rec-panel .rtests{font-size:.78rem;color:var(--brand-ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;max-width:180px;text-align:right;line-height:1.4}
+  .why{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:12px}
+  .why li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2);font-size:.98rem}
+  .why li svg{color:var(--brand);flex:none;margin-top:3px}
+  .why li b{color:var(--ink)}
+  .rec-cta{display:flex;gap:12px;flex-wrap:wrap}
+  .restart{text-align:center;margin-top:18px}
+  .restart button{background:none;border:none;color:var(--ink-3);font-family:var(--sans);font-weight:600;cursor:pointer;font-size:.9rem}
+  .restart button:hover{color:var(--brand)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo-color.png" alt="Sacred Sampling Solutions"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="kits.html">Test Kits</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="index.html#contaminants">What We Test</a>
+      <a href="quiz.html" class="active">Find My Kit</a>
+      <a href="sampleregistration.html">Activate Kit</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="sampleregistration.html" class="btn btn-ghost btn-sm hide-sm">Activate kit</a>
+      <a href="kits.html" class="btn btn-primary btn-sm">Shop kits</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero on-dark" style="padding-bottom:34px">
+  <div class="wrap">
+    <span class="eyebrow">Find my kit</span>
+    <h1>Which test is right for your home?</h1>
+    <p>Answer five quick questions. We'll match you to the panel that covers what matters most for your situation — no account needed.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="quiz-wrap">
+    <div class="quiz-card">
+      <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+
+      <!-- QUIZ -->
+      <div id="quiz">
+        <!-- Q1 -->
+        <div class="qstep on" data-step="0">
+          <div class="qcount">Question 1 of 5</div>
+          <div class="qtitle">Where does your water come from?</div>
+          <div class="qhint">This tells us which contaminants are most likely.</div>
+          <div class="opts" data-q="source" data-multi="false">
+            <button class="opt" data-val="city"><span class="emoji">🏙️</span> City / municipal water <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="well"><span class="emoji">🪣</span> Private well <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="unsure"><span class="emoji">🤔</span> I'm not sure <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="qstep" data-step="1">
+          <div class="qcount">Question 2 of 5</div>
+          <div class="qtitle">How old is your home's plumbing?</div>
+          <div class="qhint">Older pipes and solder are the #1 source of lead.</div>
+          <div class="opts" data-q="age" data-multi="false">
+            <button class="opt" data-val="old"><span class="emoji">🏚️</span> Built before 1986 <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="mid"><span class="emoji">🏡</span> 1986 – 2010 <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="new"><span class="emoji">✨</span> After 2010 <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="unsure"><span class="emoji">🤔</span> Not sure <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="qstep" data-step="2">
+          <div class="qcount">Question 3 of 5</div>
+          <div class="qtitle">What's driving you to test?</div>
+          <div class="qhint">Select all that apply.</div>
+          <div class="opts" data-q="reasons" data-multi="true">
+            <button class="opt" data-val="kids"><span class="emoji">👶</span> Young kids or pregnancy <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="taste"><span class="emoji">👃</span> Taste, odor, or color issues <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="realestate"><span class="emoji">🏠</span> Buying or selling a home <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="industry"><span class="emoji">🏭</span> Live near industry or farmland <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="peace"><span class="emoji">🕊️</span> General peace of mind <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="qstep" data-step="3">
+          <div class="qcount">Question 4 of 5</div>
+          <div class="qtitle">What do you want to check?</div>
+          <div class="qhint">You can always add more later.</div>
+          <div class="opts" data-q="scope" data-multi="false">
+            <button class="opt" data-val="water"><span class="emoji">💧</span> Just my drinking water <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="waterair"><span class="emoji">🌬️</span> Water and indoor air <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="whole"><span class="emoji">🔬</span> The whole home — water, air &amp; surfaces <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="qstep" data-step="4">
+          <div class="qcount">Question 5 of 5</div>
+          <div class="qtitle">Will you need documentation you can hand to someone?</div>
+          <div class="qhint">Chain-of-custody makes results defensible for real estate, disputes, or compliance.</div>
+          <div class="opts" data-q="custody" data-multi="false">
+            <button class="opt" data-val="yes"><span class="emoji">📋</span> Yes — I may need legal-grade proof <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+            <button class="opt" data-val="no"><span class="emoji">🙂</span> No — this is just for me <span class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span></button>
+          </div>
+        </div>
+
+        <div class="qnav">
+          <button class="qback" id="backBtn" disabled>← Back</button>
+          <button class="btn btn-primary" id="nextBtn" style="display:none">Continue</button>
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div class="result" id="result">
+        <div class="rec-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Your recommended kit</div>
+        <div class="rec-panel">
+          <div>
+            <div class="kname" id="recKname">Kit 03 · Everyday</div>
+            <h3 id="recName">Essentials Kit</h3>
+          </div>
+          <div class="rtests mono" id="recTests">tests: bacteria, nitrates, pH</div>
+        </div>
+        <ul class="why" id="recWhy"></ul>
+        <div class="rec-cta">
+          <a class="btn btn-primary btn-lg" id="recBuy" href="kits.html#kits">View this kit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost btn-lg" href="kits.html#compare">Compare all kits</a>
+        </div>
+        <div class="restart"><button id="restartBtn">↺ Start over</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo-light.png" alt="Sacred Sampling Solutions"></a>
+        <p class="foot-about">Certified laboratory environmental testing delivered to your door. Built on science, rooted in faith. Real results — no strips, no guesswork.</p>
+      </div>
+      <div>
+        <h4>Water Kits</h4>
+        <a href="kits.html#kits">Heavy Metals &middot; Metals &amp; Minerals</a>
+        <a href="kits.html#kits">Essentials</a>
+        <a href="kits.html#kits">Comprehensive &middot; PFAS</a>
+        <a href="kits.html#kits">Professional (all-in-one)</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="index.html#how">How it works</a>
+        <a href="index.html#contaminants">What we test</a>
+        <a href="quiz.html">Find my kit</a>
+        <a href="sampleregistration.html">Activate a kit</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="refund.html">Refund &amp; Returns</a>
+        <a href="shipping.html">Shipping Policy</a>
+        <a href="disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Sacred Sampling Solutions LLC &middot; Assembled in the USA</span>
+      <span class="mono">For informational &amp; screening purposes. Not a medical diagnosis.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+(function(){
+  var TOTAL = 5;
+  var idx = 0;
+  var answers = { source:null, age:null, reasons:[], scope:null, custody:null };
+  var steps = [].slice.call(document.querySelectorAll('.qstep'));
+  var bar = document.getElementById('bar');
+  var backBtn = document.getElementById('backBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var quiz = document.getElementById('quiz');
+  var result = document.getElementById('result');
+
+  function render(){
+    steps.forEach(function(s,i){ s.classList.toggle('on', i===idx); });
+    bar.style.width = ((idx)/(TOTAL))*100 + 5 + '%';
+    backBtn.disabled = idx===0;
+    // multi-select steps show a Continue button; single-select auto-advance
+    var multi = steps[idx].querySelector('[data-multi="true"]');
+    nextBtn.style.display = multi ? 'inline-flex' : 'none';
+  }
+
+  function selectOpt(btn, group){
+    var multi = group.getAttribute('data-multi')==='true';
+    var q = group.getAttribute('data-q');
+    if(multi){
+      btn.classList.toggle('sel');
+      var vals = [].slice.call(group.querySelectorAll('.opt.sel')).map(function(b){return b.dataset.val;});
+      answers[q] = vals;
+    } else {
+      group.querySelectorAll('.opt').forEach(function(b){ b.classList.remove('sel'); });
+      btn.classList.add('sel');
+      answers[q] = btn.dataset.val;
+      setTimeout(next, 220); // auto-advance
+    }
+  }
+
+  document.querySelectorAll('.opts .opt').forEach(function(btn){
+    btn.addEventListener('click', function(){ selectOpt(btn, btn.closest('.opts')); });
+  });
+
+  function next(){
+    if(idx < TOTAL-1){ idx++; render(); }
+    else { finish(); }
+  }
+  function back(){ if(idx>0){ idx--; render(); } }
+  backBtn.addEventListener('click', back);
+  nextBtn.addEventListener('click', next);
+
+  var PANELS = {
+    metals:       {k:'Kit 01 · Metals', n:'Heavy Metals Kit', p:'$249', t:'13 heavy metals'},
+    minerals:     {k:'Kit 02 · Metals + Minerals', n:'Metals & Minerals Kit', p:'$329', t:'metals + chloride + fluoride'},
+    essentials:   {k:'Kit 03 · Everyday', n:'Essentials Kit', p:'$199', t:'bacteria, E. coli, nitrates, pH, hardness'},
+    comprehensive:{k:'Kit 04 · Broad chemistry', n:'Comprehensive Kit', p:'$499', t:'VOCs + metals + minerals'},
+    pfas:         {k:'Kit 05 · Forever chemicals', n:'PFAS Kit', p:'$499', t:'25-compound PFAS panel (EPA 533)'},
+    professional: {k:'Kit 06 · Everything', n:'Professional Kit', p:'$1,195', t:'every analyte — bacteria to PFAS'}
+  };
+
+  function recommend(){
+    var reasons = answers.reasons || [];
+    var why = [];
+
+    // priority: later rules override earlier ones
+    var rec = 'essentials';                                    // default all-rounder
+    if(answers.age==='old') rec='metals';                      // older pipes = lead risk (metals)
+    if(reasons.indexOf('taste')>-1) rec='comprehensive';       // taste/odor = broad chemistry
+    if(answers.scope==='waterair') rec='comprehensive';
+    if(reasons.indexOf('industry')>-1) rec='pfas';             // near industry = forever chemicals
+    if(reasons.indexOf('realestate')>-1) rec='professional';   // documentation / full picture
+    if(answers.scope==='whole') rec='professional';
+    if(answers.custody==='yes') rec='professional';
+
+    // contextual "why" bullets
+    if(answers.source==='well') why.push(['Private wells aren’t regulated', 'you’re your own utility, so bacteria and nitrates are the first things to rule out.']);
+    if(answers.source==='city') why.push(['City water can still change in your home', 'metals and other contaminants can enter through your own pipes and fixtures.']);
+    if(answers.age==='old') why.push(['Older plumbing', 'pipes and solder are the leading source of lead — worth measuring the metals.']);
+    if(reasons.indexOf('kids')>-1) why.push(['Young kids or pregnancy', 'bacteria and nitrates carry the highest risk for infants — the Essentials analytes.']);
+    if(reasons.indexOf('industry')>-1) why.push(['Near industry or farmland', 'PFAS “forever chemicals” are the contaminant most tied to industrial and agricultural areas.']);
+    if(reasons.indexOf('realestate')>-1) why.push(['Buying or selling', 'the all-in-one gives you the most complete record for a transaction.']);
+    if(reasons.indexOf('taste')>-1) why.push(['Taste, odor, or color', 'these often point to metals, minerals, or VOCs — the broad chemistry panel covers them.']);
+    if(answers.scope==='whole') why.push(['You want the full picture', 'the Professional kit tests every analyte we offer in one report.']);
+    if(answers.custody==='yes') why.push(['You may need documentation', 'the Professional kit gives you the most complete, defensible record.']);
+    if(why.length===0) why.push(['A trusted starting point', 'this kit covers what most homes should check first.']);
+
+    return { key: rec, panel: PANELS[rec], why: why.slice(0,4) };
+  }
+
+  function finish(){
+    var r = recommend();
+    document.getElementById('recKname').textContent = r.panel.k;
+    document.getElementById('recName').textContent = r.panel.n;
+    document.getElementById('recTests').innerHTML = '<b style="font-size:1.5rem;color:var(--ink);display:block;margin-bottom:2px">' + r.panel.p + '</b>tests: ' + r.panel.t;
+    document.getElementById('recBuy').innerHTML = 'View the ' + r.panel.n + ' &nbsp;<span class="arrow">→</span>';
+    var ul = document.getElementById('recWhy');
+    ul.innerHTML = '';
+    r.why.forEach(function(w){
+      var li = document.createElement('li');
+      li.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span><b>'+w[0]+'</b> — '+w[1]+'</span>';
+      ul.appendChild(li);
+    });
+    bar.style.width='100%';
+    quiz.style.display='none';
+    result.classList.add('on');
+    result.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', function(){
+    idx=0; answers={source:null,age:null,reasons:[],scope:null,custody:null};
+    document.querySelectorAll('.opt.sel').forEach(function(b){b.classList.remove('sel');});
+    result.classList.remove('on'); quiz.style.display=''; render();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
