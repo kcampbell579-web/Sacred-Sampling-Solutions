@@ -40,7 +40,7 @@
   --radius:14px;
   --radius-sm:9px;
   --maxw:1160px;
-  --sans:"Helvetica Neue",Helvetica,Arial,system-ui,sans-serif;
+  --sans:"Manrope","Helvetica Neue",Arial,system-ui,sans-serif;
   --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){
@@ -82,9 +82,10 @@ body{margin:0;background:var(--ground);color:var(--ink);
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
-h1,h2,h3,h4{margin:0;letter-spacing:-.02em;text-wrap:balance;line-height:1.07;font-weight:800}
-h2{font-size:clamp(1.8rem,3.6vw,2.7rem)}
-h3{font-size:1.16rem;letter-spacing:-.01em;line-height:1.25}
+h1,h2,h3,h4{margin:0;letter-spacing:-.025em;text-wrap:balance;line-height:1.08;font-weight:700}
+h1{letter-spacing:-.035em}
+h2{font-size:clamp(1.8rem,3.6vw,2.7rem);letter-spacing:-.03em}
+h3{font-size:1.16rem;letter-spacing:-.015em;line-height:1.25;font-weight:600}
 p{margin:0}
 .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--brand);font-weight:600}
 .muted{color:var(--ink-2)}
@@ -94,7 +95,7 @@ p{margin:0}
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;gap:.5em;justify-content:center;
-  font-family:var(--sans);font-weight:700;font-size:.98rem;letter-spacing:.01em;
+  font-family:var(--sans);font-weight:600;font-size:.98rem;letter-spacing:.005em;
   padding:.82em 1.35em;border-radius:11px;border:1px solid transparent;cursor:pointer;
   transition:transform .12s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;white-space:nowrap}
 .btn:active{transform:translateY(1px)}
@@ -151,7 +152,7 @@ section{padding:88px 0}
 /* HERO — always dark */
 .hero{position:relative;overflow:hidden;color:var(--dk-text);
   background:
-    radial-gradient(120% 90% at 82% -10%, rgba(226,171,60,.16), transparent 55%),
+    radial-gradient(120% 90% at 82% -10%, rgba(44,148,252,.16), transparent 55%),
     radial-gradient(90% 120% at 8% 10%, rgba(47,134,255,.20), transparent 60%),
     linear-gradient(160deg, #060911 0%, #091530 55%, #0a1c44 100%);
   padding:64px 0 56px}
@@ -211,7 +212,7 @@ section{padding:88px 0}
 .kit .kname{font-size:.78rem;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .kit h3{margin:6px 0 10px}
 .kit .price{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
-.kit .price .amt{font-size:2.15rem;font-weight:800;letter-spacing:-.03em}
+.kit .price .amt{font-size:2.15rem;font-weight:700;letter-spacing:-.03em}
 .kit .price .per{color:var(--ink-3);font-size:.9rem;font-family:var(--mono)}
 .kit .blurb{color:var(--ink-2);font-size:.94rem;margin-bottom:18px;min-height:2.6em}
 .kit ul{list-style:none;padding:0;margin:0 0 22px;display:flex;flex-direction:column;gap:10px}
@@ -227,7 +228,7 @@ section{padding:88px 0}
 .minikit{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px}
 .minikit .kname{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .minikit h3{font-size:1.05rem}
-.minikit .mprice{font-size:1.4rem;font-weight:800;letter-spacing:-.02em;margin-top:2px}
+.minikit .mprice{font-size:1.4rem;font-weight:700;letter-spacing:-.02em;margin-top:2px}
 .minikit p{color:var(--ink-2);font-size:.9rem;margin-top:2px}
 .minikit .mmeta{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);margin-top:8px}
 .minikit a.mlink{margin-top:12px;color:var(--brand);font-weight:700;font-size:.9rem}
@@ -266,7 +267,7 @@ section{padding:88px 0}
 .tablescroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%;min-width:720px;font-size:.9rem}
 thead th{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;text-align:left;color:var(--ink-3);padding:16px 18px;background:var(--panel-2);border-bottom:1px solid var(--line);white-space:nowrap}
-thead th .sub{display:block;margin-top:4px;font-size:.9rem;letter-spacing:-.01em;text-transform:none;color:var(--ink);font-weight:800}
+thead th .sub{display:block;margin-top:4px;font-size:.9rem;letter-spacing:-.01em;text-transform:none;color:var(--ink);font-weight:700}
 .matrix thead th:not(:first-child){color:var(--ink)}
 tbody td{padding:15px 18px;border-bottom:1px solid var(--line);vertical-align:top}
 tbody tr:last-child td{border-bottom:none}
@@ -292,13 +293,13 @@ td.dash{color:var(--ink-3)}
 
 /* stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center}
-.stat .num{font-size:clamp(1.9rem,4vw,2.6rem);font-weight:800;letter-spacing:-.03em;color:var(--brand);font-variant-numeric:tabular-nums}
+.stat .num{font-size:clamp(1.9rem,4vw,2.6rem);font-weight:700;letter-spacing:-.03em;color:var(--brand);font-variant-numeric:tabular-nums}
 .stat .cap{font-size:.86rem;color:var(--ink-2);margin-top:4px}
 @media (max-width:640px){.stats{grid-template-columns:1fr 1fr;gap:28px 20px}}
 
 /* band — dark */
 .band{border-radius:20px;padding:46px 44px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;position:relative;overflow:hidden;color:#fff;
-  background:radial-gradient(90% 140% at 88% 0%, rgba(226,171,60,.18), transparent 55%), linear-gradient(155deg,#0a1633,#0b1c46)}
+  background:radial-gradient(90% 140% at 88% 0%, rgba(44,148,252,.18), transparent 55%), linear-gradient(155deg,#0a1633,#0b1c46)}
 .band::before{content:"";position:absolute;inset:0;border-radius:20px;border:1px solid rgba(255,255,255,.08)}
 .band .eyebrow{color:var(--gold-2)}
 .band h2{color:#fff}
@@ -348,7 +349,7 @@ footer .brand img{height:40px}
 
 /* interior page hero (dark, compact) */
 .page-hero{background:
-    radial-gradient(90% 130% at 85% -10%, rgba(226,171,60,.14), transparent 55%),
+    radial-gradient(90% 130% at 85% -10%, rgba(44,148,252,.14), transparent 55%),
     linear-gradient(160deg,#060911,#0a1734 60%,#0a1c44);
   color:var(--dk-text);padding:66px 0 60px;text-align:center;position:relative}
 .page-hero .eyebrow{color:var(--gold-2)}
