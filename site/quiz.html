@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Find My Panel — Sacred Sampling Solutions</title>
+<title>Find My Kit — Sacred Sampling Solutions</title>
 <meta name="description" content="Answer a few quick questions and we'll match you to the right certified testing panel for your water, air, and home.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23081230'/%3E%3Cellipse cx='50' cy='30' rx='17' ry='6' fill='none' stroke='%23e2ab3c' stroke-width='4'/%3E%3Crect x='46' y='22' width='8' height='26' fill='%23e2ab3c'/%3E%3Crect x='38' y='30' width='24' height='7' fill='%23e2ab3c'/%3E%3Ccircle cx='50' cy='66' r='20' fill='none' stroke='%232f86ff' stroke-width='5'/%3E%3Cpath d='M50 52 C58 64 60 70 60 74 a10 10 0 1 1 -20 0 C40 70 42 64 50 52 Z' fill='%238fc4f0'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230E0E0E'/%3E%3Cellipse cx='50' cy='30' rx='17' ry='6' fill='none' stroke='%236fb6ff' stroke-width='4'/%3E%3Crect x='46' y='22' width='8' height='26' fill='%236fb6ff'/%3E%3Crect x='38' y='30' width='24' height='7' fill='%236fb6ff'/%3E%3Ccircle cx='50' cy='66' r='20' fill='none' stroke='%232C94FC' stroke-width='5'/%3E%3Cpath d='M50 52 C58 64 60 70 60 74 a10 10 0 1 1 -20 0 C40 70 42 64 50 52 Z' fill='%238fc4f0'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
 <style>
   .quiz-wrap{max-width:720px;margin:0 auto;padding:60px 0 96px}
@@ -46,6 +46,7 @@
   .rec-panel .kname{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
   .rec-panel .price{font-size:1.9rem;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
   .rec-panel .price span{font-size:.85rem;font-family:var(--mono);color:var(--ink-3);font-weight:400}
+  .rec-panel .rtests{font-size:.78rem;color:var(--brand-ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;max-width:180px;text-align:right;line-height:1.4}
   .why{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:12px}
   .why li{display:flex;gap:11px;align-items:flex-start;color:var(--ink-2);font-size:.98rem}
   .why li svg{color:var(--brand);flex:none;margin-top:3px}
@@ -64,9 +65,9 @@
     <nav class="nav-links" id="navLinks">
       <a href="kits.html">Test Kits</a>
       <a href="index.html#how">How It Works</a>
-      <a href="index.html#contaminants">What We Detect</a>
-      <a href="index.html#guarantee">Guarantee</a>
-      <a href="quiz.html" class="active">Find My Panel</a>
+      <a href="index.html#contaminants">What We Test</a>
+      <a href="index.html#guarantee">Why Us</a>
+      <a href="quiz.html" class="active">Find My Kit</a>
     </nav>
     <div class="nav-cta">
       <button class="theme-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle color theme">
@@ -82,7 +83,7 @@
 
 <section class="page-hero on-dark" style="padding-bottom:34px">
   <div class="wrap">
-    <span class="eyebrow">Find my panel</span>
+    <span class="eyebrow">Find my kit</span>
     <h1>Which test is right for your home?</h1>
     <p>Answer five quick questions. We'll match you to the panel that covers what matters most for your situation — no account needed.</p>
   </div>
@@ -165,18 +166,18 @@
 
       <!-- RESULT -->
       <div class="result" id="result">
-        <div class="rec-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Your recommended panel</div>
+        <div class="rec-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Your recommended kit</div>
         <div class="rec-panel">
           <div>
-            <div class="kname" id="recKname">Benchmark+</div>
-            <h3 id="recName">Water Health Panel</h3>
+            <div class="kname" id="recKname">Kit 03 · Everyday</div>
+            <h3 id="recName">Essentials Kit</h3>
           </div>
-          <div class="price" id="recPrice">$219<span> / kit</span></div>
+          <div class="rtests mono" id="recTests">tests: bacteria, nitrates, pH</div>
         </div>
         <ul class="why" id="recWhy"></ul>
         <div class="rec-cta">
-          <a class="btn btn-primary btn-lg" id="recBuy" href="kits.html">Add to cart <span class="arrow">→</span></a>
-          <a class="btn btn-ghost btn-lg" href="kits.html#compare">Compare all panels</a>
+          <a class="btn btn-primary btn-lg" id="recBuy" href="kits.html#kits">View this kit <span class="arrow">→</span></a>
+          <a class="btn btn-ghost btn-lg" href="kits.html#compare">Compare all kits</a>
         </div>
         <div class="restart"><button id="restartBtn">↺ Start over</button></div>
       </div>
@@ -193,18 +194,18 @@
         <p class="foot-about">Certified laboratory environmental testing delivered to your door. Built on science, rooted in faith. Real results — no strips, no guesswork.</p>
       </div>
       <div>
-        <h4>Test Kits</h4>
-        <a href="kits.html">Essentials — Metals</a>
-        <a href="kits.html">Benchmark+ — Water</a>
-        <a href="kits.html">Comprehensive — Whole Home</a>
-        <a href="quiz.html">Find my panel</a>
+        <h4>Water Kits</h4>
+        <a href="kits.html#kits">Heavy Metals · Metals &amp; Minerals</a>
+        <a href="kits.html#kits">Essentials</a>
+        <a href="kits.html#kits">Comprehensive · PFAS</a>
+        <a href="kits.html#kits">Professional (all-in-one)</a>
       </div>
       <div>
-        <h4>Learn</h4>
+        <h4>Air &amp; Learn</h4>
+        <a href="kits.html#air">Indoor air quality kits</a>
         <a href="index.html#how">How it works</a>
-        <a href="index.html#contaminants">What we detect</a>
-        <a href="index.html#why">Lab vs. strips</a>
-        <a href="index.html#guarantee">Our guarantee</a>
+        <a href="index.html#contaminants">What we measure</a>
+        <a href="quiz.html">Find my kit</a>
       </div>
       <div>
         <h4>Company</h4>
@@ -215,8 +216,8 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Sacred Sampling Solutions LLC</span>
-      <span class="mono">Assembled in the USA · Chain-of-custody documented</span>
+      <span>© 2026 Sacred Sampling Solutions LLC · Assembled in the USA</span>
+      <span class="mono">For informational &amp; screening purposes. Not a medical diagnosis.</span>
     </div>
   </div>
 </footer>
@@ -270,53 +271,50 @@
   backBtn.addEventListener('click', back);
   nextBtn.addEventListener('click', next);
 
+  var PANELS = {
+    metals:       {k:'Kit 01 · Metals', n:'Heavy Metals Kit', t:'13 heavy metals'},
+    minerals:     {k:'Kit 02 · Metals + Minerals', n:'Metals & Minerals Kit', t:'metals + chloride + fluoride'},
+    essentials:   {k:'Kit 03 · Everyday', n:'Essentials Kit', t:'bacteria, E. coli, nitrates, pH, hardness'},
+    comprehensive:{k:'Kit 04 · Broad chemistry', n:'Comprehensive Kit', t:'VOCs + metals + minerals'},
+    pfas:         {k:'Kit 05 · Forever chemicals', n:'PFAS Kit', t:'25-compound PFAS panel (EPA 533)'},
+    professional: {k:'Kit 06 · Everything', n:'Professional Kit', t:'every analyte — bacteria to PFAS'}
+  };
+
   function recommend(){
-    // tier: 1 Essentials, 2 Benchmark+, 3 Comprehensive
-    var tier = 2; // default most popular
     var reasons = answers.reasons || [];
     var why = [];
 
-    if(answers.scope==='whole' || answers.scope==='waterair'){ tier = 3; }
-    if(answers.source==='well'){ tier = Math.max(tier,3); }
-    if(reasons.indexOf('industry')>-1){ tier = Math.max(tier,3); }
-    if(reasons.indexOf('realestate')>-1){ tier = Math.max(tier,3); }
-    if(answers.custody==='yes'){ tier = Math.max(tier,3); }
-    if(reasons.indexOf('kids')>-1){ tier = Math.max(tier,2); }
-    if(answers.age==='old'){ tier = Math.max(tier,2); }
+    // priority: later rules override earlier ones
+    var rec = 'essentials';                                    // default all-rounder
+    if(answers.age==='old') rec='metals';                      // older pipes = lead risk (metals)
+    if(reasons.indexOf('taste')>-1) rec='comprehensive';       // taste/odor = broad chemistry
+    if(answers.scope==='waterair') rec='comprehensive';
+    if(reasons.indexOf('industry')>-1) rec='pfas';             // near industry = forever chemicals
+    if(reasons.indexOf('realestate')>-1) rec='professional';   // documentation / full picture
+    if(answers.scope==='whole') rec='professional';
+    if(answers.custody==='yes') rec='professional';
 
-    // downgrade path to Essentials: simplest case only
-    var simple = answers.scope==='water' && answers.source!=='well' && answers.custody!=='yes'
-      && (answers.age==='new') && reasons.indexOf('industry')===-1 && reasons.indexOf('realestate')===-1
-      && reasons.indexOf('kids')===-1
-      && (reasons.length===0 || (reasons.length===1 && reasons[0]==='peace'));
-    if(simple){ tier = 1; }
+    // contextual "why" bullets
+    if(answers.source==='well') why.push(['Private wells aren’t regulated', 'you’re your own utility, so bacteria and nitrates are the first things to rule out.']);
+    if(answers.source==='city') why.push(['City water can still change in your home', 'metals and other contaminants can enter through your own pipes and fixtures.']);
+    if(answers.age==='old') why.push(['Older plumbing', 'pipes and solder are the leading source of lead — worth measuring the metals.']);
+    if(reasons.indexOf('kids')>-1) why.push(['Young kids or pregnancy', 'bacteria and nitrates carry the highest risk for infants — the Essentials analytes.']);
+    if(reasons.indexOf('industry')>-1) why.push(['Near industry or farmland', 'PFAS “forever chemicals” are the contaminant most tied to industrial and agricultural areas.']);
+    if(reasons.indexOf('realestate')>-1) why.push(['Buying or selling', 'the all-in-one gives you the most complete record for a transaction.']);
+    if(reasons.indexOf('taste')>-1) why.push(['Taste, odor, or color', 'these often point to metals, minerals, or VOCs — the broad chemistry panel covers them.']);
+    if(answers.scope==='whole') why.push(['You want the full picture', 'the Professional kit tests every analyte we offer in one report.']);
+    if(answers.custody==='yes') why.push(['You may need documentation', 'the Professional kit gives you the most complete, defensible record.']);
+    if(why.length===0) why.push(['A trusted starting point', 'this kit covers what most homes should check first.']);
 
-    // build reasons
-    if(answers.source==='well') why.push(['Private wells aren’t regulated', 'you’re your own utility, so nitrate, arsenic, and bacteria screening matter most.']);
-    if(answers.source==='city') why.push(['City water can still pick up lead', 'contamination often happens in your home’s own pipes, after the utility’s tests.']);
-    if(answers.age==='old') why.push(['Pre-1986 plumbing', 'lead pipes and solder are the leading source of lead in tap water — worth confirming.']);
-    if(reasons.indexOf('kids')>-1) why.push(['Kids and pregnancy', 'lead and nitrate carry the highest risk for young children and expecting mothers.']);
-    if(reasons.indexOf('industry')>-1) why.push(['Near industry or farmland', 'PFAS and VOCs are the contaminants most tied to industrial and agricultural runoff.']);
-    if(reasons.indexOf('realestate')>-1) why.push(['Real-estate transaction', 'documented chain-of-custody makes your results defensible in a sale or negotiation.']);
-    if(reasons.indexOf('taste')>-1) why.push(['Taste, odor, or color', 'these often point to metals, hardness, or organics we can quantify precisely.']);
-    if(answers.scope==='whole'||answers.scope==='waterair') why.push(['You want more than water', 'this panel adds indoor-air VOC sampling to the full water workup.']);
-    if(answers.custody==='yes') why.push(['You may need proof', 'every Comprehensive kit is processed under documented chain-of-custody.']);
-    if(why.length===0) why.push(['A smart baseline', 'this panel covers the contaminants most homes should rule out first.']);
-
-    var panels = {
-      1:{k:'Essentials', n:'Lead & Metals', p:'$129'},
-      2:{k:'Benchmark+', n:'Water Health Panel', p:'$219'},
-      3:{k:'Comprehensive', n:'Whole-Home Panel', p:'$389'}
-    };
-    return { panel: panels[tier], why: why.slice(0,4) };
+    return { key: rec, panel: PANELS[rec], why: why.slice(0,4) };
   }
 
   function finish(){
     var r = recommend();
     document.getElementById('recKname').textContent = r.panel.k;
     document.getElementById('recName').textContent = r.panel.n;
-    document.getElementById('recPrice').innerHTML = r.panel.p + '<span> / kit</span>';
-    document.getElementById('recBuy').innerHTML = 'Add ' + r.panel.k + ' to cart &nbsp;<span class="arrow">→</span>';
+    document.getElementById('recTests').textContent = 'tests: ' + r.panel.t;
+    document.getElementById('recBuy').innerHTML = 'View the ' + r.panel.n + ' &nbsp;<span class="arrow">→</span>';
     var ul = document.getElementById('recWhy');
     ul.innerHTML = '';
     r.why.forEach(function(w){
