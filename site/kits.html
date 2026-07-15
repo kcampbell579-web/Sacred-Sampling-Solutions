@@ -73,7 +73,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>One 250 mL sample bottle</li>
         </ul>
         <div class="kbest"><b>Best for:</b> a focused, affordable first look at metals.</div>
-        <a href="#" class="btn btn-ghost">Add to cart</a>
+        <a href="#" data-stripe="heavymetals" class="btn btn-ghost">Add to cart</a>
       </div>
 
       <div class="kit reveal">
@@ -86,7 +86,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Chloride &amp; fluoride</li>
         </ul>
         <div class="kbest"><b>Best for:</b> metals plus key minerals in one test.</div>
-        <a href="#" class="btn btn-ghost">Add to cart</a>
+        <a href="#" data-stripe="minerals" class="btn btn-ghost">Add to cart</a>
       </div>
 
       <div class="kit pop reveal">
@@ -100,7 +100,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Nitrates · pH · hardness</li>
         </ul>
         <div class="kbest"><b>Best for:</b> a trusted, well-rounded starting point.</div>
-        <a href="#" class="btn btn-primary">Add to cart</a>
+        <a href="#" data-stripe="essentials" class="btn btn-primary">Add to cart</a>
       </div>
 
       <div class="kit reveal">
@@ -113,7 +113,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>13 metals · chloride · fluoride</li>
         </ul>
         <div class="kbest"><b>Best for:</b> the broadest chemistry analysis in one kit.</div>
-        <a href="#" class="btn btn-ghost">Add to cart</a>
+        <a href="#" data-stripe="comprehensive" class="btn btn-ghost">Add to cart</a>
       </div>
 
       <div class="kit reveal">
@@ -126,7 +126,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>PFOA, PFOS, PFHxS, PFBS, GenX</li>
         </ul>
         <div class="kbest"><b>Best for:</b> anyone concerned about PFAS.</div>
-        <a href="#" class="btn btn-ghost">Add to cart</a>
+        <a href="#" data-stripe="pfas" class="btn btn-ghost">Add to cart</a>
       </div>
 
       <div class="kit flag reveal">
@@ -140,7 +140,7 @@
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>13 metals · chloride · fluoride · VOCs · PFAS</li>
         </ul>
         <div class="kbest"><b>Best for:</b> testing everything once — the most thorough analysis.</div>
-        <a href="#" class="btn btn-ghost">Add to cart</a>
+        <a href="#" data-stripe="professional" class="btn btn-ghost">Add to cart</a>
       </div>
     </div>
     <p class="kits-note">Not sure which fits your home? <a href="quiz.html">Take the 60-second quiz →</a></p>
@@ -312,5 +312,25 @@
 </footer>
 
 <script src="app.js"></script>
+<script>
+  /* ── STRIPE PAYMENT LINKS ──────────────────────────────────────────────
+     Create 6 Payment Links in your Stripe dashboard (one per kit, at the
+     prices below) and paste each URL between the quotes. That's the only
+     edit needed to make checkout live. */
+  var STRIPE_LINKS = {
+    heavymetals:   "",  /* Heavy Metals Kit — $249 */
+    minerals:      "",  /* Metals & Minerals Kit — $329 */
+    essentials:    "",  /* Essentials Kit — $199 */
+    comprehensive: "",  /* Comprehensive Kit — $499 */
+    pfas:          "",  /* PFAS Kit — $499 */
+    professional:  ""   /* Professional Kit — $1,195 */
+  };
+  document.querySelectorAll('[data-stripe]').forEach(function(a){
+    var u = STRIPE_LINKS[a.getAttribute('data-stripe')];
+    if (u) { a.href = u; }
+    else { a.addEventListener('click', function(e){ e.preventDefault();
+      alert('Checkout not connected yet — add this kit\'s Stripe Payment Link in the STRIPE_LINKS config.'); }); }
+  });
+</script>
 </body>
 </html>
