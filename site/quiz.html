@@ -272,12 +272,12 @@
   nextBtn.addEventListener('click', next);
 
   var PANELS = {
-    metals:       {k:'Kit 01 · Metals', n:'Heavy Metals Kit', t:'13 heavy metals'},
-    minerals:     {k:'Kit 02 · Metals + Minerals', n:'Metals & Minerals Kit', t:'metals + chloride + fluoride'},
-    essentials:   {k:'Kit 03 · Everyday', n:'Essentials Kit', t:'bacteria, E. coli, nitrates, pH, hardness'},
-    comprehensive:{k:'Kit 04 · Broad chemistry', n:'Comprehensive Kit', t:'VOCs + metals + minerals'},
-    pfas:         {k:'Kit 05 · Forever chemicals', n:'PFAS Kit', t:'25-compound PFAS panel (EPA 533)'},
-    professional: {k:'Kit 06 · Everything', n:'Professional Kit', t:'every analyte — bacteria to PFAS'}
+    metals:       {k:'Kit 01 · Metals', n:'Heavy Metals Kit', p:'$249', t:'13 heavy metals'},
+    minerals:     {k:'Kit 02 · Metals + Minerals', n:'Metals & Minerals Kit', p:'$329', t:'metals + chloride + fluoride'},
+    essentials:   {k:'Kit 03 · Everyday', n:'Essentials Kit', p:'$199', t:'bacteria, E. coli, nitrates, pH, hardness'},
+    comprehensive:{k:'Kit 04 · Broad chemistry', n:'Comprehensive Kit', p:'$499', t:'VOCs + metals + minerals'},
+    pfas:         {k:'Kit 05 · Forever chemicals', n:'PFAS Kit', p:'$499', t:'25-compound PFAS panel (EPA 533)'},
+    professional: {k:'Kit 06 · Everything', n:'Professional Kit', p:'$1,195', t:'every analyte — bacteria to PFAS'}
   };
 
   function recommend(){
@@ -313,7 +313,7 @@
     var r = recommend();
     document.getElementById('recKname').textContent = r.panel.k;
     document.getElementById('recName').textContent = r.panel.n;
-    document.getElementById('recTests').textContent = 'tests: ' + r.panel.t;
+    document.getElementById('recTests').innerHTML = '<b style="font-size:1.5rem;color:var(--ink);display:block;margin-bottom:2px">' + r.panel.p + '</b>tests: ' + r.panel.t;
     document.getElementById('recBuy').innerHTML = 'View the ' + r.panel.n + ' &nbsp;<span class="arrow">→</span>';
     var ul = document.getElementById('recWhy');
     ul.innerHTML = '';

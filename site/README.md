@@ -28,17 +28,16 @@ rebuild in Wix. No build step, no dependencies — just HTML/CSS/JS.
 5. **PFAS Kit** — 25-compound PFAS panel, EPA Method 533 (LC-MS/MS)
 6. **Professional Kit** — everything, all 10 analytes *(marked "Most complete")*
 
+## Prices (from the "6-Kit Model 2026" SKU sheet)
+Essentials **$199** · Heavy Metals **$249** · Metals & Minerals **$329** ·
+Comprehensive **$499** · PFAS **$499** · Professional **$1,195**.
+Air standalone: Formaldehyde **$149** · VOC **$199** · Ammonia **$125**.
+
 ## ⚠️ To finish before launch
-1. **Water-kit prices** — the 6 kits above are shown **without prices** on purpose.
-   Your SKU spreadsheet's prices were tied to the *old* kit names (Baseline/Benchmark/
-   etc.) and the new 6-kit structure re-mixes the analytes, so I didn't want to guess.
-   Send me the 6 prices and I'll add them + wire the "Add to cart" buttons.
-2. **Air-kit prices** are set from your SKU sheet (Formaldehyde $149 · VOC $199 ·
-   Ammonia $125) — confirm these are current.
-3. **Accreditation** — I say "accredited partner laboratory" generically. If you have a
+1. **Accreditation** — I say "accredited partner laboratory" generically. If you have a
    named lab or ISO/IEC 17025 number, it's a strong trust signal to add.
-4. **"Add to cart" links** point to `#` — wire them to your real checkout.
-5. **Email capture** (homepage) is front-end only — connect it to your email tool.
+2. **"Add to cart" links** point to `#` — wire them to your real checkout.
+3. **Email capture** (homepage) is front-end only — connect it to your email tool.
 
 Every page carries the required footer disclaimer: *"For informational & screening
 purposes. Not a medical diagnosis."*
