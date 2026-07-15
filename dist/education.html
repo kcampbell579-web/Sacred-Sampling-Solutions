@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Testing Kits — Compare Water, Air & Specialty Panels | Sacred Sampling Solutions</title>
-  <meta name="description" content="Compare our water quality panels — Baseline, Benchmark, Comprehensive, and Professional — plus indoor air, surface & dust, and specialty screening. Lab-grade results, home-delivered." />
+  <title>Education — Lab-Backed Answers About Your Home | Sacred Sampling Solutions</title>
+  <meta name="description" content="Understand what's really in your home — and what to do about it. Lab-backed guides on lead, PFAS, mold, well water, radon and more, for parents and homeowners." />
   <meta name="theme-color" content="#0b1220" />
 
-  <meta property="og:title" content="Testing Kits — Compare Panels | Sacred Sampling Solutions" />
-  <meta property="og:description" content="Choose the panel that meets your testing needs — from an essential water screen to a full PFAS-inclusive analysis." />
+  <meta property="og:title" content="Education — Sacred Sampling Solutions" />
+  <meta property="og:description" content="Lab-backed answers for moms, homeowners, and anyone tired of guessing." />
   <meta property="og:type" content="website" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -502,10 +502,10 @@ h1, h2, h3, h4 { font-family: var(--font-disp); font-weight: 600; line-height: 1
       </a>
 
       <nav class="nav" aria-label="Primary">
-        <a href="kits.html" aria-current="page" class="is-active">Testing Kits</a>
+        <a href="kits.html">Testing Kits</a>
         <a href="process.html">The Process</a>
         <a href="index.html#test">What We Test</a>
-        <a href="education.html">Education</a>
+        <a href="education.html" aria-current="page" class="is-active">Education</a>
         <a href="index.html#faq">FAQ</a>
       </nav>
 
@@ -530,214 +530,186 @@ h1, h2, h3, h4 { font-family: var(--font-disp); font-weight: 600; line-height: 1
   </header>
 
   <main id="main">
-    <!-- Hero -->
+    <!-- Hero + search -->
     <section class="hero hero--sub">
       <div class="hero__glow" aria-hidden="true"></div>
       <div class="container hero__inner hero__inner--center">
-        <p class="eyebrow">Testing Kits</p>
-        <h1 class="hero__title">Choose the panel that fits <span>your water</span>.</h1>
+        <p class="eyebrow">Education Library</p>
+        <h1 class="hero__title">Understand what's really in your home — <span>and what to do about it</span>.</h1>
         <p class="hero__sub hero__sub--center">
-          Pick your depth of analysis — from an essential water screen to a full,
-          PFAS-inclusive workup. Every kit ships free, both ways, with lab-grade results.
+          Lab-backed answers for moms, homeowners, and anyone tired of guessing.
         </p>
-        <div class="hero__cta hero__cta--center">
-          <a class="btn btn--primary btn--lg" href="https://www.sacredsamplingsolutions.com/find-your-test">Find My Kit</a>
-          <a class="btn btn--outline btn--lg" href="#compare">Compare Panels</a>
+        <form class="edu-search" role="search" onsubmit="return false;">
+          <svg class="edu-search__ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" id="eduSearch" placeholder="Search: lead in water, mold, PFAS, well water…" aria-label="Search the education library" autocomplete="off" />
+        </form>
+        <div class="edu-chips" aria-label="Suggested searches">
+          <button type="button" class="chip" data-q="lead">lead in water</button>
+          <button type="button" class="chip" data-q="mold">mold</button>
+          <button type="button" class="chip" data-q="pfas">PFAS</button>
+          <button type="button" class="chip" data-q="well">well water</button>
+          <button type="button" class="chip" data-q="nursery">nursery prep</button>
+          <button type="button" class="chip" data-q="report">reading reports</button>
         </div>
       </div>
     </section>
 
-    <!-- Water panels -->
-    <section class="section" id="water">
+    <!-- Start here -->
+    <section class="section" id="start" data-searchgroup>
       <div class="container">
         <div class="section__head">
-          <p class="eyebrow">Water Quality Panels</p>
-          <h2>Compare our water panels.</h2>
-          <p class="lede">Choose the panel that meets your water testing needs based on the depth of analysis required.</p>
+          <p class="eyebrow">Start Here</p>
+          <h2>Find the guide for your situation.</h2>
         </div>
-
-        <div class="kits">
-          <article class="kit">
-            <h3>Baseline</h3>
-            <p class="kit__desc">The essential water screen — hardness, total coliform bacteria, E. coli, pH, nitrites, chloride &amp; fluoride.</p>
-            <p class="kit__price">$279</p>
-            <a class="btn btn--outline btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Add to Cart</a>
-          </article>
-          <article class="kit kit--featured">
-            <span class="kit__flag">Most Popular</span>
-            <h3>Benchmark</h3>
-            <p class="kit__desc">Everything in Baseline, plus heavy metals and volatile organic compounds (VOCs).</p>
-            <p class="kit__price">$299</p>
-            <a class="btn btn--primary btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Add to Cart</a>
-          </article>
-          <article class="kit">
-            <h3>Comprehensive</h3>
-            <p class="kit__desc">Adds petroleum compounds (BTEX), THMs, industrial &amp; consumer chemicals, and chlorinated solvents.</p>
-            <p class="kit__price">$399</p>
-            <a class="btn btn--outline btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Add to Cart</a>
-          </article>
-          <article class="kit">
-            <h3>Professional</h3>
-            <p class="kit__desc">Our most thorough panel — everything in Comprehensive, plus PFAS "forever chemicals."</p>
-            <p class="kit__price">$699</p>
-            <a class="btn btn--outline btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Add to Cart</a>
-          </article>
+        <div class="guides">
+          <a class="guide" href="https://www.sacredsamplingsolutions.com/education" data-tags="nursery baby pregnancy prep lead water air preparing">
+            <div class="guide__ic"><svg viewBox="0 0 24 24"><path d="M9 21V9a3 3 0 0 1 6 0v12M6 21h12M12 6V3M9 4.5 12 3l3 1.5"/></svg></div>
+            <h3>Preparing the nursery</h3>
+            <p>What to test for — and why — before baby arrives.</p>
+            <span class="guide__link">Read guide →</span>
+          </a>
+          <a class="guide" href="https://www.sacredsamplingsolutions.com/education" data-tags="buying selling home inspector inspection real estate report">
+            <div class="guide__ic"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6"/></svg></div>
+            <h3>Buying or selling a home</h3>
+            <p>The gaps a standard inspector won't catch.</p>
+            <span class="guide__link">Read guide →</span>
+          </a>
+          <a class="guide" href="https://www.sacredsamplingsolutions.com/education" data-tags="leak flood water damage mold timeline moisture">
+            <div class="guide__ic"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 10a6 6 0 1 1-12 0c0-3 3-6 6-10ZM4 20c2 1 4 1 6 0M14 20c2 1 4 1 6 0"/></svg></div>
+            <h3>Had a leak or flood</h3>
+            <p>Mold timelines and how to test after water damage.</p>
+            <span class="guide__link">Read guide →</span>
+          </a>
+          <a class="guide" href="https://www.sacredsamplingsolutions.com/education" data-tags="well private water annual testing nitrate bacteria e coli">
+            <div class="guide__ic"><svg viewBox="0 0 24 24"><path d="M7 8h10l-1 12H8L7 8ZM9 8V5a3 3 0 0 1 6 0v3M12 12v4"/></svg></div>
+            <h3>I have a private well</h3>
+            <p>The annual testing schedule every well owner needs.</p>
+            <span class="guide__link">Read guide →</span>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- Comparison matrix -->
-    <section class="section section--tint" id="compare">
+    <!-- Browse by contaminant -->
+    <section class="section section--tint" id="contaminants" data-searchgroup>
       <div class="container">
         <div class="section__head">
-          <p class="eyebrow">What's Included</p>
-          <h2>Panel-by-panel comparison.</h2>
-          <p class="lede">Each tier builds on the one before it. Here's exactly what every panel measures.</p>
+          <p class="eyebrow">Browse by Contaminant</p>
+          <h2>Learn about what we test for.</h2>
+          <p class="lede">Nine of the most common — and most consequential — contaminants found in U.S. homes.</p>
         </div>
-
-        <div class="table-wrap">
-          <table class="matrix">
-            <thead>
-              <tr>
-                <th scope="col">Analyte group</th>
-                <th scope="col">Baseline<span class="matrix__price">$279</span></th>
-                <th scope="col" class="matrix__pop">Benchmark<span class="matrix__price">$299</span></th>
-                <th scope="col">Comprehensive<span class="matrix__price">$399</span></th>
-                <th scope="col">Professional<span class="matrix__price">$699</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><th scope="row">Hardness</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Total coliform bacteria</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">E. coli</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">pH</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Nitrites</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Chloride</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Fluoride</th><td class="y">✓</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Heavy metals</th><td class="n">—</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Volatile organic compounds (VOCs)</th><td class="n">—</td><td class="y pop">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Petroleum compounds (BTEX)</th><td class="n">—</td><td class="n pop">—</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Trihalomethanes (THMs)</th><td class="n">—</td><td class="n pop">—</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Industrial &amp; consumer chemicals</th><td class="n">—</td><td class="n pop">—</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">Chlorinated solvents</th><td class="n">—</td><td class="n pop">—</td><td class="y">✓</td><td class="y">✓</td></tr>
-              <tr><th scope="row">PFAS "forever chemicals"</th><td class="n">—</td><td class="n pop">—</td><td class="n">—</td><td class="y">✓</td></tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td></td>
-                <td><a class="btn btn--outline btn--sm btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Choose</a></td>
-                <td><a class="btn btn--primary btn--sm btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Choose</a></td>
-                <td><a class="btn btn--outline btn--sm btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Choose</a></td>
-                <td><a class="btn btn--outline btn--sm btn--block" href="https://www.sacredsamplingsolutions.com/testingkits">Choose</a></td>
-              </tr>
-            </tfoot>
-          </table>
+        <div class="contam-grid">
+          <a class="ctile" href="index.html#test" data-tags="lead heavy metal pipes solder children water">
+            <span class="ctile__tag">Heavy metal</span>
+            <h3>Lead</h3>
+            <p>From older pipes, solder, and fixtures. No safe level for kids.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="vocs volatile organic compounds air water solvents fuel">
+            <span class="ctile__tag">Air &amp; water</span>
+            <h3>VOCs</h3>
+            <p>Solvents and fuels that off-gas and dissolve into water.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="radon gas basement soil lung">
+            <span class="ctile__tag">Gas</span>
+            <h3>Radon</h3>
+            <p>An invisible soil gas and a leading cause of lung cancer.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="arsenic heavy metal well bedrock pesticide">
+            <span class="ctile__tag">Heavy metal</span>
+            <h3>Arsenic</h3>
+            <p>Naturally in bedrock and wells; long-term cancer risk.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="nitrates agricultural fertilizer septic infants">
+            <span class="ctile__tag">Agricultural</span>
+            <h3>Nitrates</h3>
+            <p>From fertilizer and septic; especially risky for infants.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="asbestos mineral fiber insulation lung">
+            <span class="ctile__tag">Mineral fiber</span>
+            <h3>Asbestos</h3>
+            <p>Legacy insulation and materials that release harmful fibers.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="pfas forever chemicals synthetic runoff foam">
+            <span class="ctile__tag">Forever chemicals</span>
+            <h3>PFAS</h3>
+            <p>Synthetic "forever chemicals" that persist in the body.</p>
+          </a>
+          <a class="ctile" href="https://www.sacredsamplingsolutions.com/education" data-tags="mold biological moisture flood spores air">
+            <span class="ctile__tag">Biological</span>
+            <h3>Mold</h3>
+            <p>Thrives after leaks and floods; affects air and health.</p>
+          </a>
+          <a class="ctile" href="index.html#test" data-tags="e coli bacteria well contamination water">
+            <span class="ctile__tag">Bacteria</span>
+            <h3>E. coli</h3>
+            <p>A marker of fecal contamination in wells and water.</p>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- What's in the box -->
-    <section class="section" id="box">
+    <!-- Featured guide -->
+    <section class="section" id="featured" data-searchgroup>
       <div class="container">
         <div class="section__head">
-          <p class="eyebrow">In Every Kit</p>
-          <h2>Everything you need to collect cleanly.</h2>
+          <p class="eyebrow">Featured Guide</p>
+          <h2>Go deeper.</h2>
         </div>
-        <div class="cards">
-          <article class="card">
-            <div class="card__ic"><svg viewBox="0 0 24 24"><path d="M9 2h6M10 2v4l-3 5v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9l-3-5V2"/><path d="M7.5 14h9"/></svg></div>
-            <h3>Sample bottles</h3>
-            <p>Lab-prepared bottles — some pre-coated with preservative — sized for each analyte.</p>
-          </article>
-          <article class="card">
-            <div class="card__ic"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M9 5v14"/></svg></div>
-            <h3>Cold pack</h3>
-            <p>A frozen gel pack keeps time-sensitive samples cold in transit.</p>
-          </article>
-          <article class="card">
-            <div class="card__ic"><svg viewBox="0 0 24 24"><path d="M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V6a1.5 1.5 0 0 1 3 0v6c0 4-2 8-6 8s-6-3-6-6l1.5-2.5"/></svg></div>
-            <h3>Gloves &amp; supplies</h3>
-            <p>Clean gloves and collection tools so your sample stays uncontaminated.</p>
-          </article>
-          <article class="card">
-            <div class="card__ic"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15a0 0 0 0 1 0 0H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></div>
-            <h3>Illustrated instructions</h3>
-            <p>Step-by-step guidance that makes collection quick and mistake-proof.</p>
-          </article>
-          <article class="card">
-            <div class="card__ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1"/><path d="M6 15h.01M14 4h7v7h-7zM14 15h3v3M20 15v.01M17 21h4M20 18v3"/></svg></div>
-            <h3>QR chain-of-custody</h3>
-            <p>Scan to register your sample and start tamper-evident, digital documentation.</p>
-          </article>
-          <article class="card">
-            <div class="card__ic"><svg viewBox="0 0 24 24"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7zM7.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM17.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg></div>
-            <h3>Prepaid return shipping</h3>
-            <p>A ready-to-go UPS mailer — no cost to send your sample back to the lab.</p>
-          </article>
-        </div>
+        <a class="feature" href="https://www.sacredsamplingsolutions.com/education" data-tags="water guide tap city well filtration report interpret complete">
+          <div class="feature__body">
+            <span class="feature__meta">Guide · 12-minute read</span>
+            <h3>The Complete Guide to Testing Your Home Water</h3>
+            <p>Everything you need, in one place — how to judge your tap water, the different risks of city vs. well supplies, how to read a lab report, and how to choose the right filtration once you know your numbers.</p>
+            <ul class="feature__list">
+              <li>Tap water quality, explained</li>
+              <li>City vs. well: different risks</li>
+              <li>How to read your lab report</li>
+              <li>Choosing filtration that fits</li>
+            </ul>
+            <span class="btn btn--primary">Read the Guide</span>
+          </div>
+          <div class="feature__side" aria-hidden="true">
+            <div class="feature__badge">
+              <svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6a0 0 0 0 1 0 0V2Z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
+              <span>12 min</span>
+            </div>
+          </div>
+        </a>
       </div>
     </section>
 
-    <!-- Other categories -->
-    <section class="section section--dark" id="categories">
-      <div class="container">
-        <div class="section__head section__head--light">
-          <p class="eyebrow">Beyond Water</p>
-          <h2>More ways to test your environment.</h2>
-        </div>
-        <div class="cards cards--3">
-          <article class="cat">
-            <div class="cat__ic"><svg viewBox="0 0 24 24"><path d="M4 12h8a3 3 0 1 0-3-3M4 16h12a3 3 0 1 1-3 3M4 8h5"/></svg></div>
-            <h3>Indoor Air Quality</h3>
-            <p>Screen for VOCs, combustion byproducts, gases, and particulate matter in the air you breathe.</p>
-            <a class="btn btn--outline-light btn--block" href="https://www.sacredsamplingsolutions.com/category/all-products">View Kits</a>
-          </article>
-          <article class="cat">
-            <div class="cat__ic"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 20V10l7-5 7 5v10M9 20v-5h6v5"/></svg></div>
-            <h3>Surface &amp; Dust Residue</h3>
-            <p>Evaluate dust and surfaces for chemical and biological contaminants around your home.</p>
-            <a class="btn btn--outline-light btn--block" href="https://www.sacredsamplingsolutions.com/category/all-products">View Kits</a>
-          </article>
-          <article class="cat">
-            <div class="cat__ic"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/><circle cx="12" cy="12" r="3"/></svg></div>
-            <h3>Specialty Screening</h3>
-            <p>Independent environmental sampling across air, water, and surface media for specific concerns.</p>
-            <a class="btn btn--outline-light btn--block" href="https://www.sacredsamplingsolutions.com/category/all-products">View Kits</a>
-          </article>
-        </div>
-      </div>
-    </section>
+    <!-- No results message (hidden by default) -->
+    <p class="edu-noresults" id="eduNoResults" hidden>No matches — try a broader term, or <a href="https://www.sacredsamplingsolutions.com/find-your-test">take the quiz</a>.</p>
 
-    <!-- Reassurance strip -->
-    <section class="strip" aria-label="What's included">
-      <div class="container strip__grid">
-        <div class="strip__item">
-          <svg class="strip__ic" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9 8 11 4.6-2 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-          <div><strong>EPA-Referenced Methods</strong><span>Defensible, standards-based analysis</span></div>
+    <!-- Foundation -->
+    <section class="section faith" id="foundation">
+      <div class="container faith__inner">
+        <div class="faith__text">
+          <p class="eyebrow">Our Foundation</p>
+          <h2>Built on science. Rooted in faith.</h2>
+          <p>We started Sacred Sampling because caring for the water your family drinks and the air they breathe is a form of stewardship — and stewardship deserves honest, uncompromised data, explained in plain language.</p>
+          <p>Every kit is assembled in the USA and independently operated. We don't sell filters or treatment systems, so there's no reason to inflate a result and nothing to upsell. Just the truth about your home.</p>
+          <ul class="faith__list">
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Assembled in the USA</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> Independently operated</li>
+            <li><svg class="ic" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></svg> No conflict of interest</li>
+          </ul>
         </div>
-        <div class="strip__item">
-          <svg class="strip__ic" viewBox="0 0 24 24"><path d="M3 7h18M6 7V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2M5 7l1 13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-13"/></svg>
-          <div><strong>Free Prepaid Shipping</strong><span>Both ways, on every kit</span></div>
-        </div>
-        <div class="strip__item">
-          <svg class="strip__ic" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5L5 19a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-11V3"/></svg>
-          <div><strong>Accredited Laboratory</strong><span>ICP-MS · GC-MS · LC-MS/MS</span></div>
-        </div>
-        <div class="strip__item">
-          <svg class="strip__ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-          <div><strong>Results in 5–7 Days</strong><span>Clear, plain-language reports</span></div>
-        </div>
+        <blockquote class="faith__quote">
+          <p>"Real science, real results. No color strips, no guesswork."</p>
+          <cite>— The Sacred Sampling promise</cite>
+        </blockquote>
       </div>
     </section>
 
     <!-- CTA -->
     <section class="cta" id="quiz">
       <div class="container cta__inner">
-        <h2>Not sure which panel?</h2>
-        <p>Answer a few quick questions and we'll match you to the right test for your home.</p>
+        <h2>Knowledge first. Then answers.</h2>
+        <p>When you're ready to test, we'll match you to the right panel in two minutes.</p>
         <div class="cta__buttons">
-          <a class="btn btn--light btn--lg" href="https://www.sacredsamplingsolutions.com/find-your-test">Take the Quiz</a>
-          <a class="btn btn--outline-light btn--lg" href="process.html">See How It Works</a>
+          <a class="btn btn--light btn--lg" href="https://www.sacredsamplingsolutions.com/find-your-test">Find My Kit</a>
+          <a class="btn btn--outline-light btn--lg" href="kits.html">Browse Panels</a>
         </div>
       </div>
     </section>
