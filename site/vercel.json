@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": false,
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/sampleregistration", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
+    { "source": "/sampleregistration.html", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
+    { "source": "/sampleregistration/:path*", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*", "permanent": false }
+  ]
+}
