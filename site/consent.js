@@ -3,7 +3,7 @@
    Vercel Web Analytics is cookieless and loads separately (no consent needed). */
 (function () {
   var GA_ID = "G-KDPVGW9JPK";
-  var CLARITY_ID = ""; // ← paste your Microsoft Clarity project ID here (e.g. "abcde12345")
+  var CLARITY_ID = "xnia2cvcli"; // Microsoft Clarity project ID
   var KEY = "sss_consent"; // stored value: "granted" | "denied"
 
   function loadGA() {
