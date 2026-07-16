@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://sacredsamplingsolutions.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/kits.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/quiz.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/sampleregistration.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/privacy.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/terms.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/refund.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/shipping.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/disclaimer.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://sacredsamplingsolutions.com/contact.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/kits.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/quiz.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/privacy.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/terms.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/refund.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/shipping.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/disclaimer.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/contact.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
 </urlset>
