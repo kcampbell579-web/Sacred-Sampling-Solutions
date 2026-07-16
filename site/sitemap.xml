@@ -9,4 +9,8 @@
   <url><loc>https://www.sacredsamplingsolutions.com/shipping.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
   <url><loc>https://www.sacredsamplingsolutions.com/disclaimer.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
   <url><loc>https://www.sacredsamplingsolutions.com/contact.html</loc><changefreq>weekly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/learn.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/collection-guide.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/understanding-results.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://www.sacredsamplingsolutions.com/help.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
