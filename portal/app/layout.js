@@ -1,4 +1,7 @@
 import "./globals.css";
+import Script from "next/script";
+
+const GA_ID = "G-KDPVGW9JPK";
 
 export const metadata = {
   title: "Customer Portal — Sacred Sampling Solutions",
@@ -17,7 +20,13 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+        <Script id="ga4" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

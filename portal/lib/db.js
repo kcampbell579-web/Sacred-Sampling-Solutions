@@ -1,12 +1,23 @@
 import { neon } from "@neondatabase/serverless";
 
-// DATABASE_URL is required at runtime (set it in Vercel env vars).
-// The placeholder only lets the app import/build without it; any real query
-// without a valid DATABASE_URL will error clearly at request time.
-const url = process.env.DATABASE_URL || "postgresql://placeholder:placeholder@localhost/placeholder";
+// Lazily create the Neon client so importing this module never fails the build.
+// neon() is only called the first time a query actually runs (at request time),
+// by which point DATABASE_URL is available in the Vercel runtime environment.
+let _client = null;
 
-if (!process.env.DATABASE_URL) {
-  console.warn("DATABASE_URL is not set — set it in your environment before serving requests.");
+function client() {
+  if (_client) return _client;
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    throw new Error(
+      "DATABASE_URL is not set. Add it in Vercel → Project → Settings → Environment Variables (use your Neon pooled connection string)."
+    );
+  }
+  _client = neon(url);
+  return _client;
 }
 
-export const sql = neon(url);
+// Tagged-template proxy: usage stays `sql`...`` exactly as before.
+export function sql(strings, ...values) {
+  return client()(strings, ...values);
+}
