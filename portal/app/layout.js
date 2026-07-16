@@ -1,7 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
 
-const GA_ID = "G-3DDSMERVMM";
+const GA_ID = "G-KDPVGW9JPK";
 
 export const metadata = {
   title: "Customer Portal — Sacred Sampling Solutions",
