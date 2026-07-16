@@ -3,6 +3,8 @@
   "cleanUrls": false,
   "trailingSlash": false,
   "redirects": [
+    { "source": "/services-3/sampleregistration", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
+    { "source": "/services-3/sampleregistration/:path*", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*", "permanent": false },
     { "source": "/sampleregistration", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
     { "source": "/sampleregistration.html", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
     { "source": "/sampleregistration/:path*", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*", "permanent": false }
