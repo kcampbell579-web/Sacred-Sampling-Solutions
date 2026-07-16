@@ -318,12 +318,12 @@
      prices below) and paste each URL between the quotes. That's the only
      edit needed to make checkout live. */
   var STRIPE_LINKS = {
-    heavymetals:   "",  /* Heavy Metals Kit — $249 */
-    minerals:      "",  /* Metals & Minerals Kit — $329 */
-    essentials:    "",  /* Essentials Kit — $199 */
-    comprehensive: "",  /* Comprehensive Kit — $499 */
-    pfas:          "",  /* PFAS Kit — $499 */
-    professional:  ""   /* Professional Kit — $1,195 */
+    heavymetals:   "https://buy.stripe.com/cNieVf0KE8Pg5p24FW7IY0f",  /* Heavy Metals Kit — $249 */
+    minerals:      "https://buy.stripe.com/bJecN79ha5D43gU0pG7IY0e",  /* Metals & Minerals Kit — $329 */
+    essentials:    "https://buy.stripe.com/9B64gBgJC5D48Be8Wc7IY0b",  /* Essentials Kit — $199 */
+    comprehensive: "https://buy.stripe.com/8x29AV64Yd5w18M7S87IY0d",  /* Comprehensive Kit — $499 */
+    pfas:          "https://buy.stripe.com/00w00lgJC0iK8Be7S87IY0c",  /* PFAS Kit — $499 */
+    professional:  "https://buy.stripe.com/14AcN70KE3uWeZC7S87IY0a"   /* Professional Kit — $1,195 */
   };
   document.querySelectorAll('[data-stripe]').forEach(function(a){
     var u = STRIPE_LINKS[a.getAttribute('data-stripe')];
