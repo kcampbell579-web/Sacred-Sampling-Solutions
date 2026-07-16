@@ -2,7 +2,7 @@
 # Build shared header/footer + legal pages + SEO for the hosting build.
 import re, os
 
-DOMAIN = "https://sacredsamplingsolutions.com"
+DOMAIN = "https://www.sacredsamplingsolutions.com"
 UPDATED = "July 15, 2026"
 SUPPORT = "support@sacredsamplingsolutions.com"
 
@@ -34,7 +34,7 @@ def seo(title, desc, slug):
 
 def nav(active=""):
     def a(href, label, key):
-        cls = ' class="active"' if key==active else ''
+        cls = ' class="active"' if (key and key==active) else ''
         return f'<a href="{href}"{cls}>{label}</a>'
     return f'''<header>
   <div class="wrap nav">
@@ -307,7 +307,7 @@ for fn,(title,desc,active) in main.items():
     print("updated", fn)
 
 # ---------- sitemap + robots ----------
-urls = ["", "kits.html", "quiz.html", "sampleregistration.html",
+urls = ["", "kits.html", "quiz.html",
         "privacy.html","terms.html","refund.html","shipping.html","disclaimer.html","contact.html"]
 sm = ['<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
