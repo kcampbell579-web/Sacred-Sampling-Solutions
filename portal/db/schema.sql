@@ -45,7 +45,28 @@ create table if not exists results (
   released_at timestamptz not null default now()
 );
 
+-- One prepaid return label per kit (bought through Shippo). from_* is the
+-- customer's return origin; the destination is the lab (see lib/shipconfig.js).
+create table if not exists shipments (
+  id           bigint generated always as identity primary key,
+  kit_id       text not null references kits(kit_id) on delete cascade,
+  carrier      text,
+  service      text,
+  tracking     text,
+  label_url    text,
+  rate         text,
+  from_name    text,
+  from_street1 text,
+  from_street2 text,
+  from_city    text,
+  from_state   text,
+  from_zip     text,
+  from_phone   text,
+  created_at   timestamptz not null default now()
+);
+
 create index if not exists idx_kits_user     on kits(activated_by);
 create index if not exists idx_sessions_user on sessions(user_id);
 create index if not exists idx_samples_kit    on samples(kit_id);
 create index if not exists idx_results_kit     on results(kit_id);
+create index if not exists idx_shipments_kit   on shipments(kit_id);

@@ -98,6 +98,8 @@ p{margin:0}
 .stack{display:flex;flex-direction:column;gap:18px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:520px){.row2{grid-template-columns:1fr}}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px}
+@media (max-width:520px){.row3{grid-template-columns:1fr}}
 .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.94rem}
 .kv:last-child{border-bottom:none}
 .kv .k{color:var(--ink-3)}
