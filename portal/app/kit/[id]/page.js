@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { productOf } from "@/lib/products";
 import { saveSample } from "@/app/actions/kit";
+import { generateLabel } from "@/app/actions/shipping";
 import Header from "@/components/Header";
 import Timeline, { StatusPill } from "@/components/Timeline";
 import { redirect } from "next/navigation";
@@ -28,6 +29,13 @@ export default async function KitPage({ params, searchParams }) {
       : [];
   const result = results[0] || null;
   const justSaved = searchParams?.saved;
+
+  const shipments = await sql`
+    select carrier, service, tracking, label_url, rate, created_at
+    from shipments where kit_id=${kitId} order by created_at desc limit 1`;
+  const shipment = shipments[0] || null;
+  const shipError = searchParams?.error;
+  const labelJustMade = searchParams?.label === "1";
 
   return (
     <>
@@ -105,6 +113,81 @@ export default async function KitPage({ params, searchParams }) {
                 </div>
                 <button className="btn btn-primary btn-block" type="submit">Save sample details</button>
               </form>
+            </div>
+          )}
+
+          {/* Return shipping */}
+          {kit.status !== "ready" && (
+            <div className="card">
+              <span className="eyebrow">Return shipping</span>
+              {shipment ? (
+                <>
+                  {labelJustMade && (
+                    <div className="alert alert-ok mt">Your prepaid UPS label is ready — print it below.</div>
+                  )}
+                  <h2 className="mt" style={{ marginBottom: 6 }}>Your prepaid UPS return label</h2>
+                  <p className="muted" style={{ marginBottom: 16 }}>
+                    Print it, tape it to your box, and drop it at any UPS location (or hand it to your driver).
+                    <b> Ship the same day you collect</b> so the sample stays valid.
+                  </p>
+                  <a className="btn btn-primary" href={shipment.label_url} target="_blank" rel="noopener">
+                    Print my UPS label (PDF)
+                  </a>
+                  <div className="kv" style={{ marginTop: 18 }}>
+                    <span className="k">Carrier</span>
+                    <span>{[shipment.carrier, shipment.service].filter(Boolean).join(" · ") || "UPS"}</span>
+                  </div>
+                  <div className="kv">
+                    <span className="k">Tracking</span>
+                    <span className="mono">{shipment.tracking || "—"}</span>
+                  </div>
+                </>
+              ) : kit.status === "activated" ? (
+                <>
+                  <h2 className="mt" style={{ marginBottom: 6 }}>Get your prepaid UPS return label</h2>
+                  <p className="muted" style={{ marginBottom: 16 }}>
+                    Return shipping is already paid. Enter the address you&rsquo;re shipping from and we&rsquo;ll
+                    generate your UPS label to print.
+                  </p>
+                  {shipError && <div className="alert alert-error">{shipError}</div>}
+                  <form action={generateLabel}>
+                    <input type="hidden" name="kit_id" value={kit.kit_id} />
+                    <div className="field">
+                      <label>Full name</label>
+                      <input name="name" defaultValue={user.name || ""} required />
+                    </div>
+                    <div className="field">
+                      <label>Street address</label>
+                      <input name="street1" placeholder="123 Main St" required />
+                    </div>
+                    <div className="field">
+                      <label>Apt / unit <span className="hint">(optional)</span></label>
+                      <input name="street2" />
+                    </div>
+                    <div className="row3">
+                      <div className="field">
+                        <label>City</label>
+                        <input name="city" required />
+                      </div>
+                      <div className="field">
+                        <label>State</label>
+                        <input name="state" maxLength={2} placeholder="NY" required />
+                      </div>
+                      <div className="field">
+                        <label>ZIP</label>
+                        <input name="zip" placeholder="11713" required />
+                      </div>
+                    </div>
+                    <div className="field">
+                      <label>Phone <span className="hint">(for the carrier)</span></label>
+                      <input name="phone" defaultValue={user.phone || ""} />
+                    </div>
+                    <button className="btn btn-primary btn-block" type="submit">Generate my prepaid UPS label</button>
+                  </form>
+                </>
+              ) : (
+                <p className="muted mt">Your sample is on its way to the lab.</p>
+              )}
             </div>
           )}
         </div>
