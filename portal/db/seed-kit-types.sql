@@ -68,3 +68,9 @@ on conflict (code) do update set
   intro = excluded.intro, tests = excluded.tests, methods = excluded.methods,
   sensitivity = excluded.sensitivity, containers = excluded.containers,
   whats_inside = excluded.whats_inside, steps = excluded.steps, panels = excluded.panels;
+
+-- Training videos (self-hosted in portal/public/videos, served by Vercel).
+update kit_types set video_url = '/videos/baseline-training.mp4'      where code = 'BAS';
+update kit_types set video_url = '/videos/benchmark-training.mp4'     where code = 'BEN';
+update kit_types set video_url = '/videos/comprehensive-training.mp4' where code = 'COM';
+update kit_types set video_url = '/videos/pfas-training.mp4'          where code = 'PFA';
