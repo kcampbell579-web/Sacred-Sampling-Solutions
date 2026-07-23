@@ -109,3 +109,41 @@ p{margin:0}
 .hero-note p{color:#9fb0c9}
 .center{text-align:center}
 .mt{margin-top:18px}
+
+/* ── Phase 2: 7-stage dashboard + registration ──────────────────────────── */
+.btn-sm{padding:.5em .95em;font-size:.86rem}
+.field input.mono{font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase}
+
+/* 7-segment progress bar */
+.stepbar{display:flex;gap:4px;margin:2px 0 8px}
+.stepbar .seg{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.stepbar .seg.done,.stepbar .seg.on{background:var(--brand)}
+.stepbar .seg.ready{background:var(--good)}
+
+/* stage-colored pills */
+.pill.p-blue{background:var(--brand-wash);color:var(--brand-ink)}
+.pill.p-good{background:var(--good-wash);color:var(--good)}
+.pill.p-warn{background:#fdf1d9;color:var(--warn)}
+
+/* dashboard kit card */
+.kitcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+.kitcard .kc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.kitcard .kc-name{font-size:1.02rem;font-weight:700;color:var(--ink)}
+.kitcard .code{font-family:var(--mono);font-size:.76rem;color:var(--brand-ink);margin-top:2px}
+.kitcard .kc-step{font-size:.8rem;color:var(--ink-3);margin-bottom:14px}
+.kitcard .kc-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* detected-kit banner on register */
+.kitbanner{display:flex;align-items:center;gap:11px;background:var(--brand-wash);border:1px solid #bfe0ff;border-radius:10px;padding:11px 13px;margin-top:10px}
+.kitbanner .dot{width:34px;height:34px;border-radius:9px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.kitbanner .kb-label{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-ink)}
+.kitbanner .kb-name{font-weight:700;color:var(--ink)}
+
+/* conditional water/air block */
+.cond{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px;margin:4px 0 16px}
+.cond .cond-t{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-ink);margin-bottom:10px}
+
+/* checkbox rows */
+.ck{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;cursor:pointer}
+.ck input{width:17px;height:17px;accent-color:var(--brand);margin-top:2px;flex-shrink:0}
+.ck span{font-size:.84rem;color:var(--ink-2);line-height:1.5}
