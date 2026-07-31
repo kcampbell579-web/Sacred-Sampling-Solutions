@@ -7,7 +7,7 @@ export const KIT_TYPES = {
   BAS: { code: "BAS", title: "Baseline Water Kit",      slug: "baseline-water",      matrix: "water", panels: ["metals"] },
   BEN: { code: "BEN", title: "Benchmark Water Kit",     slug: "benchmark-water",     matrix: "water", panels: ["metals", "nitrite"] },
   ESS: { code: "ESS", title: "Essentials Water Kit",    slug: "essentials-water",    matrix: "water", panels: ["bacteria", "nitrate", "ph", "hardness"] },
-  COM: { code: "COM", title: "Comprehensive Water Kit", slug: "comprehensive-water", matrix: "water", panels: ["vocs", "pfas", "nitrate"] },
+  COM: { code: "COM", title: "Comprehensive Water Kit", slug: "comprehensive-water", matrix: "water", panels: ["metals", "vocs", "chloride", "fluoride"] },
   PFA: { code: "PFA", title: "PFAS Water Kit",          slug: "pfas-water",          matrix: "water", panels: ["pfas"] },
   PRO: { code: "PRO", title: "Professional Kit",        slug: "professional",        matrix: "water", panels: ["metals", "vocs", "pfas", "nitrate", "bacteria"] },
 };
