@@ -11,19 +11,21 @@ function nextStep(k) {
   const id = encodeURIComponent(k.sample_id);
   if (i >= 6) return { label: "View results", href: `/results/${id}` };
   if (i >= 3) return { label: "Track sample", href: `/shipping?id=${id}` };
+  // Stage 2 (With Customer for Collection): once a COC exists, next is shipping.
+  if (k.coc_url) return { label: "Print label & ship", href: `/shipping?id=${id}` };
   return { label: "Continue — start training", href: `/training/${k.kit_slug}?id=${id}` };
 }
 
 export default async function Dashboard({ searchParams }) {
   const user = await requireUser();
   const kits = await sql`
-    select sample_id, kit_code, kit_panel, kit_slug, status
+    select sample_id, kit_code, kit_panel, kit_slug, status, coc_url
     from sample_registrations
     where user_id=${user.id}
     order by created_at desc`;
 
   const justRegistered = (searchParams?.registered || "").toString();
-  const justTrained = (searchParams?.trained || "").toString();
+  const justCoc = (searchParams?.coc || "").toString();
 
   return (
     <>
@@ -41,8 +43,8 @@ export default async function Dashboard({ searchParams }) {
           {justRegistered && (
             <div className="alert alert-ok">Kit {justRegistered} registered. Start its training to continue.</div>
           )}
-          {justTrained && (
-            <div className="alert alert-ok">Training complete for {justTrained}. Chain of custody &amp; shipping are coming next.</div>
+          {justCoc && (
+            <div className="alert alert-ok">Chain of custody generated for {justCoc}. Print your shipping label and send it the same day.</div>
           )}
 
           {kits.length === 0 ? (
