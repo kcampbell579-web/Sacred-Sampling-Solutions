@@ -73,6 +73,16 @@ export function cocPublicUrl(sampleId) {
 // Split a stored timestamp into {date, time} for the form cells.
 export function splitCollected(v) {
   if (!v) return { date: "—", time: "" };
+  // Neon returns timestamptz as a Date (or a string); coerce and format in UTC
+  // so it round-trips to what the customer entered.
+  const d = new Date(v);
+  if (!isNaN(d.getTime())) {
+    const p = (n) => String(n).padStart(2, "0");
+    return {
+      date: `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}`,
+      time: `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`,
+    };
+  }
   const s = String(v).replace("T", " ");
   return { date: s.slice(0, 10), time: s.slice(11, 16) };
 }
