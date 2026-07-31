@@ -65,5 +65,6 @@ export async function registerSample(formData) {
          ${consent}, ${marketing}, 'With Customer for Collection')`;
   }
 
-  redirect(`/training/${kit.slug}?id=${encodeURIComponent(sampleId)}`);
+  // TODO(Phase 3): route to `/training/${kit.slug}?id=...` once training exists.
+  redirect(`/dashboard?registered=${encodeURIComponent(sampleId)}`);
 }
