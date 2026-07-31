@@ -15,7 +15,7 @@ export default async function CollectPage({ searchParams }) {
   if (!id) redirect("/dashboard");
 
   const regRows = await sql`
-    select sample_id, kit_code, kit_panel, kit_slug, customer_name, sample_source
+    select sample_id, kit_code, kit_panel, kit_slug, customer_name, sample_source, city, state
     from sample_registrations where sample_id=${id} and user_id=${user.id}`;
   if (!regRows.length) redirect("/dashboard");
   const reg = regRows[0];

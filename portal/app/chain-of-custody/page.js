@@ -19,8 +19,8 @@ export default async function PublicCoc({ searchParams }) {
     const cocRows = await sql`select coc_ref, coc_url, sampler_name, collected_at, location, matrix, observations, signature_png from chain_of_custody where sample_id=${id} order by created_at desc limit 1`;
     coc = cocRows[0] || null;
     if (coc) {
-      const regRows = await sql`select sample_id, kit_code, kit_panel, customer_name, sample_source from sample_registrations where sample_id=${id} limit 1`;
-      reg = regRows[0] || { sample_id: id, kit_panel: "", customer_name: "", sample_source: "" };
+      const regRows = await sql`select sample_id, kit_code, kit_panel, customer_name, sample_source, city, state from sample_registrations where sample_id=${id} limit 1`;
+      reg = regRows[0] || { sample_id: id, kit_code: "", kit_panel: "", customer_name: "", sample_source: "", city: "", state: "" };
       const kitRows = await sql`select title, panels, matrix from kit_types where code=${reg.kit_code}`;
       kit = kitRows[0] || { panels: "", matrix: "water" };
     }
