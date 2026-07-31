@@ -1,24 +1,22 @@
-import { LAB, CLIENT, ANALYSIS_COLUMNS, checkedColumns, extraAnalyses, splitCollected } from "@/lib/coc";
+import { LAB, CLIENT, RELINQUISHER, ANALYSIS_COLUMNS, checkedColumnsForCode, cocComment, splitCollected } from "@/lib/coc";
 
 const MATRIX_CODE = { water: "DW", air: "A", tick: "O" };
 
 export default function CocDocument({ coc, reg, kit }) {
-  const panels = kit?.panels || "";
-  const checks = checkedColumns(panels);
-  const extras = extraAnalyses(panels);
+  const checks = checkedColumnsForCode(reg.kit_code);
   const { date, time } = splitCollected(coc.collected_at);
   const matrix = coc.matrix || MATRIX_CODE[kit?.matrix] || "DW";
-  const containers = Math.max(1, checks.filter(Boolean).length + extras.length);
+  const containers = Math.max(1, checks.filter(Boolean).length);
   const sampler = coc.signature_png || coc.sampler_name || reg.customer_name || "";
+  const projectLocation = [reg.city, reg.state].filter(Boolean).join(", ") || "—";
+  const comment = cocComment(reg.sample_id, reg.kit_code, reg.kit_panel, coc.location);
 
   return (
     <div className="cocdoc">
       {/* Header */}
       <div className="coc-top">
-        <div className="coc-lab">
-          <div className="coc-web">{LAB.web}</div>
-          <div className="coc-labline">{LAB.line}</div>
-        </div>
+        <div className="coc-web">{LAB.web}</div>
+        <div className="coc-labline">{LAB.line}</div>
         <div className="coc-doctitle">CHAIN OF CUSTODY / REQUEST FOR ANALYSIS DOCUMENT</div>
       </div>
 
@@ -27,9 +25,8 @@ export default function CocDocument({ coc, reg, kit }) {
         <div className="cc cc-name">
           <div className="cc-lbl">Client Name / Address</div>
           <div className="cc-big">{CLIENT.name}</div>
-          <div>{CLIENT.address}</div>
           <div className="cc-lbl" style={{ marginTop: 8 }}>Project Location</div>
-          <div>{coc.location || reg.sample_source || "—"}</div>
+          <div>{projectLocation}</div>
           <div className="cc-emails">
             <div><span className="cc-lbl">Reports Email</span> {CLIENT.reportsEmail}</div>
             <div><span className="cc-lbl">Invoice Email</span> {CLIENT.invoiceEmail}</div>
@@ -107,11 +104,7 @@ export default function CocDocument({ coc, reg, kit }) {
         </div>
         <div className="coc-comments">
           <div className="cc-lbl">Comments / Instructions</div>
-          <div>
-            Sacred Sampling kit — {reg.kit_panel || kit?.title || "Water"}
-            {extras.length > 0 && <> · Also: {extras.join(", ")}</>}
-            {coc.observations && <> · {coc.observations}</>}
-          </div>
+          <div>{comment}</div>
         </div>
       </div>
 
@@ -119,8 +112,8 @@ export default function CocDocument({ coc, reg, kit }) {
       <div className="coc-custody">
         <div className="ccx">
           <div className="cc-lbl">Relinquished by (Signature)</div>
-          <div className="cc-sig">{sampler}</div>
-          <div className="ccx-row"><span>Printed: {coc.sampler_name || reg.customer_name || "—"}</span><span>{date} {time}</span></div>
+          <div className="cc-sig">{RELINQUISHER}</div>
+          <div className="ccx-row"><span>Printed: {RELINQUISHER}</span><span>{date} {time}</span></div>
         </div>
         <div className="ccx">
           <div className="cc-lbl">Received by (Signature)</div>

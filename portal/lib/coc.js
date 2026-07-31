@@ -12,42 +12,57 @@ export const LAB = {
 // The client block (fixed).
 export const CLIENT = {
   name: "SACRED SAMPLING SOLUTIONS",
-  address: "44 Drake Ave, Bellport NY",
   contact: "Kelly Campbell",
   phone: "631-875-2958",
   reportsEmail: "laboratory@sacredsamplingsolutions.com",
-  invoiceEmail: "laboratory@sacredsamplingsolutions.com",
+  invoiceEmail: "info@sacredsamplingsolutions.com",
 };
 
-// The four named analysis columns on the LIAL form + which portal panels tick each.
+// Who relinquishes the sample to the lab (the company rep, not the homeowner).
+export const RELINQUISHER = "Kelly McClure";
+
+// The four named analysis columns on the LIAL form.
 export const ANALYSIS_COLUMNS = [
-  { label: "13 Heavy Metals", panels: ["metals"] },
-  { label: "Nitrate", panels: ["nitrate", "nitrite"] },
-  { label: "VOCs", panels: ["vocs"] },
-  { label: "40 PFCs (PFAS/PFOA)", panels: ["pfas"] },
+  { label: "13 Heavy Metals", key: "metals" },
+  { label: "Nitrate", key: "nitrate" },
+  { label: "VOCs", key: "vocs" },
+  { label: "40 PFCs (PFAS/PFOA)", key: "pfas" },
 ];
 
-// Panels that don't have a dedicated LIAL column — surfaced in the comments line.
-export const EXTRA_PANEL_NAMES = {
-  bacteria: "Total Coliform / E. coli",
-  ph: "pH",
-  hardness: "Hardness",
+// Which analysis columns each kit ticks (by kit code), matching the real COCs.
+export const COC_CHECKS = {
+  BAS: ["metals"],
+  BEN: ["metals", "nitrate"],
+  ESS: ["nitrate"], // remaining Essentials analytes flagged as "EST" in the comment
+  COM: ["metals", "vocs", "nitrate"],
+  PFA: ["pfas"],
+  PRO: ["metals", "nitrate", "vocs", "pfas"],
 };
 
-export function panelSet(panelsCsv) {
-  return new Set(String(panelsCsv || "").split(",").map((s) => s.trim()).filter(Boolean));
+// Analysis description printed in the comments line (by kit code).
+export const ANALYSIS_TEXT = {
+  BAS: "Metals EPA 200.8",
+  BEN: "Metals EPA 200.8 + Nitrate EPA 353.2",
+  ESS: "EST — Total Coliform, E. coli, Nitrate, pH, Hardness",
+  COM: "Metals EPA 200.8 + VOCs EPA 524.2 + Nitrate EPA 353.2",
+  PFA: "PFAS (40 PFCs, EPA 537.1)",
+  PRO: "Metals 200.8 + VOCs 524.2 + PFAS 537.1 + Nitrate 353.2 + Bacteria",
+};
+
+// Boolean[] over ANALYSIS_COLUMNS for a kit code.
+export function checkedColumnsForCode(code) {
+  const checks = COC_CHECKS[String(code || "").toUpperCase()] || [];
+  return ANALYSIS_COLUMNS.map((c) => checks.includes(c.key));
 }
 
-// Which of the 4 columns are checked for a kit's panels.
-export function checkedColumns(panelsCsv) {
-  const set = panelSet(panelsCsv);
-  return ANALYSIS_COLUMNS.map((c) => c.panels.some((p) => set.has(p)));
-}
-
-// Human list of any analyses not covered by the 4 columns (for the comments line).
-export function extraAnalyses(panelsCsv) {
-  const set = panelSet(panelsCsv);
-  return Object.entries(EXTRA_PANEL_NAMES).filter(([k]) => set.has(k)).map(([, v]) => v);
+// The comment / instructions line, matching the real COC format.
+export function cocComment(sampleId, code, kitPanel, faucet) {
+  const analysis = ANALYSIS_TEXT[String(code || "").toUpperCase()];
+  let s = `Sacred Sampling kit ${sampleId} - ${kitPanel || "Water"}`;
+  if (analysis) s += ` (${analysis})`;
+  s += ". Shipped same day on ice.";
+  if (faucet) s += ` Collected at ${faucet}.`;
+  return s;
 }
 
 // The public, lab-scannable COC link (marketing domain redirects to the portal).
