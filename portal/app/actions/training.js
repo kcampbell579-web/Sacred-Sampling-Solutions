@@ -29,7 +29,6 @@ export async function saveAcknowledgment(formData) {
       values (${sampleId}, ${user.id}, true, true, true, ${signedName})`;
   }
 
-  // Next step in the flow is Chain of Custody (Phase 4). Until it exists,
-  // land back on the dashboard with a confirmation.
-  redirect(`/dashboard?trained=${encodeURIComponent(sampleId)}`);
+  // Next step in the flow: Chain of Custody / collection.
+  redirect(sampleId ? `/collect?id=${encodeURIComponent(sampleId)}` : "/dashboard");
 }

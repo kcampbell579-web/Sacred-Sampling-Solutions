@@ -168,3 +168,49 @@ p{margin:0}
 .trainvid{width:100%;max-width:680px;border-radius:14px;background:#0b0e14;display:block;aspect-ratio:16/9}
 .locktag{font-size:12.5px;font-weight:700;color:var(--warn);margin-top:10px}
 .locktag.ok{color:var(--good)}
+
+/* ── Phase 4: chain of custody document ─────────────────────────────────── */
+.labscan{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.labscan img{border:1px solid var(--line);border-radius:10px;background:#fff;flex-shrink:0}
+.coc-link{display:inline-block;word-break:break-all;font-size:.8rem;color:var(--brand-ink)}
+.coc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;justify-content:flex-end}
+
+.cocdoc{background:#fff;border:2px solid #0e1520;border-radius:6px;padding:0;margin-top:18px;color:#0e1520;font-size:12px;overflow:hidden}
+.coc-top{border-bottom:2px solid #0e1520;padding:10px 14px;text-align:center}
+.coc-web{font-weight:800;font-size:15px}
+.coc-labline{font-size:10px;color:#333;margin-top:2px}
+.coc-doctitle{font-weight:900;font-size:14px;letter-spacing:.02em;margin-top:6px;border-top:1px solid #0e1520;padding-top:6px}
+.coc-client{display:grid;grid-template-columns:2fr 1fr 1.2fr .9fr;border-bottom:2px solid #0e1520}
+.coc-client .cc{padding:8px 10px;border-right:1px solid #0e1520}
+.coc-client .cc:last-child{border-right:none}
+.cc-lbl{font-size:8.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#555}
+.cc-big{font-weight:800;font-size:13px}
+.cc-name .cc-big{font-size:14px}
+.cc-emails{margin-top:8px;font-size:10px;line-height:1.6}
+.cc-sig{font-family:'Segoe Script','Brush Script MT',cursive;font-size:18px;border-bottom:1px solid #0e1520;padding-bottom:2px;min-height:24px}
+.cc-print{font-weight:700;text-transform:uppercase}
+.coc-tablewrap{overflow-x:auto}
+.coc-table{width:100%;border-collapse:collapse;font-size:11px;min-width:640px}
+.coc-table th,.coc-table td{border:1px solid #0e1520;padding:4px 5px;text-align:center;height:26px}
+.coc-table thead th{background:#eef2f7;font-size:9px;font-weight:800;text-transform:uppercase;vertical-align:bottom}
+.coc-table .col-loc{text-align:left;min-width:150px}
+.coc-table .col-an{width:34px}
+.coc-table thead .col-an span{display:inline-block;writing-mode:vertical-rl;transform:rotate(200deg);white-space:nowrap;font-size:8.5px;line-height:1;max-height:78px;overflow:hidden}
+.coc-table tbody .col-an{font-weight:900;font-size:14px}
+.coc-table .col-num{width:22px;color:#555}
+.coc-table .col-cont{width:40px}
+.coc-lower{display:grid;grid-template-columns:1.4fr 1fr;border-top:2px solid #0e1520}
+.coc-legend{padding:8px 10px;border-right:1px solid #0e1520;font-size:9px;line-height:1.7;color:#333}
+.coc-comments{padding:8px 10px;font-size:11px}
+.coc-comments div:last-child{margin-top:4px}
+.coc-custody{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #0e1520}
+.ccx{padding:8px 10px;border-right:1px solid #0e1520}
+.ccx:last-child{border-right:none}
+.ccx-row{display:flex;justify-content:space-between;font-size:10px;color:#555;margin-top:4px}
+.coc-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:2px solid #0e1520;padding:6px 10px;font-size:9px;color:#555}
+.coc-accred{font-weight:700}
+@media print{
+  body{background:#fff}
+  .hdr,.coc-actions,.labscan,.backlink{display:none !important}
+  .cocdoc{border-color:#000;margin:0}
+}
