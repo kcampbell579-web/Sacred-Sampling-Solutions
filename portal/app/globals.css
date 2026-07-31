@@ -247,3 +247,39 @@ p{margin:0}
 .bd.dim{background:var(--panel-2);color:var(--ink-3)}
 .disc{font-size:.72rem;color:var(--ink-3);line-height:1.6;max-width:60ch;margin-inline:auto}
 @media print{.hdr,.backlink,.btn{display:none !important}body{background:#fff}}
+
+/* ── Dashboard redesign ─────────────────────────────────────────────────── */
+.dash-section{margin-top:26px}
+.section-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sh{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+
+/* do-this-next banner */
+.next-banner{background:linear-gradient(120deg,#0b1626,#122a6b 70%,#2C94FC 160%);color:#fff;border-radius:16px;padding:22px 24px;margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.next-banner .nb-eyebrow{font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#9fd0ff}
+.next-banner h3{color:#fff;font-size:1.2rem;margin:5px 0 3px}
+.next-banner p{color:#d6e7ff;font-size:.9rem;max-width:60ch}
+.next-banner .nb-btn{background:#fff;color:var(--brand-ink);border:none}
+.next-banner .nb-btn:hover{filter:none;background:#eaf0fe}
+
+/* 2-col kit grid */
+.kits-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.kits-grid{grid-template-columns:1fr}}
+
+/* education situations */
+.sit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+@media(max-width:560px){.sit-grid{grid-template-columns:1fr}}
+.sitcard{display:block;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;transition:border-color .15s}
+.sitcard:hover{border-color:var(--brand)}
+.sitcard .st{font-size:.9rem;font-weight:700;color:var(--ink)}
+.sitcard .sb{font-size:.8rem;color:var(--ink-2);margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{background:var(--brand-wash);color:var(--brand-ink);font-size:.78rem;font-weight:700;padding:6px 11px;border-radius:100px}
+
+/* results + support */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.two-col{grid-template-columns:1fr}}
+
+/* lab portal footer link */
+.dash-foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;font-size:.82rem;color:var(--ink-3)}
+.dash-foot a{color:var(--brand-ink);font-weight:700}
+.dash-foot a:hover{text-decoration:underline}
