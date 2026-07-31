@@ -225,3 +225,25 @@ p{margin:0}
 .labelcard .lrow{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;padding:5px 0}
 .labelcard .lk{font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
 .trk{font-family:var(--mono);font-weight:700;letter-spacing:.02em}
+
+/* ── Phase 7: results ───────────────────────────────────────────────────── */
+.verdictcard{display:flex;gap:16px;align-items:flex-start;border-radius:16px;padding:22px;margin-bottom:18px;border:1px solid}
+.verdictcard.ok{background:var(--good-wash);border-color:#bfe4cd}
+.verdictcard.warn{background:#fdf1d9;border-color:#f0d9b8}
+.verdictcard .v-ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.3rem;flex-shrink:0}
+.verdictcard.ok .v-ic{background:var(--good)}
+.verdictcard.warn .v-ic{background:var(--warn)}
+.verdictcard h2{font-size:1.25rem;margin-bottom:4px}
+.verdictcard.ok h2{color:#0d5c34}.verdictcard.ok p{color:#14663c}
+.verdictcard.warn h2{color:#7a4d09}.verdictcard.warn p{color:#7a4d09}
+.antable{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.anrow{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.anrow:last-child{border-bottom:none}
+.an-name{flex:1;font-size:.9rem;font-weight:600}
+.an-val{font-size:.82rem;color:var(--ink-2)}
+.bd{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:100px;white-space:nowrap}
+.bd.ok{background:var(--good-wash);color:var(--good)}
+.bd.warn{background:#fdf1d9;color:var(--warn)}
+.bd.dim{background:var(--panel-2);color:var(--ink-3)}
+.disc{font-size:.72rem;color:var(--ink-3);line-height:1.6;max-width:60ch;margin-inline:auto}
+@media print{.hdr,.backlink,.btn{display:none !important}body{background:#fff}}
