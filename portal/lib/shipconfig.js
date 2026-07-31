@@ -1,20 +1,20 @@
 // Return-shipping configuration for prepaid UPS return labels (via Shippo).
 //
-// LAB_ADDRESS is the DESTINATION — where customers mail their samples. This is
-// NOT a secret; edit it here (or override any field with an env var in Vercel)
-// and redeploy. IMPORTANT: replace the placeholder below with the real lab /
-// sample-intake address before generating live labels.
+// LAB_ADDRESS is the DESTINATION — where customers mail their samples.
+// Samples ship directly to the analyzing lab: Long Island Analytical
+// Laboratories (LIAL), Holbrook NY. Not a secret; override any field with an
+// env var in Vercel and redeploy.
 export const LAB_ADDRESS = {
-  name:    process.env.LAB_NAME    || "Sacred Sampling Solutions — Sample Intake",
-  company: process.env.LAB_COMPANY || "Sacred Sampling Solutions LLC",
-  street1: process.env.LAB_STREET1 || "44 Drake Ave",
+  name:    process.env.LAB_NAME    || "Long Island Analytical Laboratories — Sample Receiving",
+  company: process.env.LAB_COMPANY || "Long Island Analytical Laboratories, Inc.",
+  street1: process.env.LAB_STREET1 || "110 Colin Drive",
   street2: process.env.LAB_STREET2 || "",
-  city:    process.env.LAB_CITY    || "Bellport",
+  city:    process.env.LAB_CITY    || "Holbrook",
   state:   process.env.LAB_STATE   || "NY",
-  zip:     process.env.LAB_ZIP     || "11713",
+  zip:     process.env.LAB_ZIP     || "11741",
   country: "US",
-  phone:   process.env.LAB_PHONE   || "",
-  email:   process.env.LAB_EMAIL   || "support@sacredsamplingsolutions.com",
+  phone:   process.env.LAB_PHONE   || "631-472-3400",
+  email:   process.env.LAB_EMAIL   || "LIAL@lialinc.com",
 };
 
 // Default return parcel — a small water-kit box. Shippo needs dimensions + weight.
