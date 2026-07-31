@@ -214,3 +214,14 @@ p{margin:0}
   .hdr,.coc-actions,.labscan,.backlink{display:none !important}
   .cocdoc{border-color:#000;margin:0}
 }
+
+/* freeze-icepack reminder */
+.freeze-note{display:flex;gap:12px;align-items:flex-start;background:#eaf4ff;border:1px solid #bfe0ff;border-left:4px solid var(--brand);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:.92rem;color:var(--ink)}
+.freeze-note .freeze-ic{font-size:1.3rem;line-height:1}
+.freeze-note b{color:var(--brand-ink)}
+
+/* shipping label card */
+.labelcard{border:2px dashed var(--line-strong);border-radius:12px;padding:20px;background:#fff}
+.labelcard .lrow{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;padding:5px 0}
+.labelcard .lk{font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.trk{font-family:var(--mono);font-weight:700;letter-spacing:.02em}

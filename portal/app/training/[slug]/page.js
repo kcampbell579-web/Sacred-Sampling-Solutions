@@ -53,6 +53,14 @@ export default async function TrainingPage({ params, searchParams }) {
         <div className="wrap">
           <a className="backlink" href="/dashboard">← Back to dashboard</a>
 
+          <div className="freeze-note">
+            <span className="freeze-ic">❄️</span>
+            <div>
+              <b>Freeze your ice pack first.</b> Put it in the freezer until solid — <b>at least 6 hours ahead</b> (overnight is best).
+              Your sample has to stay cold all the way to the lab.
+            </div>
+          </div>
+
           <div className="hero-note">
             <span className="eyebrow" style={{ color: "#9fd0ff" }}>Step 2 · Collection training</span>
             <h1 style={{ marginTop: 8 }}>{kit.title}</h1>

@@ -26,6 +26,7 @@ export default async function Dashboard({ searchParams }) {
 
   const justRegistered = (searchParams?.registered || "").toString();
   const justCoc = (searchParams?.coc || "").toString();
+  const justShipped = (searchParams?.shipped || "").toString();
 
   return (
     <>
@@ -45,6 +46,9 @@ export default async function Dashboard({ searchParams }) {
           )}
           {justCoc && (
             <div className="alert alert-ok">Chain of custody generated for {justCoc}. Print your shipping label and send it the same day.</div>
+          )}
+          {justShipped && (
+            <div className="alert alert-ok">{justShipped} is on its way to the lab. We&rsquo;ll update you as it moves through analysis.</div>
           )}
 
           {kits.length === 0 ? (
