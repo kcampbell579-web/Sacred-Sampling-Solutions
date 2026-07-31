@@ -174,6 +174,10 @@ p{margin:0}
 .labscan img{border:1px solid var(--line);border-radius:10px;background:#fff;flex-shrink:0}
 .coc-link{display:inline-block;word-break:break-all;font-size:.8rem;color:var(--brand-ink)}
 .coc-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;justify-content:flex-end}
+.coc-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.coc-head .coc-actions{margin-top:0}
+.coc-embed{margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f3f5f9}
+.coc-embed iframe{display:block;width:100%;height:78vh;min-height:560px;border:0;background:#fff}
 
 .cocdoc{background:#fff;border:2px solid #0e1520;border-radius:6px;padding:0;margin-top:18px;color:#0e1520;font-size:12px;overflow:hidden}
 .coc-top{border-bottom:2px solid #0e1520;padding:10px 14px;text-align:center}

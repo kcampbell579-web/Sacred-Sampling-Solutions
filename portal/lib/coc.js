@@ -49,6 +49,31 @@ export const ANALYSIS_TEXT = {
   PRO: "Metals 200.8 + VOCs 524.2 + PFAS 537.1 + Nitrate 353.2 + Bacteria",
 };
 
+// How each kit maps onto the physical LIAL form when we fill the real PDF.
+//  - named:      which of the four PRE-PRINTED columns to tick
+//                (metals=col0, nitrate=col1, vocs=col2, pfas=col3)
+//  - writeIns:   short labels handwritten into the blank columns (col4+),
+//                for analyses LIAL doesn't pre-print a header for
+//  - containers: default "# of containers" for a single-bottle household kit
+// This is what fixes the Essentials complaint: rather than ticking the lone
+// "Nitrate" column (which read as "nitrate only"), Essentials gets a write-in
+// "EST" column plus the full package spelled out in the comment line.
+export const COC_SPEC = {
+  BAS: { named: ["metals"], writeIns: [], containers: 1 },
+  BEN: { named: ["metals", "nitrate"], writeIns: [], containers: 1 },
+  ESS: { named: [], writeIns: ["EST"], containers: 2 },
+  COM: { named: ["metals", "vocs"], writeIns: ["CL/F"], containers: 3 },
+  PFA: { named: ["pfas"], writeIns: [], containers: 1 },
+  PRO: { named: ["metals", "nitrate", "vocs", "pfas"], writeIns: ["BACT"], containers: 4 },
+};
+
+// Named-column index on the LIAL form for each analysis key.
+export const NAMED_COL_INDEX = { metals: 0, nitrate: 1, vocs: 2, pfas: 3 };
+
+export function cocSpecForCode(code) {
+  return COC_SPEC[String(code || "").toUpperCase()] || { named: [], writeIns: [], containers: 1 };
+}
+
 // Boolean[] over ANALYSIS_COLUMNS for a kit code.
 export function checkedColumnsForCode(code) {
   const checks = COC_CHECKS[String(code || "").toUpperCase()] || [];
