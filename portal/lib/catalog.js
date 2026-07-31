@@ -4,14 +4,12 @@
 // app needs for ID parsing and routing without a DB round-trip.
 
 export const KIT_TYPES = {
-  BAS: { code: "BAS", title: "Baseline Water Kit",     slug: "baseline-water",     matrix: "water", panels: ["metals"] },
-  BEN: { code: "BEN", title: "Benchmark Water Kit",    slug: "benchmark-water",    matrix: "water", panels: ["metals", "nitrite"] },
+  BAS: { code: "BAS", title: "Baseline Water Kit",      slug: "baseline-water",      matrix: "water", panels: ["metals"] },
+  BEN: { code: "BEN", title: "Benchmark Water Kit",     slug: "benchmark-water",     matrix: "water", panels: ["metals", "nitrite"] },
+  ESS: { code: "ESS", title: "Essentials Water Kit",    slug: "essentials-water",    matrix: "water", panels: ["bacteria", "nitrate", "ph", "hardness"] },
   COM: { code: "COM", title: "Comprehensive Water Kit", slug: "comprehensive-water", matrix: "water", panels: ["vocs", "pfas", "nitrate"] },
-  PFA: { code: "PFA", title: "PFAS Water Kit",         slug: "pfas-water",         matrix: "water", panels: ["pfas"] },
-  VOC: { code: "VOC", title: "Air — VOC",              slug: "air-voc",            matrix: "air",   panels: ["air_voc"] },
-  ALD: { code: "ALD", title: "Air — Formaldehyde",     slug: "air-aldehyde",       matrix: "air",   panels: ["aldehyde"] },
-  AMM: { code: "AMM", title: "Air — Ammonia",          slug: "air-ammonia",        matrix: "air",   panels: ["ammonia"] },
-  TCK: { code: "TCK", title: "Tick PCR",               slug: "tick",               matrix: "tick",  panels: ["tick_pcr"] },
+  PFA: { code: "PFA", title: "PFAS Water Kit",          slug: "pfas-water",          matrix: "water", panels: ["pfas"] },
+  PRO: { code: "PRO", title: "Professional Kit",        slug: "professional",        matrix: "water", panels: ["metals", "vocs", "pfas", "nitrate", "bacteria"] },
 };
 
 // SSS-COM-00001 (2–3 S's, 3-letter code, up to 6 digits).
