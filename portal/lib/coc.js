@@ -34,7 +34,7 @@ export const COC_CHECKS = {
   BAS: ["metals"],
   BEN: ["metals", "nitrate"],
   ESS: ["nitrate"], // remaining Essentials analytes flagged as "EST" in the comment
-  COM: ["metals", "vocs", "nitrate"],
+  COM: ["metals", "vocs"], // chloride & fluoride noted in the comment (no LIAL column)
   PFA: ["pfas"],
   PRO: ["metals", "nitrate", "vocs", "pfas"],
 };
@@ -44,7 +44,7 @@ export const ANALYSIS_TEXT = {
   BAS: "Metals EPA 200.8",
   BEN: "Metals EPA 200.8 + Nitrate EPA 353.2",
   ESS: "EST — Total Coliform, E. coli, Nitrate, pH, Hardness",
-  COM: "Metals EPA 200.8 + VOCs EPA 524.2 + Nitrate EPA 353.2",
+  COM: "Metals EPA 200.8 + VOCs EPA 524.2 + Chloride & Fluoride EPA 300.0",
   PFA: "PFAS (40 PFCs, EPA 537.1)",
   PRO: "Metals 200.8 + VOCs 524.2 + PFAS 537.1 + Nitrate 353.2 + Bacteria",
 };
