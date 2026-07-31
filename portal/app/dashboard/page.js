@@ -23,6 +23,7 @@ export default async function Dashboard({ searchParams }) {
     order by created_at desc`;
 
   const justRegistered = (searchParams?.registered || "").toString();
+  const justTrained = (searchParams?.trained || "").toString();
 
   return (
     <>
@@ -39,6 +40,9 @@ export default async function Dashboard({ searchParams }) {
 
           {justRegistered && (
             <div className="alert alert-ok">Kit {justRegistered} registered. Start its training to continue.</div>
+          )}
+          {justTrained && (
+            <div className="alert alert-ok">Training complete for {justTrained}. Chain of custody &amp; shipping are coming next.</div>
           )}
 
           {kits.length === 0 ? (
