@@ -248,6 +248,13 @@ section{padding:88px 0}
 .minikit .mmeta{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);margin-top:8px}
 .minikit a.mlink{margin-top:12px;color:var(--brand);font-weight:700;font-size:.9rem}
 @media (max-width:760px){.minikits{grid-template-columns:1fr}}
+.soongrid{grid-template-columns:repeat(4,1fr);margin-top:22px}
+@media (max-width:960px){.soongrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.soongrid{grid-template-columns:1fr}}
+.minikit.soon{position:relative;opacity:.96}
+.minikit.soon h3{color:var(--ink-2)}
+.minikit.soon .mprice{color:var(--ink-3)}
+.soonchip{position:absolute;top:14px;right:14px;background:var(--brand-soft,#E8F3FF);color:var(--brand);font-family:var(--mono);font-size:.6rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;padding:.34em .6em;border-radius:100px}
 .disclaimer{text-align:center;color:var(--dk-text-2);font-size:.78rem;margin-top:18px;font-family:var(--mono);letter-spacing:.02em}
 .notice{color:var(--ink-3);font-size:.85rem;text-align:center;margin-top:18px}
 .kits-note a{color:var(--brand);font-weight:700;border-bottom:1px solid transparent}
