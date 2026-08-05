@@ -66,33 +66,15 @@ CHK = ('<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="curr
        'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>')
 ARROW = '<span class="arrow">→</span>'
 
-# Brand mark: gold atom + cross inside a targeting ring (recreated as SVG so it
-# stays crisp at every size and powers the favicon). Amber Glow accent #E6B422.
+# Brand mark: the Sacred Forge emblem — gold atom + cross inside a targeting
+# ring — lives in assets/logo-mark.svg (metallic gradients, glowing nucleus) so
+# it stays crisp at every size and also serves as the favicon. Accent #E6B422.
 AMBER = "#E6B422"
-_LOGO_INNER = (
- '<rect width="100" height="100" rx="22" fill="#0E0E0E"/>'
- '<g fill="none" stroke-linecap="round">'
-   '<g stroke="#9298a2" stroke-width="2">'
-     '<line x1="50" y1="5" x2="50" y2="17"/><line x1="50" y1="83" x2="50" y2="95"/>'
-     '<line x1="5" y1="50" x2="17" y2="50"/><line x1="83" y1="50" x2="95" y2="50"/>'
-   '</g>'
-   '<circle cx="50" cy="50" r="34" stroke="#E6B422" stroke-width="2.6"/>'
-   '<circle cx="50" cy="50" r="30" stroke="#6f7681" stroke-width="1"/>'
- '</g>'
- '<g fill="#E6B422">'
-   '<rect x="47.4" y="20" width="5.2" height="60" rx="1"/>'
-   '<rect x="30" y="45.4" width="40" height="5.2" rx="1"/>'
- '</g>'
- '<g fill="none" stroke="#ffffff" stroke-width="2">'
-   '<ellipse cx="50" cy="50" rx="23" ry="9.5" transform="rotate(35 50 50)"/>'
-   '<ellipse cx="50" cy="50" rx="23" ry="9.5" transform="rotate(-35 50 50)"/>'
- '</g>'
- '<circle cx="50" cy="50" r="5.6" fill="#E6B422"/>'
- '<circle cx="50" cy="50" r="2" fill="#0E0E0E"/>'
-)
-LOGO = f'<svg class="logo" viewBox="0 0 100 100" aria-hidden="true">{_LOGO_INNER}</svg>'
-FAVICON = "data:image/svg+xml," + urllib.parse.quote(
-    f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">{_LOGO_INNER}</svg>')
+LOGO = '<img class="logo" src="/assets/logo-mark.svg" alt="Sacred Forge" width="34" height="34">'
+FAVICON = "/assets/logo-mark.svg"
+# Two-tone wordmark lockup used beside the emblem, matching the logo artwork.
+BRAND_TX = ('<span class="brand-tx"><span class="wordmark">SACRED<span class="wf">FORGE</span></span>'
+            '<small>We Forge Digital Solutions.</small></span>')
 
 # --------------------------------------------------------------- helpers
 def ticks(items):
@@ -154,8 +136,7 @@ def header(active):
         else:
             items += f'<a href="{href}" class="{cls.strip()}">{label}</a>'
     return (f'<header class="site"><div class="wrap nav">'
-            f'<a class="brand" href="/" aria-label="Sacred Forge Systems home">{LOGO}'
-            f'<span>Sacred Forge Systems<small>Design · Build · Launch</small></span></a>'
+            f'<a class="brand" href="/" aria-label="Sacred Forge Systems home">{LOGO}{BRAND_TX}</a>'
             f'<nav class="nav-links" id="navLinks">{items}</nav>'
             f'<div class="nav-cta"><a href="/contact.html" class="btn btn-primary btn-sm">Start your project {ARROW}</a>'
             f'<button class="nav-toggle" id="navToggle" aria-label="Menu">'
@@ -172,8 +153,7 @@ def footer():
             f'<a href="mailto:{EMAIL}">{EMAIL}</a>')
     year = datetime.date.today().year
     return (f'<footer class="site"><div class="wrap"><div class="foot-grid">'
-            f'<div><a class="brand" href="/" aria-label="Sacred Forge Systems home">{LOGO}'
-            f'<span>Sacred Forge Systems<small>Design · Build · Launch</small></span></a>'
+            f'<div><a class="brand" href="/" aria-label="Sacred Forge Systems home">{LOGO}{BRAND_TX}</a>'
             f'<p class="foot-about">A technology studio that designs, builds and launches websites, software, apps and AI — plus a growing line of our own products.</p></div>'
             f'<div><h4>Services</h4>{svc}</div>'
             f'<div><h4>Products</h4>{prod}</div>'
@@ -189,7 +169,7 @@ def page(path, title, desc, body, active=""):
             f'<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n'
             f'<title>{title}</title>\n<meta name="description" content="{desc}">\n'
             f'<link rel="canonical" href="{canonical}">\n'
-            f'<link rel="icon" href="{FAVICON}">\n'
+            f'<link rel="icon" type="image/svg+xml" href="{FAVICON}">\n'
             f'<meta property="og:type" content="website">\n<meta property="og:site_name" content="Sacred Forge Systems">\n'
             f'<meta property="og:title" content="{title}">\n<meta property="og:description" content="{desc}">\n'
             f'<meta property="og:url" content="{canonical}">\n<meta name="twitter:card" content="summary_large_image">\n'

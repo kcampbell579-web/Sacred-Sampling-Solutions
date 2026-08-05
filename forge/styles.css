@@ -64,7 +64,9 @@ header.site{position:sticky;top:0;z-index:70;backdrop-filter:blur(14px);
 .nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:18px}
 .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:1.02rem;white-space:nowrap}
 .brand .logo{width:34px;height:34px;flex:none}
-.brand small{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;color:var(--ink-3);font-weight:500;text-transform:uppercase;margin-top:1px}
+.brand .wordmark{font-weight:800;letter-spacing:.01em;font-size:1.05rem;line-height:1;color:var(--ink)}
+.brand .wf{color:var(--gold-2)}
+.brand small{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;color:var(--ink-3);font-weight:500;text-transform:uppercase;margin-top:3px}
 .nav-links{display:flex;gap:22px;align-items:center;font-size:.92rem;font-weight:600;color:var(--ink-2)}
 .nav-links a{position:relative;padding:6px 0}
 .nav-links a:hover{color:var(--ink)}
