@@ -1,37 +1,56 @@
 # Sacred Forge Systems
 
-Marketing site for **Sacred Forge Systems** — a digital build studio offering
-website design & build, app building, portal building, and ongoing care. It's a
-sister brand to Sacred Sampling Solutions and shares its blue/gold, Manrope
-design DNA with a darker "forge" treatment (anvil + spark mark).
+Multi-page marketing site for **Sacred Forge Systems** — a technology studio
+offering website design, custom software, mobile apps, AI & automation,
+branding and more, plus its own line of products. Brand mark is the gold
+atom + cross inside a targeting ring; accent is Amber Glow `#E6B422`, on a
+blue/amber + Manrope design system.
 
-## What's here
+## How it's built
 
-- `index.html` — the full single-page site. Fully self-contained: all CSS and JS
-  are inline, the logo/favicon is an inline SVG, and fonts are the only external
-  request (Google Fonts). No build step required.
-- `vercel.json` — static hosting config with `cleanUrls` and basic security headers.
-
-## Sections
-
-Hero (build-pipeline console) → trust KPIs → services (Website, App, Portal +
-AI/Automation, Branding, Care) → process pipeline (Discover → Architect → Build →
-Launch → Temper) → tech stack → case study (Sacred Sampling Solutions) →
-engagement tiers (Launch / Build / Temper) → FAQ → contact CTA → footer.
-
-## Run locally
-
-It's a static file — open `index.html` directly, or serve the folder:
+Pages are **generated** from shared templates by `build.py`, so the nav,
+header, footer and `<head>` stay identical everywhere. The output is plain
+static HTML committed alongside the script — no build step is needed to deploy.
 
 ```bash
 cd forge
-python3 -m http.server 8000   # then visit http://localhost:8000
+python3 build.py          # regenerates every .html page + sitemap.xml + robots.txt
+python3 -m http.server 8000   # preview at http://localhost:8000
 ```
+
+> Serve the folder (as above) rather than opening files directly — links are
+> root-absolute (`/services/…`), which resolve correctly under any static host.
+
+### Source vs. output
+- **Edit `build.py`** (content + templates), `styles.css` (design system) and
+  `app.js` (nav, theme, reveal, form). Then re-run `build.py`.
+- The `.html` files, `sitemap.xml` and `robots.txt` are generated — don't hand-edit.
+
+## Pages (23)
+
+- **Home** — hero, services, industries, why, portfolio, process, testimonials, CTA
+- **Services** — overview + 5 SEO sub-pages (Website Design, Custom Software,
+  Mobile Apps, AI & Automation, Branding)
+- **Products** — SacredOps, Sacred Sampling Portal, Proposal Builder, and more
+- **Portfolio** — grid + two full case studies (Sacred Sampling, SacredOps)
+- **Industries** — 8 industries
+- **About**, **Process**, **Pricing** (4 bands), **FAQ**
+- **Blog** — index + 4 sample posts (+ "coming soon" cards)
+- **Contact** — form, booking, phone, email
+- **Client Portal** — feature overview, interface mock, sign-in preview
 
 ## Notes
 
-- **Theme:** dark by default with a light toggle in the footer; the choice is
-  remembered in `localStorage`. Respects `prefers-reduced-motion`.
-- **Responsive:** collapses to a mobile nav and single-column layouts under 900px.
-- **Placeholders to update before going live:** the `hello@sacredforgesystems.com`
-  contact address, the pricing bands, and the Q3 booking badge in the hero.
+- **Theme:** dark by default with a light toggle in the footer (remembered).
+  Respects `prefers-reduced-motion`; reveal animations are progressive
+  enhancement (content is visible without JS).
+- **Responsive:** 8-item nav collapses to a mobile menu with a Services
+  dropdown under 1040px.
+
+## Placeholders to replace before launch
+
+- Contact email `hello@sacredforgesystems.com`, phone, and the `cal.com` booking link
+- The contact form is a front-end demo — wire it to an inbox or form service
+- Testimonials and the About "founder story" are placeholder copy
+- Case-study screenshots are mockups — swap in real captures
+- Pricing bands are indicative
