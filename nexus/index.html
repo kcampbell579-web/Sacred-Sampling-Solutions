@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sacred Command Nexus — Websites, Apps &amp; Portals, engineered to launch</title>
+<meta name="description" content="Sacred Command Nexus is a digital build studio. We design and ship marketing websites, web &amp; mobile apps, and secure customer portals — from first sketch to live command center. Strategy, design, and engineering under one roof.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230E0E0E'/%3E%3Cg fill='none' stroke='%232C94FC' stroke-width='4'%3E%3Ccircle cx='50' cy='50' r='9' fill='%232C94FC' stroke='none'/%3E%3Ccircle cx='22' cy='26' r='6'/%3E%3Ccircle cx='78' cy='26' r='6'/%3E%3Ccircle cx='22' cy='74' r='6'/%3E%3Ccircle cx='78' cy='74' r='6'/%3E%3Cpath d='M28 30 44 46M72 30 56 46M28 70 44 54M72 70 56 54'/%3E%3C/g%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sacred Command Nexus">
+<meta property="og:title" content="Sacred Command Nexus — Websites, Apps &amp; Portals, engineered to launch">
+<meta property="og:description" content="A digital build studio. We design and ship marketing sites, apps, and secure portals — from first sketch to live command center.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090e; --bg-2:#0b0f17; --panel:#0f1420; --panel-2:#131a29;
+  --ink:#eef3fb; --ink-2:#a6b4cc; --ink-3:#6f7f9a; --line:#1c2637; --line-2:#26344c;
+  --brand:#2C94FC; --brand-2:#67b3ff; --brand-ink:#bcdcff; --brand-wash:#0f2846;
+  --gold:#e6b642; --gold-2:#ffd479; --gold-wash:#2a2411;
+  --good:#3fd28a; --danger:#f0705f;
+  --maxw:1180px;
+  --sans:"Manrope","Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --radius:16px; --radius-sm:11px;
+  --shadow:0 2px 8px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+  --glow:0 0 0 1px rgba(44,148,252,.25), 0 18px 60px -22px rgba(44,148,252,.55);
+}
+:root[data-theme="light"]{
+  --bg:#eef4fc; --bg-2:#e5eefb; --panel:#ffffff; --panel-2:#f4f8ff;
+  --ink:#0e1520; --ink-2:#455267; --ink-3:#78859a; --line:#dce5f2; --line-2:#c9d6ea;
+  --brand:#155ec2; --brand-2:#2C94FC; --brand-ink:#124a99; --brand-wash:#e3f0ff;
+  --gold:#a9700c; --gold-2:#c88a1a; --gold-wash:#f6ecd4;
+  --shadow:0 1px 2px rgba(9,18,40,.05), 0 20px 50px -22px rgba(9,18,40,.28);
+  --glow:0 0 0 1px rgba(44,148,252,.2), 0 18px 50px -24px rgba(44,148,252,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+h1,h2,h3,h4{margin:0;letter-spacing:-.03em;line-height:1.08;font-weight:800;text-wrap:balance}
+h1{font-size:clamp(2.4rem,6vw,4.4rem);letter-spacing:-.04em;line-height:1.02}
+h2{font-size:clamp(1.9rem,4vw,2.9rem)}
+h3{font-size:1.18rem;font-weight:700;letter-spacing:-.02em;line-height:1.25}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--brand-2);font-weight:600}
+.muted{color:var(--ink-2)}
+.mono{font-family:var(--mono)}
+.grad{background:linear-gradient(120deg,var(--brand-2),var(--gold-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:.55em;justify-content:center;font-family:var(--sans);
+  font-weight:700;font-size:.98rem;padding:.85em 1.5em;border-radius:12px;border:1px solid transparent;
+  cursor:pointer;transition:transform .12s ease,box-shadow .22s ease,background .22s ease,border-color .22s ease}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(180deg,var(--brand-2),var(--brand));color:#fff;box-shadow:0 10px 30px -10px var(--brand)}
+.btn-primary:hover{filter:brightness(1.08);box-shadow:0 16px 38px -12px var(--brand)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.btn-ghost:hover{border-color:var(--brand-2);color:var(--brand-2)}
+.btn-lg{padding:1em 1.75em;font-size:1.06rem}
+.btn-sm{padding:.6em 1.05em;font-size:.9rem}
+.arrow{transition:transform .15s ease}
+.btn:hover .arrow{transform:translateX(4px)}
+
+/* header */
+header{position:sticky;top:0;z-index:60;backdrop-filter:blur(14px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:1.06rem}
+.brand .logo{width:34px;height:34px;flex:none}
+.brand small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;color:var(--ink-3);font-weight:500;text-transform:uppercase;margin-top:1px}
+.nav-links{display:flex;gap:26px;align-items:center;font-size:.94rem;font-weight:600;color:var(--ink-2)}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.nav-toggle{display:none;background:none;border:1px solid var(--line-2);color:var(--ink);border-radius:9px;padding:8px;cursor:pointer}
+@media(max-width:900px){
+  .nav-links{position:fixed;inset:70px 0 auto 0;flex-direction:column;gap:0;background:var(--bg-2);
+    border-bottom:1px solid var(--line);padding:8px 24px;display:none}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:13px 0;border-bottom:1px solid var(--line);width:100%}
+  .nav-toggle{display:inline-flex}
+  .hide-sm{display:none}
+}
+
+/* hero */
+.hero{position:relative;padding:76px 0 88px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(680px 420px at 78% 10%,rgba(44,148,252,.22),transparent 70%),
+    radial-gradient(520px 360px at 12% 90%,rgba(230,182,66,.12),transparent 70%);
+  pointer-events:none}
+.grid-bg{position:absolute;inset:0;z-index:0;opacity:.5;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(circle at 60% 30%,#000,transparent 80%);
+  -webkit-mask-image:radial-gradient(circle at 60% 30%,#000,transparent 80%)}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+@media(max-width:940px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.badge{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--brand-ink);background:var(--brand-wash);border:1px solid var(--line-2);
+  padding:7px 13px;border-radius:100px;font-weight:600}
+.badge .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 30%,transparent);animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+.hero h1{margin:20px 0 0}
+.lead{color:var(--ink-2);font-size:clamp(1.05rem,2vw,1.24rem);margin-top:20px;max-width:34ch}
+.hero-cta{display:flex;gap:13px;flex-wrap:wrap;margin-top:30px}
+.hero-meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:30px;font-size:.86rem;color:var(--ink-2)}
+.hero-meta b{color:var(--ink);font-weight:700}
+.hero-meta .im{display:flex;align-items:center;gap:8px}
+.hero-meta svg{color:var(--brand-2)}
+
+/* console card */
+.console{position:relative;border:1px solid var(--line-2);border-radius:var(--radius);background:
+  linear-gradient(180deg,var(--panel),var(--panel-2));box-shadow:var(--glow);overflow:hidden}
+.console-top{display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 60%,#000 6%)}
+.console-top .lights{display:flex;gap:6px}
+.console-top .lights i{width:11px;height:11px;border-radius:50%;background:var(--line-2)}
+.console-top .lights i:nth-child(1){background:#f0705f}.console-top .lights i:nth-child(2){background:#e6b642}.console-top .lights i:nth-child(3){background:#3fd28a}
+.console-top .ttl{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);margin-left:6px}
+.console-body{padding:18px 18px 20px}
+.pipe{display:flex;flex-direction:column;gap:10px}
+.pipe-row{display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--panel-2) 70%,transparent)}
+.pipe-row .ic{width:34px;height:34px;flex:none;border-radius:9px;display:grid;place-items:center;background:var(--brand-wash);color:var(--brand-2);border:1px solid var(--line-2)}
+.pipe-row .txt{flex:1;min-width:0}
+.pipe-row .txt b{display:block;font-size:.95rem;font-weight:700}
+.pipe-row .txt span{font-size:.78rem;color:var(--ink-3);font-family:var(--mono)}
+.chip{font-family:var(--mono);font-size:.68rem;font-weight:600;padding:4px 9px;border-radius:100px;white-space:nowrap}
+.chip.ok{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good);border:1px solid color-mix(in srgb,var(--good) 34%,transparent)}
+.chip.run{background:var(--brand-wash);color:var(--brand-2);border:1px solid var(--line-2)}
+.chip.wait{background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold-2);border:1px solid color-mix(in srgb,var(--gold) 32%,transparent)}
+.console-foot{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.72rem;color:var(--ink-3)}
+
+/* logos / trust strip */
+.strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2)}
+.strip .wrap{display:flex;flex-wrap:wrap;gap:14px 40px;align-items:center;justify-content:space-between;padding-top:26px;padding-bottom:26px}
+.strip .kpi{display:flex;flex-direction:column}
+.strip .kpi b{font-size:1.7rem;font-weight:800;letter-spacing:-.03em;line-height:1}
+.strip .kpi span{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+
+/* sections */
+section{position:relative}
+.sec{padding:88px 0}
+.sec-head{max-width:640px;margin-bottom:44px}
+.sec-head h2{margin-top:14px}
+.sec-head p{margin-top:16px;color:var(--ink-2);font-size:1.08rem}
+.center{text-align:center}.center.sec-head{margin-left:auto;margin-right:auto}
+
+/* services */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:900px){.svc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.svc-grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  padding:26px 24px;position:relative;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.card:hover{transform:translateY(-4px);border-color:var(--line-2);box-shadow:var(--shadow)}
+.card .ic{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;margin-bottom:18px;
+  background:var(--brand-wash);color:var(--brand-2);border:1px solid var(--line-2)}
+.svc.feature{grid-column:span 3;display:grid;grid-template-columns:1.1fr 1fr;gap:8px;padding:0;overflow:hidden}
+@media(max-width:900px){.svc.feature{grid-column:span 2;grid-template-columns:1fr}}
+@media(max-width:620px){.svc.feature{grid-column:span 1}}
+.card p{color:var(--ink-2);font-size:.96rem;margin-top:9px}
+.card ul{list-style:none;padding:0;margin:16px 0 0;display:flex;flex-direction:column;gap:8px}
+.card ul li{display:flex;gap:9px;align-items:flex-start;font-size:.9rem;color:var(--ink-2)}
+.card ul li svg{color:var(--brand-2);flex:none;margin-top:3px}
+.tag{position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-2);background:var(--gold-wash);border:1px solid color-mix(in srgb,var(--gold) 30%,transparent);padding:4px 9px;border-radius:100px;font-weight:600}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;counter-reset:step;position:relative}
+@media(max-width:900px){.steps{grid-template-columns:1fr}}
+.step{padding:26px 22px;border-left:1px solid var(--line);position:relative}
+.steps .step:first-child{border-left:none}
+@media(max-width:900px){.step{border-left:none;border-top:1px solid var(--line);padding-left:0}.steps .step:first-child{border-top:none}}
+.step .n{font-family:var(--mono);font-size:.8rem;color:var(--brand-2);font-weight:600}
+.step h3{margin:14px 0 8px}
+.step p{font-size:.9rem;color:var(--ink-2)}
+.step .dot{position:absolute;left:-5px;top:26px;width:9px;height:9px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 4px var(--bg)}
+@media(max-width:900px){.step .dot{display:none}}
+
+/* stack */
+.stack{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.stack .pill{display:flex;align-items:center;gap:9px;padding:13px 14px;border:1px solid var(--line);border-radius:11px;
+  background:var(--panel);font-size:.86rem;font-weight:600;color:var(--ink-2)}
+.stack .pill i{width:8px;height:8px;border-radius:2px;background:var(--brand-2);flex:none}
+
+/* case study */
+.case{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--panel)}
+@media(max-width:840px){.case{grid-template-columns:1fr}}
+.case .left{padding:40px 36px}
+.case .right{background:linear-gradient(150deg,var(--brand-wash),var(--panel-2));padding:40px 36px;border-left:1px solid var(--line);display:flex;flex-direction:column;justify-content:center;gap:16px}
+@media(max-width:840px){.case .right{border-left:none;border-top:1px solid var(--line)}}
+.case .metric{display:flex;align-items:baseline;gap:12px}
+.case .metric b{font-size:2rem;font-weight:800;letter-spacing:-.03em}
+.case .metric span{color:var(--ink-2);font-size:.92rem}
+.case .left h3{font-size:1.5rem;margin:14px 0}
+.case .left p{color:var(--ink-2);margin-bottom:14px}
+.feat-list{list-style:none;padding:0;margin:18px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.feat-list li{font-family:var(--mono);font-size:.72rem;color:var(--ink-2);border:1px solid var(--line);padding:6px 11px;border-radius:100px}
+
+/* engagement */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:860px){.plans{grid-template-columns:1fr}}
+.plan{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),var(--panel-2));padding:30px 26px;display:flex;flex-direction:column}
+.plan.pop{border-color:var(--brand);box-shadow:var(--glow)}
+.plan h3{font-size:1.24rem}
+.plan .price{margin:16px 0 4px;font-size:2rem;font-weight:800;letter-spacing:-.03em}
+.plan .price small{font-size:.9rem;font-weight:500;color:var(--ink-3)}
+.plan .who{color:var(--ink-2);font-size:.92rem;min-height:44px}
+.plan ul{list-style:none;padding:0;margin:20px 0 24px;display:flex;flex-direction:column;gap:10px;flex:1}
+.plan ul li{display:flex;gap:9px;font-size:.92rem;color:var(--ink-2)}
+.plan ul li svg{color:var(--brand-2);flex:none;margin-top:3px}
+.plan .poptag{align-self:flex-start;font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-2);background:var(--brand-wash);border:1px solid var(--line-2);padding:4px 10px;border-radius:100px;font-weight:600;margin-bottom:12px}
+
+/* faq */
+.faq{max-width:800px;margin:0 auto}
+.qa{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;background:var(--panel);overflow:hidden}
+.qa summary{cursor:pointer;padding:18px 20px;font-weight:700;font-size:1.02rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary .plus{flex:none;width:22px;height:22px;position:relative;transition:transform .2s}
+.qa summary .plus::before,.qa summary .plus::after{content:"";position:absolute;background:var(--brand-2);border-radius:2px}
+.qa summary .plus::before{top:10px;left:3px;right:3px;height:2px}
+.qa summary .plus::after{left:10px;top:3px;bottom:3px;width:2px;transition:transform .2s}
+.qa[open] summary .plus::after{transform:scaleY(0)}
+.qa .a{padding:0 20px 20px;color:var(--ink-2);font-size:.98rem}
+
+/* CTA */
+.cta{position:relative;border:1px solid var(--line-2);border-radius:22px;overflow:hidden;padding:56px 40px;text-align:center;
+  background:linear-gradient(150deg,var(--brand-wash),var(--panel));box-shadow:var(--glow)}
+.cta::before{content:"";position:absolute;inset:0;opacity:.4;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:40px 40px;mask-image:radial-gradient(circle at 50% 0%,#000,transparent 75%);
+  -webkit-mask-image:radial-gradient(circle at 50% 0%,#000,transparent 75%)}
+.cta>*{position:relative}
+.cta h2{margin-bottom:14px}
+.cta p{color:var(--ink-2);max-width:52ch;margin:0 auto 28px}
+.cta .hero-cta{justify-content:center}
+
+/* footer */
+footer{border-top:1px solid var(--line);background:var(--bg-2);padding:56px 0 28px;margin-top:20px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
+@media(max-width:800px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.foot-grid{grid-template-columns:1fr}}
+.foot-grid h4{font-size:.78rem;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;font-weight:600}
+.foot-grid a{display:block;color:var(--ink-2);font-size:.92rem;padding:5px 0}
+.foot-grid a:hover{color:var(--ink)}
+.foot-about{color:var(--ink-2);font-size:.92rem;margin-top:14px;max-width:38ch}
+.foot-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-3);font-size:.82rem}
+.themetog{background:none;border:1px solid var(--line-2);color:var(--ink-2);border-radius:9px;padding:8px 10px;cursor:pointer;display:inline-flex;gap:7px;align-items:center;font-size:.82rem;font-family:var(--mono)}
+.themetog:hover{color:var(--ink);border-color:var(--brand-2)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Sacred Command Nexus home">
+      <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0E0E0E"/><g fill="none" stroke="#2C94FC" stroke-width="4"><circle cx="50" cy="50" r="9" fill="#2C94FC" stroke="none"/><circle cx="22" cy="26" r="6"/><circle cx="78" cy="26" r="6"/><circle cx="22" cy="74" r="6"/><circle cx="78" cy="74" r="6"/><path d="M28 30 44 46M72 30 56 46M28 70 44 54M72 70 56 54"/></g></svg>
+      <span>Sacred Command Nexus<small>Design · Build · Launch</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#work">Work</a>
+      <a href="#engagements">Engagements</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#work" class="btn btn-ghost btn-sm hide-sm">See our work</a>
+      <a href="#contact" class="btn btn-primary btn-sm">Start a build <span class="arrow">→</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="grid-bg"></div>
+  <div class="wrap hero-grid">
+    <div class="reveal in">
+      <span class="badge"><span class="dot"></span> Now booking Q3 · 2 build slots open</span>
+      <h1>Your digital <span class="grad">command center</span>, built from the ground up.</h1>
+      <p class="lead">Sacred Command Nexus is a build studio for founders and small teams. We design and ship the whole stack — marketing sites, web &amp; mobile apps, and secure customer portals — from first sketch to launch day.</p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-primary btn-lg">Start a build <span class="arrow">→</span></a>
+        <a href="#services" class="btn btn-ghost btn-lg">What we build</a>
+      </div>
+      <div class="hero-meta">
+        <span class="im"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><b>Fixed scope</b>, fixed price</span>
+        <span class="im"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><b>2–6 week</b> launch windows</span>
+        <span class="im"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7l8-4 8 4v10l-8 4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>You own <b>the code</b></span>
+      </div>
+    </div>
+
+    <div class="reveal in">
+      <div class="console" role="img" aria-label="A build pipeline console showing design, app, portal and launch stages progressing">
+        <div class="console-top">
+          <div class="lights"><i></i><i></i><i></i></div>
+          <span class="ttl">nexus://build-pipeline — live</span>
+        </div>
+        <div class="console-body">
+          <div class="pipe">
+            <div class="pipe-row">
+              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8"/></svg></span>
+              <div class="txt"><b>Website &amp; brand</b><span>design → responsive build</span></div>
+              <span class="chip ok">shipped</span>
+            </div>
+            <div class="pipe-row">
+              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+              <div class="txt"><b>App build</b><span>web + mobile · auth · data</span></div>
+              <span class="chip run">building</span>
+            </div>
+            <div class="pipe-row">
+              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 9h16M8 5v14"/></svg></span>
+              <div class="txt"><b>Customer portal</b><span>logins · dashboards · docs</span></div>
+              <span class="chip run">building</span>
+            </div>
+            <div class="pipe-row">
+              <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/><path d="M12 2v4"/></svg></span>
+              <div class="txt"><b>Launch &amp; handoff</b><span>DNS · analytics · training</span></div>
+              <span class="chip wait">queued</span>
+            </div>
+          </div>
+        </div>
+        <div class="console-foot"><span>uptime 99.9%</span><span>build 2.6.0 · region us-east</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="strip">
+  <div class="wrap">
+    <div class="kpi"><b>3</b><span>Core disciplines</span></div>
+    <div class="kpi"><b>2–6 wk</b><span>Typical build</span></div>
+    <div class="kpi"><b>100%</b><span>Code you own</span></div>
+    <div class="kpi"><b>1</b><span>Point of contact</span></div>
+    <div class="kpi"><b>∞</b><span>Care &amp; iteration</span></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What we build</span>
+      <h2>Three disciplines. One command center.</h2>
+      <p>Most studios do one thing. We take you from an empty domain to a running business system — the front door, the product, and the back office — so nothing gets lost in a handoff.</p>
+    </div>
+
+    <div class="svc-grid">
+      <div class="card svc">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8"/></svg></span>
+        <h3>Website design &amp; build</h3>
+        <p>Fast, accessible marketing sites that look like you spent a fortune — and load like you didn't.</p>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Brand, copy &amp; design system</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>SEO, analytics &amp; speed baked in</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Edit-it-yourself content</li>
+        </ul>
+      </div>
+
+      <div class="card svc">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></span>
+        <h3>App building</h3>
+        <p>Web and mobile apps with real accounts, real data, and real workflows — not a prototype that falls over.</p>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Auth, payments &amp; databases</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>APIs &amp; third-party integrations</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Installable, offline-ready PWAs</li>
+        </ul>
+      </div>
+
+      <div class="card svc">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 9h16M8 5v14"/></svg></span>
+        <h3>Portal building</h3>
+        <p>Secure customer &amp; staff portals — the logged-in home base where your business actually runs.</p>
+        <ul>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Role-based logins &amp; dashboards</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Document, order &amp; status flows</li>
+          <li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>PDF generation &amp; records</li>
+        </ul>
+      </div>
+
+      <div class="card svc">
+        <span class="tag">and more</span>
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3c1.7 0 3 1.3 3 3a3 3 0 0 1 1 5.8V17a3 3 0 0 1-3 3h-1a3 3 0 0 1-6 0H8a3 3 0 0 1-3-3v-.2A3 3 0 0 1 6 11c0-1.7 1.3-3 3-3a3 3 0 0 1 3-3z"/></svg></span>
+        <h3>AI &amp; automation</h3>
+        <p>Chat assistants, smart forms, and behind-the-scenes automations that cut the busywork out of your day.</p>
+      </div>
+
+      <div class="card svc">
+        <span class="tag">and more</span>
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span>
+        <h3>Branding &amp; identity</h3>
+        <p>Logo, color, type, and voice — a coherent system so every touchpoint feels like the same company.</p>
+      </div>
+
+      <div class="card svc">
+        <span class="tag">and more</span>
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <h3>Hosting, care &amp; support</h3>
+        <p>We keep it online, patched, backed up, and improving — on a simple monthly plan, no surprise invoices.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="sec" id="process" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>A clear pipeline, from idea to launch.</h2>
+      <p>No mystery, no month-long silences. You always know which stage we're in and what's next.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><span class="dot"></span><span class="n">01 / discover</span><h3>Discover</h3><p>We map your goals, users, and must-haves into a fixed scope and a flat quote.</p></div>
+      <div class="step"><span class="dot"></span><span class="n">02 / architect</span><h3>Architect</h3><p>Sitemap, data model, and clickable design so you see it before we build it.</p></div>
+      <div class="step"><span class="dot"></span><span class="n">03 / build</span><h3>Build</h3><p>We ship in visible increments on a live staging link you can watch the whole way.</p></div>
+      <div class="step"><span class="dot"></span><span class="n">04 / launch</span><h3>Launch</h3><p>Domains, analytics, and testing — then we go live and hand you the keys.</p></div>
+      <div class="step"><span class="dot"></span><span class="n">05 / command</span><h3>Command</h3><p>Ongoing care, iteration, and new features whenever the business needs them.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="sec" id="stack">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Under the hood</span>
+      <h2>Modern, boring-in-a-good-way tools.</h2>
+      <p>We build on proven, well-supported technology so your site or app is fast today and maintainable for years — no exotic stack that only we can touch.</p>
+    </div>
+    <div class="stack">
+      <div class="pill"><i></i>Next.js / React</div>
+      <div class="pill"><i></i>Node &amp; Edge</div>
+      <div class="pill"><i></i>PostgreSQL</div>
+      <div class="pill"><i></i>Static HTML/CSS</div>
+      <div class="pill"><i></i>PWA / Mobile</div>
+      <div class="pill"><i></i>Stripe payments</div>
+      <div class="pill"><i></i>Auth &amp; sessions</div>
+      <div class="pill"><i></i>Vercel hosting</div>
+      <div class="pill"><i></i>PDF &amp; docs</div>
+      <div class="pill"><i></i>Analytics &amp; SEO</div>
+      <div class="pill"><i></i>AI / LLM APIs</div>
+      <div class="pill"><i></i>Email &amp; SMS</div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK / CASE STUDY -->
+<section class="sec" id="work" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Selected work</span>
+      <h2>The full stack, shipped for a real business.</h2>
+      <p>Sacred Sampling Solutions came to us with a testing service and no software. We built the whole command center.</p>
+    </div>
+    <div class="case">
+      <div class="left">
+        <span class="eyebrow">Case study</span>
+        <h3>Sacred Sampling Solutions</h3>
+        <p>A certified mail-in water &amp; contaminant testing company needed a storefront, a customer app, and a lab back office — all connected.</p>
+        <p>We delivered a marketing site, a customer portal for kit activation and results, chain-of-custody document generation, training gates, and a lab intake dashboard — one continuous system from "shop now" to "signed report."</p>
+        <ul class="feat-list">
+          <li>Marketing site</li><li>Customer portal</li><li>Kit registration</li><li>Chain-of-custody PDFs</li><li>Results &amp; reports</li><li>Lab dashboard</li><li>Training videos</li><li>Shipping flows</li>
+        </ul>
+      </div>
+      <div class="right">
+        <div class="metric"><b>3-in-1</b><span>Website + app + portal, one build</span></div>
+        <div class="metric"><b>End-to-end</b><span>Storefront through signed lab report</span></div>
+        <div class="metric"><b>Self-serve</b><span>Customers activate &amp; track their own kits</span></div>
+        <a href="https://www.sacredsamplingsolutions.com" class="btn btn-primary" style="margin-top:8px;align-self:flex-start">Visit the live site <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENGAGEMENTS -->
+<section class="sec" id="engagements">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Engagements</span>
+      <h2>Pick the altitude you need.</h2>
+      <p>Flat, honest pricing bands. We'll confirm an exact fixed quote after a short discovery call.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>Launch</h3>
+        <div class="price">$2.5k+</div>
+        <p class="who">A polished marketing website that makes you look established.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Up to ~6 designed pages</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Brand, copy help &amp; SEO</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Contact &amp; lead capture</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Live in ~2 weeks</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost btn-block" style="width:100%">Start a Launch build</a>
+      </div>
+      <div class="plan pop">
+        <span class="poptag">Most popular</span>
+        <h3>Build</h3>
+        <div class="price">$7k+</div>
+        <p class="who">A real app or customer portal with logins, data, and workflows.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Accounts, roles &amp; dashboards</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Database &amp; integrations</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Payments &amp; documents</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Live in ~4–6 weeks</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary btn-block" style="width:100%">Start a Build</a>
+      </div>
+      <div class="plan">
+        <h3>Command</h3>
+        <div class="price">$500<small>/mo+</small></div>
+        <p class="who">Ongoing hosting, care, and a steady stream of improvements.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Hosting, backups &amp; updates</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Monitoring &amp; support</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Monthly feature hours</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Cancel anytime</li>
+        </ul>
+        <a href="#contact" class="btn btn-ghost btn-block" style="width:100%">Add Command care</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Questions</span>
+      <h2>Good to know before we start.</h2>
+    </div>
+    <div class="faq">
+      <details class="qa"><summary>Do I own the code and content?<span class="plus"></span></summary><div class="a">Yes — completely. Everything we build is yours: the code lives in your repository, the domain and accounts are in your name, and there's no lock-in. If you ever want to bring it in-house or move on, you can.</div></details>
+      <details class="qa"><summary>How long does a project take?<span class="plus"></span></summary><div class="a">A marketing site is typically live in about two weeks. A full app or customer portal runs about four to six weeks depending on scope. We'll give you a firm timeline with your fixed quote after a short discovery call.</div></details>
+      <details class="qa"><summary>Is pricing really fixed?<span class="plus"></span></summary><div class="a">Yes. We scope the work up front and quote one flat price for it — no hourly meter, no surprise invoices. If you want to add something mid-project, we'll price that change clearly before doing it.</div></details>
+      <details class="qa"><summary>Can you take over an existing site or app?<span class="plus"></span></summary><div class="a">Often, yes. We'll audit what you have, tell you honestly whether it's worth improving or rebuilding, and give you a plan either way.</div></details>
+      <details class="qa"><summary>What happens after launch?<span class="plus"></span></summary><div class="a">You can take the keys and run it yourself, or keep us on a Command care plan for hosting, updates, monitoring, and ongoing improvements. It's month-to-month — no long contracts.</div></details>
+      <details class="qa"><summary>What do you need from me to start?<span class="plus"></span></summary><div class="a">A short call and whatever brand assets, content, and examples you already have. If you're starting from nothing, that's fine too — helping shape it is part of the job.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / CTA -->
+<section class="sec" id="contact">
+  <div class="wrap">
+    <div class="cta">
+      <span class="eyebrow">Start a build</span>
+      <h2>Let's map your command center.</h2>
+      <p>Tell us what you're building — a site, an app, a portal, or all three. We'll reply within one business day with next steps and a rough scope.</p>
+      <div class="hero-cta">
+        <a href="mailto:hello@sacredcommandnexus.com?subject=New%20build%20inquiry&amp;body=What%20I%20want%20to%20build%3A%0D%0A%0D%0ATimeline%3A%0D%0A%0D%0ABudget%20range%3A%0D%0A%0D%0AAnything%20else%3A%0D%0A" class="btn btn-primary btn-lg">Email us your idea <span class="arrow">→</span></a>
+        <a href="https://www.sacredsamplingsolutions.com" class="btn btn-ghost btn-lg">See a live build</a>
+      </div>
+      <p class="mono" style="margin-top:26px;font-size:.8rem;color:var(--ink-3)">hello@sacredcommandnexus.com · Response within 1 business day</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top" aria-label="Sacred Command Nexus home">
+          <svg class="logo" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0E0E0E"/><g fill="none" stroke="#2C94FC" stroke-width="4"><circle cx="50" cy="50" r="9" fill="#2C94FC" stroke="none"/><circle cx="22" cy="26" r="6"/><circle cx="78" cy="26" r="6"/><circle cx="22" cy="74" r="6"/><circle cx="78" cy="74" r="6"/><path d="M28 30 44 46M72 30 56 46M28 70 44 54M72 70 56 54"/></g></svg>
+          <span>Sacred Command Nexus<small>Design · Build · Launch</small></span>
+        </a>
+        <p class="foot-about">A digital build studio for founders and small teams. Websites, apps, and portals — designed, built, and launched under one roof.</p>
+      </div>
+      <div>
+        <h4>Build</h4>
+        <a href="#services">Website design</a>
+        <a href="#services">App building</a>
+        <a href="#services">Portal building</a>
+        <a href="#services">AI &amp; automation</a>
+      </div>
+      <div>
+        <h4>Studio</h4>
+        <a href="#process">Process</a>
+        <a href="#work">Our work</a>
+        <a href="#engagements">Engagements</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <a href="mailto:hello@sacredcommandnexus.com">hello@sacredcommandnexus.com</a>
+        <a href="#contact">Start a build</a>
+        <a href="https://www.sacredsamplingsolutions.com">Sacred Sampling Solutions</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Sacred Command Nexus &middot; Built in the USA</span>
+      <button class="themetog" id="themeToggle" aria-label="Toggle theme"><span id="themeIcon">◐</span> <span id="themeLabel">Theme</span></button>
+    </div>
+  </div>
+</footer>
+
+<script>
+// mobile nav
+const navToggle=document.getElementById('navToggle'),navLinks=document.getElementById('navLinks');
+navToggle&&navToggle.addEventListener('click',()=>navLinks.classList.toggle('open'));
+navLinks&&navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navLinks.classList.remove('open')));
+
+// reveal on scroll
+const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.sec-head, .card, .step, .plan, .case, .qa, .cta, .stack .pill').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%6*40)+'ms';io.observe(el)});
+
+// theme toggle (default dark; remembers choice)
+const root=document.documentElement,tIcon=document.getElementById('themeIcon'),tLabel=document.getElementById('themeLabel');
+function setTheme(t){root.setAttribute('data-theme',t);try{localStorage.setItem('scn-theme',t)}catch(e){}
+  tIcon.textContent=t==='dark'?'☾':'☀';tLabel.textContent=t==='dark'?'Dark':'Light'}
+let saved='dark';try{saved=localStorage.getItem('scn-theme')||'dark'}catch(e){}
+setTheme(saved);
+document.getElementById('themeToggle').addEventListener('click',()=>setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark'));
+</script>
+</body>
+</html>
