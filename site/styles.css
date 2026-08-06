@@ -390,3 +390,47 @@ footer .brand img{height:40px}
 .cookie-actions .ck-accept{background:linear-gradient(180deg,var(--brand-2),var(--brand));color:#fff}
 .cookie-actions .ck-accept:hover{filter:brightness(1.06)}
 @media (max-width:560px){.cookie-actions{margin-left:0;width:100%}.cookie-actions button{flex:1}}
+
+/* ── PRODUCT PAGES ──────────────────────────────────────────────────── */
+.page-hero .backlink{display:inline-block;color:rgba(255,255,255,.72);font-size:.85rem;font-weight:600;margin-bottom:14px;border-bottom:1px solid transparent}
+.page-hero .backlink:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+.page-hero .lede{max-width:60ch;font-size:1.05rem;color:rgba(255,255,255,.9)}
+.page-hero .price{margin-top:16px}
+.page-hero .price .amt{font-size:2.4rem;font-weight:700;letter-spacing:-.02em;color:#fff}
+.page-hero .price .per{color:rgba(255,255,255,.66);margin-left:6px;font-size:.95rem}
+.prod{padding:52px 0}
+.prod-grid{display:grid;grid-template-columns:1fr 360px;gap:40px;align-items:start}
+.prod-main{min-width:0}
+.prod-block{margin-bottom:30px}
+.prod-block .eyebrow{display:block;margin-bottom:10px}
+.prod-block h2,.prod-block h3{margin-bottom:8px}
+.ticks{list-style:none;display:grid;gap:9px}
+.ticks li{display:flex;gap:10px;align-items:flex-start;color:var(--ink-2);font-size:.98rem;line-height:1.5}
+.ticks li svg{color:var(--brand);margin-top:3px;flex-shrink:0}
+.prose p{color:var(--ink-2);margin-bottom:10px;line-height:1.62}
+.prose p:last-child{margin-bottom:0}
+.prod-side{position:sticky;top:84px}
+.buycard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-lg)}
+.buycard .price .amt{font-size:2rem;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.buycard .price .per{color:var(--ink-3);margin-left:5px;font-size:.9rem}
+.buycard-name{font-weight:700;font-size:1.05rem;margin:2px 0 14px}
+.buycard .btn{width:100%;justify-content:center;margin-bottom:10px}
+.spec{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;display:grid;gap:8px}
+.specrow{display:flex;justify-content:space-between;gap:14px;font-size:.85rem}
+.specrow .k{color:var(--ink-3);flex-shrink:0}
+.specrow .v{color:var(--ink-2);text-align:right;font-weight:500}
+.prod-inbox{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.prod-inbox .ib-h{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
+.prod-inbox ul{list-style:none;display:grid;gap:6px}
+.prod-inbox li{position:relative;padding-left:16px;color:var(--ink-2);font-size:.86rem;line-height:1.45}
+.prod-inbox li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--brand)}
+@media (max-width:860px){.prod-grid{grid-template-columns:1fr}.prod-side{position:static;order:-1}}
+
+/* clickable product cards on the kits page */
+.kit,.minikit{position:relative}
+.cardlink{position:absolute;inset:0;z-index:2;border-radius:var(--radius)}
+.kit .btn{position:relative;z-index:3}
+.kit .tag{z-index:3}
+.minikit .soonchip{z-index:3;pointer-events:none}
+.kit:hover,.minikit:hover{border-color:var(--brand)}
+.kit:hover,.minikit:hover{transition:border-color .15s ease}
