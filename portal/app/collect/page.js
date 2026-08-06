@@ -3,7 +3,6 @@ import { sql } from "@/lib/db";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import Header from "@/components/Header";
-import CocDocument from "@/components/CocDocument";
 import CollectForm from "./CollectForm";
 import { cocPublicUrl } from "@/lib/coc";
 
@@ -35,7 +34,7 @@ export default async function CollectPage({ searchParams }) {
           <a className="backlink" href="/dashboard">← Back to dashboard</a>
 
           {coc ? (
-            <CocDone coc={coc} reg={reg} kit={kit} />
+            <CocDone reg={reg} />
           ) : (
             <CollectForm
               sampleId={reg.sample_id}
@@ -50,7 +49,7 @@ export default async function CollectPage({ searchParams }) {
   );
 }
 
-async function CocDone({ coc, reg, kit }) {
+async function CocDone({ reg }) {
   const url = cocPublicUrl(reg.sample_id);
   const qr = await QRCode.toDataURL(url, { margin: 1, width: 168 });
 
@@ -72,10 +71,12 @@ async function CocDone({ coc, reg, kit }) {
         </div>
       </div>
 
-      <CocDocument coc={coc} reg={reg} kit={kit} />
+      <div className="coc-embed">
+        <iframe src={`/coc-pdf?id=${encodeURIComponent(reg.sample_id)}`} title={`Chain of custody ${reg.sample_id}`} />
+      </div>
 
       <div className="coc-actions">
-        <a className="btn btn-ghost" href={url} target="_blank" rel="noopener">View / print COC →</a>
+        <a className="btn btn-ghost" href={`/coc-pdf?id=${encodeURIComponent(reg.sample_id)}&dl=1`}>Download COC PDF ↓</a>
         <a className="btn btn-primary" href={`/dashboard?coc=${encodeURIComponent(reg.sample_id)}`}>Done — back to dashboard</a>
       </div>
     </>
