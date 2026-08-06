@@ -281,9 +281,30 @@ p{margin:0}
 
 /* results + support */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two-col .card{display:flex;flex-direction:column}
+.two-col .card .btn{margin-top:auto;align-self:flex-start}
 @media(max-width:640px){.two-col{grid-template-columns:1fr}}
 
 /* lab portal footer link */
 .dash-foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;font-size:.82rem;color:var(--ink-3)}
 .dash-foot a{color:var(--brand-ink);font-weight:700}
 .dash-foot a:hover{text-decoration:underline}
+
+/* ── Fulfillment portal ─────────────────────────────────────────────────── */
+.ord-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:640px){.ord-summary{grid-template-columns:repeat(2,1fr)}}
+.os-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.os-card .os-n{font-size:1.5rem;font-weight:700;color:var(--ink)}
+.os-card .os-l{font-size:.78rem;color:var(--ink-3);margin-top:2px}
+.otable-scroll{overflow-x:auto}
+.otable{width:100%;border-collapse:collapse;font-size:.88rem;min-width:860px}
+.otable th{text-align:left;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.otable td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink)}
+.otable tr:last-child td{border-bottom:none}
+.otable .sub{font-size:.76rem;color:var(--ink-3);margin-top:2px}
+.otable .nowrap{white-space:nowrap}
+.ostep{display:flex;gap:5px;margin-top:6px}
+.os-dot{width:9px;height:9px;border-radius:50%;background:var(--line-strong)}
+.os-dot.done{background:var(--brand)}
+.inlineform{display:inline}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap}
