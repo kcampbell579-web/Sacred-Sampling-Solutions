@@ -12,11 +12,11 @@
 <meta property="og:title" content="Find My Kit — Sacred Sampling Solutions">
 <meta property="og:description" content="Answer a few quick questions and we'll match you to the right Sacred Sampling water test kit.">
 <meta property="og:url" content="https://www.sacredsamplingsolutions.com/quiz.html">
-<meta property="og:image" content="https://www.sacredsamplingsolutions.com/assets/logo-color.png">
+<meta property="og:image" content="https://www.sacredsamplingsolutions.com/assets/logo.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Find My Kit — Sacred Sampling Solutions">
 <meta name="twitter:description" content="Answer a few quick questions and we'll match you to the right Sacred Sampling water test kit.">
-<meta name="twitter:image" content="https://www.sacredsamplingsolutions.com/assets/logo-color.png">
+<meta name="twitter:image" content="https://www.sacredsamplingsolutions.com/assets/logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <style>
@@ -73,7 +73,7 @@
 
 <header>
   <div class="wrap nav">
-    <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo-color.png" alt="Sacred Sampling Solutions"></a>
+    <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo.svg" alt="Sacred Sampling Solutions"></a>
     <nav class="nav-links" id="navLinks">
       <a href="kits.html">Test Kits</a>
       <a href="index.html#how">How It Works</a>
@@ -202,7 +202,7 @@
   <div class="wrap">
     <div class="foot-grid">
       <div>
-        <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo-light.png" alt="Sacred Sampling Solutions"></a>
+        <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo.svg" alt="Sacred Sampling Solutions"></a>
         <p class="foot-about">Certified laboratory environmental testing delivered to your door. Built on science, rooted in faith. Real results — no strips, no guesswork.</p>
       </div>
       <div>
@@ -210,7 +210,7 @@
         <a href="kits.html#kits">Heavy Metals &middot; Metals &amp; Minerals</a>
         <a href="kits.html#kits">Essentials</a>
         <a href="kits.html#kits">Comprehensive &middot; PFAS</a>
-        <a href="kits.html#kits">Professional (all-in-one)</a>
+        <a href="kits.html#kits">Complete Home Inspection (all-in-one)</a>
       </div>
       <div>
         <h4>Company</h4>
@@ -292,7 +292,7 @@
     essentials:   {k:'Kit 03 · Everyday', n:'Essentials Kit', p:'$199', t:'bacteria, E. coli, nitrates, pH, hardness'},
     comprehensive:{k:'Kit 04 · Broad chemistry', n:'Comprehensive Kit', p:'$499', t:'VOCs + metals + minerals'},
     pfas:         {k:'Kit 05 · Forever chemicals', n:'PFAS Kit', p:'$499', t:'25-compound PFAS panel (EPA 533)'},
-    professional: {k:'Kit 06 · Everything', n:'Professional Kit', p:'$1,195', t:'every analyte — bacteria to PFAS'}
+    professional: {k:'Kit 06 · Everything', n:'Complete Home Inspection Water Kit', p:'$1,195', t:'every analyte — bacteria to PFAS'}
   };
 
   function recommend(){
@@ -317,8 +317,8 @@
     if(reasons.indexOf('industry')>-1) why.push(['Near industry or farmland', 'PFAS “forever chemicals” are the contaminant most tied to industrial and agricultural areas.']);
     if(reasons.indexOf('realestate')>-1) why.push(['Buying or selling', 'the all-in-one gives you the most complete record for a transaction.']);
     if(reasons.indexOf('taste')>-1) why.push(['Taste, odor, or color', 'these often point to metals, minerals, or VOCs — the broad chemistry panel covers them.']);
-    if(answers.scope==='whole') why.push(['You want the full picture', 'the Professional kit tests every analyte we offer in one report.']);
-    if(answers.custody==='yes') why.push(['You may need documentation', 'the Professional kit gives you the most complete, defensible record.']);
+    if(answers.scope==='whole') why.push(['You want the full picture', 'the Complete Home Inspection kit tests every analyte we offer in one report.']);
+    if(answers.custody==='yes') why.push(['You may need documentation', 'the Complete Home Inspection kit gives you the most complete, defensible record.']);
     if(why.length===0) why.push(['A trusted starting point', 'this kit covers what most homes should check first.']);
 
     return { key: rec, panel: PANELS[rec], why: why.slice(0,4) };

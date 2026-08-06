@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 300" role="img" aria-label="Sacred Sampling Solutions">
+  <defs>
+    <linearGradient id="cross" x1="60" y1="40" x2="240" y2="260" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b2a4a"/>
+      <stop offset="0.55" stop-color="#1f6fd0"/>
+      <stop offset="1" stop-color="#5aabff"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="150" cy="150" r="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0.7" stop-color="#7fb8ff" stop-opacity="0"/>
+      <stop offset="0.92" stop-color="#8fc4ff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#8fc4ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- icon: crosshair + cross in a ring -->
+  <g transform="translate(0,0)">
+    <circle cx="150" cy="150" r="132" fill="url(#halo)"/>
+    <circle cx="150" cy="150" r="120" fill="none" stroke="#cfe6ff" stroke-width="5"/>
+    <circle cx="150" cy="150" r="108" fill="none" stroke="#5aabff" stroke-width="2" opacity="0.6"/>
+    <!-- diagonal reticle ticks -->
+    <g stroke="#9fd0ff" stroke-width="4" stroke-linecap="round">
+      <line x1="96" y1="96" x2="120" y2="120"/>
+      <line x1="204" y1="96" x2="180" y2="120"/>
+      <line x1="96" y1="204" x2="120" y2="180"/>
+      <line x1="204" y1="204" x2="180" y2="180"/>
+    </g>
+    <!-- cross / crosshair bars (tapered diamonds) -->
+    <polygon points="150,30 164,150 150,270 136,150" fill="url(#cross)"/>
+    <polygon points="30,150 150,136 270,150 150,164" fill="url(#cross)"/>
+    <!-- center hub -->
+    <circle cx="150" cy="150" r="16" fill="#0b2a4a"/>
+    <circle cx="150" cy="150" r="16" fill="none" stroke="#2fb6a8" stroke-width="3"/>
+    <circle cx="150" cy="150" r="6" fill="#bfe0ff"/>
+  </g>
+
+  <!-- wordmark (white for dark backgrounds) -->
+  <text x="322" y="150" font-family="Manrope, Arial, Helvetica, sans-serif" font-weight="800" font-size="128" letter-spacing="2" fill="#ffffff">SACRED</text>
+  <text x="326" y="236" font-family="Manrope, Arial, Helvetica, sans-serif" font-weight="700" font-size="57" letter-spacing="7.5" fill="#9fd0ff">SAMPLING SOLUTIONS</text>
+</svg>
