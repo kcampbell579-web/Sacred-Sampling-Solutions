@@ -9,6 +9,10 @@
     { "source": "/sampleregistration.html", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
     { "source": "/sampleregistration/:path*", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*", "permanent": false },
     { "source": "/chain-of-custody", "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody", "permanent": false },
-    { "source": "/chain-of-custody/:path*", "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody/:path*", "permanent": false }
+    { "source": "/chain-of-custody/:path*", "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody/:path*", "permanent": false },
+
+    { "source": "/go/fb", "destination": "/kits.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=shop", "permanent": false },
+    { "source": "/go/fb-post", "destination": "/kits.html?utm_source=facebook&utm_medium=social&utm_campaign=shop", "permanent": false },
+    { "source": "/go/ig", "destination": "/kits.html?utm_source=instagram&utm_medium=social&utm_campaign=shop", "permanent": false }
   ]
 }
