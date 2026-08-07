@@ -434,3 +434,15 @@ footer .brand img{height:40px}
 .minikit .soonchip{z-index:3;pointer-events:none}
 .kit:hover,.minikit:hover{border-color:var(--brand)}
 .kit:hover,.minikit:hover{transition:border-color .15s ease}
+
+/* Floating WhatsApp chat button */
+.wa-fab{position:fixed;right:20px;bottom:20px;z-index:90;display:inline-flex;align-items:center;gap:0;
+  height:56px;padding:0;border-radius:999px;background:#25D366;color:#fff;overflow:hidden;
+  box-shadow:0 8px 26px -8px rgba(0,0,0,.5);transition:padding .2s ease,box-shadow .2s ease}
+.wa-fab svg{flex:none;width:56px;height:56px;padding:13px}
+.wa-fab .wa-label{max-width:0;opacity:0;white-space:nowrap;font-weight:700;font-size:.95rem;
+  transition:max-width .25s ease,opacity .2s ease,padding .2s ease;overflow:hidden}
+.wa-fab:hover{box-shadow:0 12px 30px -8px rgba(0,0,0,.55)}
+.wa-fab:hover .wa-label{max-width:160px;opacity:1;padding-right:20px}
+@media (max-width:640px){.wa-fab{right:16px;bottom:16px}.wa-fab:hover .wa-label{max-width:0;opacity:0;padding-right:0}}
+@media print{.wa-fab{display:none}}
