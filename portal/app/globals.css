@@ -308,3 +308,7 @@ p{margin:0}
 .os-dot.done{background:var(--brand)}
 .inlineform{display:inline}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Training video embed (YouTube / Vimeo) — responsive 16:9 */
+.trainvid-embed{position:relative;width:100%;max-width:680px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0b0e14}
+.trainvid-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}

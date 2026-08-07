@@ -9,7 +9,7 @@ export const KIT_TYPES = {
   ESS: { code: "ESS", title: "Essentials Water Kit",    slug: "essentials-water",    matrix: "water", panels: ["bacteria", "nitrate", "ph", "hardness"] },
   COM: { code: "COM", title: "Comprehensive Water Kit", slug: "comprehensive-water", matrix: "water", panels: ["metals", "vocs", "chloride", "fluoride"] },
   PFA: { code: "PFA", title: "PFAS Water Kit",          slug: "pfas-water",          matrix: "water", panels: ["pfas"] },
-  PRO: { code: "PRO", title: "Professional Kit",        slug: "professional",        matrix: "water", panels: ["metals", "vocs", "pfas", "nitrate", "bacteria"] },
+  PRO: { code: "PRO", title: "Complete Home Inspection Water Kit", slug: "professional", matrix: "water", panels: ["metals", "vocs", "pfas", "nitrate", "bacteria"] },
 };
 
 // SSS-COM-00001 (2–3 S's, 3-letter code, up to 6 digits).

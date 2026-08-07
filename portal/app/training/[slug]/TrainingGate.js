@@ -3,9 +3,22 @@
 import { useState } from "react";
 import { saveAcknowledgment } from "@/app/actions/training";
 
+// Figure out how to embed a video URL: a hosted YouTube/Vimeo link (iframe) or
+// a direct file (/videos/x.mp4, .webm, or any other URL we play with <video>).
+function videoKind(url) {
+  const u = String(url || "").trim();
+  if (!u) return { type: "none" };
+  let m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{6,})/);
+  if (m) return { type: "embed", src: `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1` };
+  m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (m) return { type: "embed", src: `https://player.vimeo.com/video/${m[1]}` };
+  return { type: "file", src: u };
+}
+
 export default function TrainingGate({ slug, sampleId, videoUrl, kitTitle }) {
+  const vid = videoKind(videoUrl);
   // If there's no video for this kit yet, don't block on it.
-  const [watched, setWatched] = useState(!videoUrl);
+  const [watched, setWatched] = useState(vid.type === "none");
   const [a, setA] = useState(false);
   const [b, setB] = useState(false);
   const [c, setC] = useState(false);
@@ -22,16 +35,34 @@ export default function TrainingGate({ slug, sampleId, videoUrl, kitTitle }) {
         record that you watched it for your chain of custody.
       </p>
 
-      {videoUrl ? (
+      {vid.type === "file" && (
         <video
           className="trainvid"
           controls
           playsInline
           preload="metadata"
           onEnded={() => setWatched(true)}
-          src={videoUrl}
+          src={vid.src}
         />
-      ) : (
+      )}
+      {vid.type === "embed" && (
+        <>
+          <div className="trainvid-embed">
+            <iframe
+              src={vid.src}
+              title={`${kitTitle} training video`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          {!watched && (
+            <button type="button" className="btn btn-ghost btn-sm" style={{ marginTop: 10 }} onClick={() => setWatched(true)}>
+              ✓ I&rsquo;ve watched the full video
+            </button>
+          )}
+        </>
+      )}
+      {vid.type === "none" && (
         <div className="alert">A training video for this kit is coming soon — continue below.</div>
       )}
 
