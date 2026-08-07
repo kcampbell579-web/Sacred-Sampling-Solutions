@@ -4,7 +4,46 @@
 (function () {
   var GA_ID = "G-KDPVGW9JPK";
   var CLARITY_ID = "xnia2cvcli"; // Microsoft Clarity project ID
+  var META_PIXEL_ID = "3647281315287094"; // Facebook / Meta Pixel
   var KEY = "sss_consent"; // stored value: "granted" | "denied"
+
+  function loadMetaPixel() {
+    if (!META_PIXEL_ID || window.__fbqLoaded) return; window.__fbqLoaded = true;
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = "2.0"; n.queue = [];
+      t = b.createElement(e); t.async = !0; t.src = v; s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+    }(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+    window.fbq("init", META_PIXEL_ID);
+    window.fbq("track", "PageView");
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", trackViewContent);
+    else trackViewContent();
+  }
+
+  // Fire ViewContent on a kit product page (kit-<slug>.html).
+  function trackViewContent() {
+    if (!window.fbq) return;
+    var m = location.pathname.match(/kit-([a-z0-9-]+)\.html$/);
+    if (!m) return;
+    var nameEl = document.querySelector(".page-hero h1");
+    var amtEl = document.querySelector(".page-hero .price .amt");
+    var val = amtEl ? parseFloat(amtEl.textContent.replace(/[^0-9.]/g, "")) : NaN;
+    var data = { content_type: "product", content_ids: [m[1]], content_name: nameEl ? nameEl.textContent.trim() : m[1] };
+    if (!isNaN(val)) { data.value = val; data.currency = "USD"; }
+    window.fbq("track", "ViewContent", data);
+  }
+
+  // Fire InitiateCheckout when a Stripe buy link is clicked (only if the pixel
+  // is loaded, i.e. the visitor consented).
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="buy.stripe.com"]');
+    if (!a || !window.fbq) return;
+    var amtEl = document.querySelector(".buycard .price .amt, .page-hero .price .amt");
+    var val = amtEl ? parseFloat(amtEl.textContent.replace(/[^0-9.]/g, "")) : NaN;
+    var data = { content_type: "product" };
+    if (!isNaN(val)) { data.value = val; data.currency = "USD"; }
+    window.fbq("track", "InitiateCheckout", data);
+  }, true);
 
   function loadGA() {
     if (window.__gaLoaded) return; window.__gaLoaded = true;
@@ -26,7 +65,7 @@
     })(window, document, "clarity", "script", CLARITY_ID);
   }
 
-  function enable() { loadGA(); loadClarity(); }
+  function enable() { loadGA(); loadClarity(); loadMetaPixel(); }
 
   var choice = null;
   try { choice = localStorage.getItem(KEY); } catch (e) {}
