@@ -37,12 +37,21 @@
   // is loaded, i.e. the visitor consented).
   document.addEventListener("click", function (e) {
     var a = e.target.closest && e.target.closest('a[href*="buy.stripe.com"]');
-    if (!a || !window.fbq) return;
+    if (!a) return;
     var amtEl = document.querySelector(".buycard .price .amt, .page-hero .price .amt");
     var val = amtEl ? parseFloat(amtEl.textContent.replace(/[^0-9.]/g, "")) : NaN;
-    var data = { content_type: "product" };
-    if (!isNaN(val)) { data.value = val; data.currency = "USD"; }
-    window.fbq("track", "InitiateCheckout", data);
+    // Meta: InitiateCheckout
+    if (window.fbq) {
+      var fb = { content_type: "product" };
+      if (!isNaN(val)) { fb.value = val; fb.currency = "USD"; }
+      window.fbq("track", "InitiateCheckout", fb);
+    }
+    // GA4 / Google Ads: begin_checkout (import as a conversion in Google Ads)
+    if (window.gtag) {
+      var ga = { currency: "USD" };
+      if (!isNaN(val)) ga.value = val;
+      window.gtag("event", "begin_checkout", ga);
+    }
   }, true);
 
   function loadGA() {
