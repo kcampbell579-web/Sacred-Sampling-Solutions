@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site.js';
+---
+<Base title="Guests / Become a Guest" description="Come on Sacred Intel — we host scientists, engineers, safety experts, survivors, and investigators who can help our audience understand risk.">
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <span class="eyebrow">Guests</span>
+      <h1>Come on the show</h1>
+      <p>We host the researchers, engineers, safety professionals, and firsthand witnesses who make a complex story make sense.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="grid grid-2" style="gap:48px;align-items:start">
+        <div class="prose">
+          <h2>Who we're looking for</h2>
+          <ul>
+            <li>Scientists and academics studying contaminants, toxicology, or environmental health.</li>
+            <li>Engineers and forensic analysts who can explain how and why systems fail.</li>
+            <li>Safety professionals, inspectors, and regulators with frontline perspective.</li>
+            <li>Journalists and investigators covering disasters and infrastructure.</li>
+            <li>People with lived experience of the events we cover.</li>
+          </ul>
+          <h2>What to expect</h2>
+          <p>Episodes are recorded remotely and run about 20–40 minutes. We share topics and questions in advance, keep it conversational, and always send you the final links to share. No gotchas — the aim is clarity, not conflict.</p>
+          <h2>Have a story we should cover?</h2>
+          <p>You don't have to be an expert to point us at one. If you know of a disaster, exposure, or failure that deserves the Sacred Intel treatment, use the form and tell us about it.</p>
+        </div>
+
+        <div class="side-block" style="background:var(--paper);padding:28px">
+          <h4 style="margin-bottom:6px">Become a guest</h4>
+          <p class="meta" style="text-transform:none;font-family:var(--sans);color:var(--ink-2);margin:0 0 18px">Tell us about you and what you'd bring. We read every submission.</p>
+          <form class="form" action="#" method="post" novalidate>
+            <div class="row">
+              <div class="field"><label for="g-name">Name</label><input id="g-name" name="name" type="text" required /></div>
+              <div class="field"><label for="g-email">Email</label><input id="g-email" name="email" type="email" required /></div>
+            </div>
+            <div class="field"><label for="g-role">Role / expertise</label><input id="g-role" name="role" type="text" placeholder="e.g. Environmental toxicologist" /></div>
+            <div class="field">
+              <label for="g-type">I'm reaching out as a…</label>
+              <select id="g-type" name="type">
+                <option>Potential guest</option>
+                <option>Publicist / representative</option>
+                <option>Story tip only</option>
+              </select>
+            </div>
+            <div class="field"><label for="g-topic">Topic or story</label><textarea id="g-topic" name="topic" placeholder="What would you talk about, or what story should we cover?"></textarea></div>
+            <button type="submit" class="btn btn-primary">Submit pitch</button>
+            <p class="meta" style="text-transform:none;font-family:var(--sans);margin-top:4px">Prefer email? Write us at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

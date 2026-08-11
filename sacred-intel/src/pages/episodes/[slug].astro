@@ -1,0 +1,138 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import EpisodeArt from '../../components/EpisodeArt.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import SeriesBadge from '../../components/SeriesBadge.astro';
+import SubscribeLinks from '../../components/SubscribeLinks.astro';
+
+export async function getStaticPaths() {
+  const episodes = await getCollection('episodes', (e) => !e.data.draft);
+  return episodes.map((ep) => ({
+    params: { slug: ep.slug },
+    props: { ep, all: episodes },
+  }));
+}
+
+const { ep, all } = Astro.props;
+const { data } = ep;
+const { Content } = await ep.render();
+const date = data.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+// Related: same series first, then shared topics; exclude self; up to 3.
+const related = all
+  .filter((e) => e.slug !== ep.slug)
+  .map((e) => {
+    let score = e.data.series === data.series ? 2 : 0;
+    score += e.data.topics.filter((t) => data.topics.includes(t)).length;
+    return { e, score };
+  })
+  .filter((r) => r.score > 0)
+  .sort((a, b) => b.score - a.score || b.e.data.date.valueOf() - a.e.data.date.valueOf())
+  .slice(0, 3)
+  .map((r) => r.e);
+
+// Normalize a YouTube URL / ID into an embed URL.
+function ytEmbed(v) {
+  if (!v) return null;
+  const m = v.match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/);
+  const id = m ? m[1] : /^[\w-]{11}$/.test(v) ? v : null;
+  return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+}
+const embed = ytEmbed(data.video);
+---
+<Base title={data.title} description={data.description} type="article" image={data.image || '/favicon.svg'}>
+  <section class="ep-hero">
+    <div class="wrap ep-hero-inner">
+      <a href="/episodes/" class="backlink">← All episodes</a>
+      <div style="display:flex;gap:10px;align-items:center;margin:16px 0 0;flex-wrap:wrap">
+        <SeriesBadge series={data.series} />
+        <span class="meta" style="color:var(--d-text-3)">Episode {String(data.number).padStart(2, '0')} · {date} · {data.duration}</span>
+      </div>
+      <h1>{data.title}</h1>
+      <p class="desc">{data.description}</p>
+      {data.guests.length > 0 && (
+        <p class="meta" style="margin-top:16px">With {data.guests.join(', ')}</p>
+      )}
+
+      <div class="player">
+        {embed && (
+          <div class="video"><iframe src={embed} title={data.title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        )}
+        <div class="plabel">{embed ? 'Listen to audio' : 'Play episode'}</div>
+        <audio controls preload="none">
+          {data.audio && <source src={data.audio} type="audio/mpeg" />}
+          Your browser doesn’t support embedded audio.
+          {data.audio && <a href={data.audio}> Download the episode.</a>}
+        </audio>
+        {!data.audio && (
+          <p class="meta" style="margin-top:10px">Audio link coming soon — subscribe below to get it first.</p>
+        )}
+      </div>
+
+      <div style="margin-top:22px"><SubscribeLinks label="Subscribe to Sacred Intel" /></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="ep-body">
+        <div>
+          <article class="prose">
+            <Content />
+          </article>
+
+          {data.transcript && (
+            <details class="transcript">
+              <summary>Read the transcript</summary>
+              <div class="t-body">
+                {data.transcript.split('\n\n').map((para) => <p>{para}</p>)}
+              </div>
+            </details>
+          )}
+        </div>
+
+        <aside>
+          {data.sources.length > 0 && (
+            <div class="side-block">
+              <h4>Sources &amp; references</h4>
+              <ul>
+                {data.sources.map((s, i) => (
+                  <li>
+                    <span class="src-num">{String(i + 1).padStart(2, '0')}</span>
+                    <a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {data.topics.length > 0 && (
+            <div class="side-block">
+              <h4>Topics</h4>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                {data.topics.map((t) => <span class="chip">{t}</span>)}
+              </div>
+            </div>
+          )}
+          {data.guests.length > 0 && (
+            <div class="side-block">
+              <h4>Guests</h4>
+              <ul>{data.guests.map((g) => <li>{g}</li>)}</ul>
+            </div>
+          )}
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section section-paper">
+      <div class="wrap">
+        <div class="head-row"><h2>Related episodes</h2><a href={`/series/${''}`} style="display:none"></a></div>
+        <div class="grid grid-3">
+          {related.map((e) => <EpisodeCard episode={e} />)}
+        </div>
+      </div>
+    </section>
+  )}
+</Base>

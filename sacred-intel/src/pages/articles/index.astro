@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Newsletter from '../../components/Newsletter.astro';
+
+const articles = (await getCollection('articles', (a) => !a.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const categories = [...new Set(articles.map((a) => a.data.category))].sort();
+---
+<Base title="Articles / Intel" description="Written investigations, explainers, and field notes from Sacred Intel — the reporting behind the podcast.">
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <span class="eyebrow">Articles / Intel</span>
+      <h1>The reporting, in writing</h1>
+      <p>Explainers, deep-dive companions, and field notes — sourced and shareable.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {articles.length > 0 ? (
+        <>
+          <div class="filter">
+            <div class="filter-row">
+              <span class="filter-label">Category</span>
+              <button class="fbtn active" data-cat="all">All</button>
+              {categories.map((c) => <button class="fbtn" data-cat={c.toLowerCase()}>{c}</button>)}
+            </div>
+          </div>
+          <div class="grid grid-3" id="artGrid">
+            {articles.map((a) => (
+              <div data-article-wrap data-cat={a.data.category.toLowerCase()}>
+                <ArticleCard article={a} />
+              </div>
+            ))}
+          </div>
+          <p class="no-results" id="noResults">No articles in that category yet.</p>
+        </>
+      ) : (
+        <p class="meta">First articles are being written now — check back soon.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="section section-paper">
+    <div class="wrap"><Newsletter title="Get new articles as they publish" /></div>
+  </section>
+</Base>
+
+<script>
+  const wraps = [...document.querySelectorAll('[data-article-wrap]')];
+  const noResults = document.getElementById('noResults');
+  document.querySelectorAll('.fbtn[data-cat]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.fbtn[data-cat]').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      let shown = 0;
+      wraps.forEach((w) => {
+        const show = cat === 'all' || w.dataset.cat === cat;
+        w.style.display = show ? '' : 'none';
+        if (show) shown++;
+      });
+      if (noResults) noResults.style.display = shown === 0 ? 'block' : 'none';
+    });
+  });
+</script>

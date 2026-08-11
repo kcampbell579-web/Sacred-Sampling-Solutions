@@ -1,0 +1,6 @@
+---
+import { seriesInfo } from '../lib/series.js';
+const { series } = Astro.props;
+const info = seriesInfo(series);
+---
+<span class="badge" style={`background:${info.color}`}>{series}</span>

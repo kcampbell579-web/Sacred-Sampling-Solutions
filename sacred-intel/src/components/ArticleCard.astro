@@ -1,0 +1,28 @@
+---
+const { article } = Astro.props;
+const { data, slug } = article;
+const date = data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+---
+<article class="ep-card" data-article data-title={data.title.toLowerCase()} data-topics={data.topics.join('|').toLowerCase()}>
+  <a href={`/articles/${slug}/`}>
+    <div class="ep-art">
+      {data.image ? (
+        <img src={data.image} alt={data.title} loading="lazy" />
+      ) : (
+        <div class="gen" style="background:linear-gradient(145deg,#8b5cf6 -10%,#1a1a1f 70%)">
+          <span class="ser">{data.category}</span>
+          <div class="ttl">{data.title}</div>
+        </div>
+      )}
+    </div>
+  </a>
+  <div class="card-body">
+    <span class="chip">{data.category}</span>
+    <h3><a href={`/articles/${slug}/`}>{data.title}</a></h3>
+    <p>{data.description}</p>
+    <div class="card-foot meta">
+      <span>{data.author}</span>
+      <span>{date}</span>
+    </div>
+  </div>
+</article>

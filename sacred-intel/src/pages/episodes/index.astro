@@ -1,0 +1,92 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import SubscribeLinks from '../../components/SubscribeLinks.astro';
+import { seriesList } from '../../lib/series.js';
+
+const episodes = (await getCollection('episodes', (e) => !e.data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+// Unique topic list for the filter chips.
+const topics = [...new Set(episodes.flatMap((e) => e.data.topics))].sort();
+---
+<Base title="Episodes" description="Every Sacred Intel episode — filter by series or topic, from PFAS and microplastics to bridge collapses and wildfire smoke.">
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <span class="eyebrow">The Archive</span>
+      <h1>Every episode</h1>
+      <p>Filter the full catalog by series or topic — or search for the story you remember.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <!-- Filter / search -->
+      <div class="filter">
+        <input type="search" class="search" id="epSearch" placeholder="Search episodes — PFAS, bridge, wildfire…" aria-label="Search episodes" />
+        <div class="filter-row">
+          <span class="filter-label">Series</span>
+          <button class="fbtn active" data-series="all">All</button>
+          {seriesList.map((s) => <button class="fbtn" data-series={s.name}>{s.name}</button>)}
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">Topic</span>
+          <button class="fbtn active" data-topic="all">All</button>
+          {topics.map((t) => <button class="fbtn" data-topic={t.toLowerCase()}>{t}</button>)}
+        </div>
+      </div>
+
+      <div class="grid grid-3" id="epGrid">
+        {episodes.map((e) => <EpisodeCard episode={e} />)}
+      </div>
+      <p class="no-results" id="noResults">No episodes match those filters yet.</p>
+    </div>
+  </section>
+
+  <section class="section section-dark" id="subscribe">
+    <div class="wrap center">
+      <span class="eyebrow">Subscribe</span>
+      <h2 style="font-size:clamp(1.7rem,3.4vw,2.4rem);margin:12px 0 22px">Never miss an investigation</h2>
+      <div style="display:flex;justify-content:center"><SubscribeLinks label={null} /></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const search = document.getElementById('epSearch');
+  const grid = document.getElementById('epGrid');
+  const cards = [...grid.querySelectorAll('[data-episode]')];
+  const noResults = document.getElementById('noResults');
+  let activeSeries = 'all';
+  let activeTopic = 'all';
+
+  function apply() {
+    const q = (search.value || '').trim().toLowerCase();
+    let shown = 0;
+    cards.forEach((c) => {
+      const matchSeries = activeSeries === 'all' || c.dataset.series === activeSeries;
+      const matchTopic = activeTopic === 'all' || (c.dataset.topics || '').split('|').includes(activeTopic);
+      const matchText = !q || c.dataset.title.includes(q) || (c.dataset.desc || '').includes(q) || (c.dataset.topics || '').includes(q);
+      const show = matchSeries && matchTopic && matchText;
+      c.style.display = show ? '' : 'none';
+      if (show) shown++;
+    });
+    noResults.style.display = shown === 0 ? 'block' : 'none';
+  }
+
+  function wire(attr, setter) {
+    document.querySelectorAll(`.fbtn[data-${attr}]`).forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll(`.fbtn[data-${attr}]`).forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        setter(btn.dataset[attr]);
+        apply();
+      });
+    });
+  }
+  wire('series', (v) => (activeSeries = v));
+  wire('topic', (v) => (activeTopic = v));
+  search.addEventListener('input', apply);
+</script>

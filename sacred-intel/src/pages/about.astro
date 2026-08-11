@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import SubscribeLinks from '../components/SubscribeLinks.astro';
+import { seriesList } from '../lib/series.js';
+---
+<Base title="About" description="Sacred Intel is a podcast and content platform on environmental health, safety, engineering failures, and the science behind the headlines.">
+  <section class="page-hero">
+    <div class="wrap page-hero-inner">
+      <span class="eyebrow">About Sacred Intel</span>
+      <h1>Investigative science, in twenty minutes.</h1>
+      <p>We take the disasters, exposures, and failures making news — and explain what the evidence actually says.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap-narrow prose">
+      <p style="font-size:1.25rem;color:var(--ink)">Sacred Intel exists for a simple reason: the most important stories about our safety are usually told badly — too technical to follow, or too shallow to trust. We sit in the middle.</p>
+      <p>Each week we take one subject — a bridge that fell, a chemical in the water, a fire that moved faster than anyone predicted — and reconstruct it from the evidence up. We read the incident reports, the peer-reviewed studies, and the regulatory record so you don't have to, then tell the story in plain language you can actually use.</p>
+      <h2>What we cover</h2>
+      <p>Environmental health and emerging contaminants like PFAS and microplastics. Workplace safety and the human cost of preventable failures. Engineering and infrastructure — why structures fail and what the warnings looked like beforehand. And wildfire smoke, air quality, and the disasters reshaping how we live.</p>
+      <h2>How we work</h2>
+      <ul>
+        <li><strong>Sourced, always.</strong> Every episode ships with its references. If we make a claim, you can check it.</li>
+        <li><strong>Credible but conversational.</strong> No jargon walls. No fear-mongering. Just the clearest version of what's known.</li>
+        <li><strong>Independent.</strong> We report the science wherever it leads.</li>
+      </ul>
+      <blockquote>The goal isn't to scare you. It's to make you the most informed person in the room when it matters.</blockquote>
+    </div>
+  </section>
+
+  <section class="section section-dark">
+    <div class="wrap">
+      <div class="stat-row">
+        <div class="stat"><div class="n">20 min</div><p>The average episode — deep enough to matter, short enough to finish.</p></div>
+        <div class="stat"><div class="n">3</div><p>Investigative series, from disaster reconstructions to slow-burn deep dives.</p></div>
+        <div class="stat"><div class="n">100%</div><p>Sourced. Every claim traces back to the record.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-paper">
+    <div class="wrap">
+      <div class="section-head center"><span class="eyebrow">The Series</span><h2>Where to start</h2></div>
+      <div class="grid grid-3">
+        {seriesList.map((s) => (
+          <a class="series-card" href={`/series/${s.slug}/`} style={`background:linear-gradient(150deg, ${s.color} -20%, #141418 75%)`}>
+            <span class="eyebrow">Series</span><h3>{s.name}</h3><p>{s.blurb}</p><span class="arrow">→</span>
+          </a>
+        ))}
+      </div>
+      <div class="center" style="margin-top:40px"><SubscribeLinks label="Listen & subscribe" /></div>
+    </div>
+  </section>
+</Base>

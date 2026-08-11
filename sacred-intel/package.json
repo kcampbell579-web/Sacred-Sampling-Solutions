@@ -1,0 +1,19 @@
+{
+  "name": "sacred-intel",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sacred Intel — a podcast and content platform on environmental health, safety, engineering failures, and the science behind the headlines.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.11",
+    "@astrojs/sitemap": "3.2.1",
+    "astro": "^4.16.18"
+  }
+}

@@ -1,0 +1,66 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import SubscribeLinks from '../../components/SubscribeLinks.astro';
+import { seriesList, seriesBySlug } from '../../lib/series.js';
+
+export async function getStaticPaths() {
+  const episodes = await getCollection('episodes', (e) => !e.data.draft);
+  return seriesList.map((s) => ({
+    params: { series: s.slug },
+    props: {
+      series: s,
+      episodes: episodes
+        .filter((e) => e.data.series === s.name)
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+const { series, episodes } = Astro.props;
+---
+<Base title={series.name} description={series.long}>
+  <section class="page-hero" style={`--acc:${series.color}`}>
+    <div class="wrap page-hero-inner">
+      <a href="/episodes/" class="backlink" style="color:var(--d-text-3);font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase">← All episodes</a>
+      <span class="eyebrow" style={`color:${series.color};display:block;margin-top:14px`}>Series</span>
+      <h1>{series.name}</h1>
+      <p>{series.long}</p>
+      <div style="margin-top:22px"><SubscribeLinks label="Follow the show" /></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head-row">
+        <h2>{episodes.length} episode{episodes.length === 1 ? '' : 's'}</h2>
+        <a href="/episodes/" class="btn btn-ghost btn-sm">Browse all series →</a>
+      </div>
+      {episodes.length > 0 ? (
+        <div class="grid grid-3">
+          {episodes.map((e) => <EpisodeCard episode={e} />)}
+        </div>
+      ) : (
+        <p class="meta">First episode of this series is in production — subscribe to catch it.</p>
+      )}
+    </div>
+  </section>
+
+  <!-- Other series -->
+  <section class="section section-paper">
+    <div class="wrap">
+      <div class="section-head center"><span class="eyebrow">Keep exploring</span><h2>Other series</h2></div>
+      <div class="grid grid-3">
+        {seriesList.filter((s) => s.slug !== series.slug).map((s) => (
+          <a class="series-card" href={`/series/${s.slug}/`} style={`background:linear-gradient(150deg, ${s.color} -20%, #141418 75%)`}>
+            <span class="eyebrow">Series</span>
+            <h3>{s.name}</h3>
+            <p>{s.blurb}</p>
+            <span class="arrow">→</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
