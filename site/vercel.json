@@ -14,6 +14,7 @@
     { "source": "/go/fb", "destination": "/kits.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=shop", "permanent": false },
     { "source": "/go/fb-post", "destination": "/kits.html?utm_source=facebook&utm_medium=social&utm_campaign=shop", "permanent": false },
     { "source": "/go/ig", "destination": "/kits.html?utm_source=instagram&utm_medium=social&utm_campaign=shop", "permanent": false },
-    { "source": "/go/pfas", "destination": "/kit-pfas.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=pfas", "permanent": false }
+    { "source": "/go/pfas", "destination": "/kit-pfas.html?utm_source=facebook&utm_medium=paid_social&utm_campaign=pfas", "permanent": false },
+    { "source": "/go/google", "destination": "/kits.html?utm_source=google&utm_medium=cpc&utm_campaign=search", "permanent": false }
   ]
 }
