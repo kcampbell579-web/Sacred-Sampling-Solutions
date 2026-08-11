@@ -326,6 +326,8 @@ td.dash{color:var(--ink-3)}
 .band .eyebrow{color:var(--gold-2)}
 .band h2{color:#fff}
 .band p{color:rgba(233,240,251,.74);margin-top:12px}
+.band .btn-ghost{color:#fff;border-color:rgba(255,255,255,.42)}
+.band .btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,.10);color:#fff}
 .guarantees{display:flex;flex-direction:column;gap:14px;position:relative}
 .g{display:flex;gap:13px;align-items:flex-start}
 .g svg{color:var(--gold-2);flex:none;margin-top:2px}
