@@ -3,6 +3,7 @@
    Vercel Web Analytics is cookieless and loads separately (no consent needed). */
 (function () {
   var GA_ID = "G-KDPVGW9JPK";
+  var GADS_ID = "AW-972661273"; // Google Ads (conversion tracking / remarketing)
   var CLARITY_ID = "xnia2cvcli"; // Microsoft Clarity project ID
   var META_PIXEL_ID = "3647281315287094"; // Facebook / Meta Pixel
   var KEY = "sss_consent"; // stored value: "granted" | "denied"
@@ -63,6 +64,7 @@
     window.gtag = function () { window.dataLayer.push(arguments); };
     window.gtag("js", new Date());
     window.gtag("config", GA_ID);
+    if (GADS_ID) window.gtag("config", GADS_ID); // Google Ads tag
   }
 
   function loadClarity() {
