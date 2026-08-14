@@ -2,7 +2,7 @@
    Google Analytics and Microsoft Clarity load ONLY after the visitor accepts.
    Vercel Web Analytics is cookieless and loads separately (no consent needed). */
 (function () {
-  var GA_ID = "G-0Q794B7J15";
+  var GA_ID = "G-KDPVGW9JPK";
   var GADS_ID = "AW-972661273"; // Google Ads (conversion tracking / remarketing)
   var CLARITY_ID = "xnia2cvcli"; // Microsoft Clarity project ID
   var META_PIXEL_ID = "3647281315287094"; // Facebook / Meta Pixel
