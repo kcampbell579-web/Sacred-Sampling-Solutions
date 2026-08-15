@@ -3,29 +3,29 @@
    Dark by default; light via [data-theme="light"] toggle. */
 
 :root{
-  /* Matte Black bg · Graphite cards · Iron/Steel lines & muted · Burnished/Molten Gold accents ·
-     White headings · Silver body. Accents: Molten Gold #D4A017, Copper #B66A3C, Amber Glow #E6B422 */
-  --bg:#111111; --bg-2:#141619; --panel:#1A1D21; --panel-2:#22262b; --footer:#0D0D0D;
-  --ink:#F5F5F5; --ink-2:#C9CED4; --ink-3:#7D8790; --line:#2E3135; --line-2:#3C4046;
-  --brand:#B8860B; --brand-2:#D4A017; --brand-ink:#eccf7f; --brand-wash:#2a2410;
-  --gold:#B8860B; --gold-2:#E6B422; --gold-wash:#2a2410; --copper:#B66A3C;
-  --good:#3fd28a; --danger:#f0705f;
-  --btn-ink:#111111;
+  /* NEXUS: Charcoal backgrounds · silver typography · lavender accent.
+     Accents: Lavender #9E8FE0 / light #B7A8F0, silver #C6CAD9 */
+  --bg:#15151b; --bg-2:#1a1a22; --panel:#212230; --panel-2:#2a2b3a; --footer:#101015;
+  --ink:#F2F1F7; --ink-2:#C4C6D4; --ink-3:#8B8FA3; --line:#2c2d3a; --line-2:#3b3d4e;
+  --brand:#9E8FE0; --brand-2:#B7A8F0; --brand-ink:#d8cffb; --brand-wash:#241f3a;
+  --gold:#9AA0B5; --gold-2:#C6CAD9; --gold-wash:#23242f; --copper:#8E7DE8;
+  --good:#5bd3a6; --danger:#f0705f;
+  --btn-ink:#15151b;
   --maxw:1180px;
   --sans:"Manrope","Helvetica Neue",Arial,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
   --radius:16px; --radius-sm:11px;
-  --shadow:0 2px 8px rgba(0,0,0,.55), 0 30px 70px -30px rgba(0,0,0,.9);
-  --glow:0 0 0 1px rgba(184,134,11,.30), 0 18px 60px -22px rgba(184,134,11,.5);
+  --shadow:0 2px 8px rgba(0,0,0,.5), 0 30px 70px -30px rgba(0,0,0,.85);
+  --glow:0 0 0 1px rgba(158,143,224,.30), 0 18px 60px -22px rgba(158,143,224,.5);
 }
 :root[data-theme="light"]{
-  --bg:#F5F5F5; --bg-2:#ececec; --panel:#ffffff; --panel-2:#f6f6f6; --footer:#e6e6e6;
-  --ink:#1A1D21; --ink-2:#3C4046; --ink-3:#7D8790; --line:#dcdcdc; --line-2:#c4c8cd;
-  --brand:#9a6f0a; --brand-2:#B8860B; --brand-ink:#7a5808; --brand-wash:#f4ead0;
-  --gold:#9a6f0a; --gold-2:#B8860B; --gold-wash:#f4ead0; --copper:#8C6239;
-  --btn-ink:#111111;
-  --shadow:0 1px 2px rgba(17,17,17,.06), 0 20px 50px -22px rgba(17,17,17,.28);
-  --glow:0 0 0 1px rgba(184,134,11,.22), 0 18px 50px -24px rgba(184,134,11,.4);
+  --bg:#f3f2f9; --bg-2:#eae8f4; --panel:#ffffff; --panel-2:#f6f5fb; --footer:#e7e5f0;
+  --ink:#1b1c24; --ink-2:#4a4c5a; --ink-3:#7d8090; --line:#e0def0; --line-2:#c9c7da;
+  --brand:#6f5fc0; --brand-2:#8E7DE8; --brand-ink:#5a49a8; --brand-wash:#eae6fb;
+  --gold:#7a7f95; --gold-2:#9AA0B5; --gold-wash:#ececf2; --copper:#6f5fc0;
+  --btn-ink:#F5F5F5;
+  --shadow:0 1px 2px rgba(20,20,30,.06), 0 20px 50px -22px rgba(20,20,30,.26);
+  --glow:0 0 0 1px rgba(111,95,192,.22), 0 18px 50px -24px rgba(111,95,192,.4);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -44,7 +44,7 @@ ul{margin:0}
 .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--brand-2);font-weight:600}
 .muted{color:var(--ink-2)}
 .mono{font-family:var(--mono)}
-.grad{background:linear-gradient(120deg,#E6B422,#D4A017 45%,#B66A3C);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grad{background:linear-gradient(120deg,#CBCEDE,#B7A8F0 50%,#9E8FE0);-webkit-background-clip:text;background-clip:text;color:transparent}
 .center{text-align:center}
 
 /* buttons */
@@ -69,7 +69,7 @@ header.site{position:sticky;top:0;z-index:70;backdrop-filter:blur(14px);
 .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:1.02rem;white-space:nowrap}
 .brand .logo{width:34px;height:34px;flex:none}
 .brand .wordmark{font-weight:800;letter-spacing:.01em;font-size:1.05rem;line-height:1;color:var(--ink)}
-.brand .wf{color:var(--gold-2)}
+.brand .wf{color:var(--brand-2)}
 .brand small{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;color:var(--ink-3);font-weight:500;text-transform:uppercase;margin-top:3px}
 .nav-links{display:flex;gap:22px;align-items:center;font-size:.92rem;font-weight:600;color:var(--ink-2)}
 .nav-links a{position:relative;padding:6px 0}
@@ -110,8 +110,8 @@ header.site{position:sticky;top:0;z-index:70;backdrop-filter:blur(14px);
 /* hero (home) */
 .hero{position:relative;padding:76px 0 88px;overflow:hidden}
 .hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(680px 420px at 78% 10%,rgba(212,160,23,.20),transparent 70%),
-    radial-gradient(520px 360px at 12% 90%,rgba(182,106,60,.12),transparent 70%)}
+  background:radial-gradient(680px 420px at 78% 10%,rgba(158,143,224,.22),transparent 70%),
+    radial-gradient(520px 360px at 12% 90%,rgba(150,155,185,.10),transparent 70%)}
 .grid-bg{position:absolute;inset:0;z-index:0;opacity:.5;pointer-events:none;
   background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
   background-size:48px 48px;mask-image:radial-gradient(circle at 60% 30%,#000,transparent 80%);
@@ -134,7 +134,7 @@ header.site{position:sticky;top:0;z-index:70;backdrop-filter:blur(14px);
 /* page hero (interior) */
 .phero{position:relative;padding:64px 0 40px;overflow:hidden;border-bottom:1px solid var(--line)}
 .phero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(600px 300px at 85% -10%,rgba(212,160,23,.16),transparent 70%)}
+  background:radial-gradient(600px 300px at 85% -10%,rgba(158,143,224,.16),transparent 70%)}
 .phero .wrap{position:relative;z-index:1}
 .phero h1{font-size:clamp(2rem,4.4vw,3.2rem);margin-top:14px;max-width:20ch}
 .phero p{margin-top:18px;color:var(--ink-2);font-size:1.12rem;max-width:60ch}
