@@ -120,8 +120,8 @@
     // GA4 purchase (import this into Google Ads as a conversion)
     if (window.gtag) {
       window.gtag('event', 'purchase', { transaction_id: txn, currency: 'USD' });
-      // Google Ads conversion — paste your conversion label between the slashes:
-      // window.gtag('event', 'conversion', { send_to: 'AW-972661273/CONVERSION_LABEL', transaction_id: txn, currency: 'USD' });
+      // Google Ads Purchase conversion (AW-972661273/2hWnCIW7tdscEJnE5s8D)
+      window.gtag('event', 'conversion', { send_to: 'AW-972661273/2hWnCIW7tdscEJnE5s8D', transaction_id: txn });
     }
     // Meta Purchase
     if (window.fbq) window.fbq('track', 'Purchase', { currency: 'USD' });
