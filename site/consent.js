@@ -8,6 +8,17 @@
   var META_PIXEL_ID = "3647281315287094"; // Facebook / Meta Pixel
   var KEY = "sss_consent"; // stored value: "granted" | "denied"
 
+  // Capture ad attribution on landing so it survives the off-site Stripe
+  // checkout and can be re-attached to the purchase on thank-you.html.
+  (function captureAttribution() {
+    try {
+      var q = new URLSearchParams(location.search), a = {};
+      ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "gclid", "fbclid"]
+        .forEach(function (k) { if (q.get(k)) a[k] = q.get(k); });
+      if (Object.keys(a).length) { a.landing = location.pathname; localStorage.setItem("sss_attr", JSON.stringify(a)); }
+    } catch (e) {}
+  })();
+
   function loadMetaPixel() {
     if (!META_PIXEL_ID || window.__fbqLoaded) return; window.__fbqLoaded = true;
     !function (f, b, e, v, n, t, s) {

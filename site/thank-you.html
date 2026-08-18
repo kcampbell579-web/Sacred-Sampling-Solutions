@@ -107,21 +107,52 @@
 <!-- Purchase conversion: fires once tags are loaded (after cookie consent). -->
 <script>
 (function () {
+  // Readable names for known product slugs (passed via ?product= on the Stripe redirect).
+  var NAMES = {
+    'heavy-metals': 'Heavy Metals Kit', 'metals-minerals': 'Metals & Minerals Kit',
+    'essentials': 'Essentials Kit', 'comprehensive': 'Comprehensive Kit', 'pfas': 'PFAS Kit',
+    'professional': 'Complete Home Inspection Water Kit',
+    'asbestos-core': 'Asbestos Core Kit', 'asbestos-standard': 'Asbestos Standard Kit',
+    'asbestos-advanced': 'Asbestos Advanced Kit', 'cosmetic-screening': 'Cosmetic Screening Panel',
+    'cosmetic-identification': 'Cosmetic Identification Panel', 'fentanyl-surface': 'Fentanyl Surface Residue Kit',
+    'formaldehyde': 'Aldehyde & Formaldehyde Monitor', 'voc-air': 'VOC Monitor', 'ammonia': 'Ammonia Monitor',
+    'iaq-baseline': 'Baseline Residential IAQ Kit', 'iaq-standard': 'Standard Residential IAQ Kit',
+    'iaq-comprehensive': 'Comprehensive Residential IAQ Kit'
+  };
   var params = new URLSearchParams(location.search);
   var txn = params.get('session_id') || params.get('order') || undefined;
+  var slug = params.get('product') || undefined;
+  var name = slug ? (NAMES[slug] || slug) : undefined;
+  var value = parseFloat(params.get('value'));
+  if (isNaN(value)) value = undefined;
+  var attr = {}; try { attr = JSON.parse(localStorage.getItem('sss_attr') || '{}'); } catch (e) {}
+
   var fired = false;
   function firePurchase() {
     if (fired) return;
     if (!window.gtag && !window.fbq) return;
     fired = true;
-    // GA4 purchase (import this into Google Ads as a conversion)
     if (window.gtag) {
-      window.gtag('event', 'purchase', { transaction_id: txn, currency: 'USD' });
+      // GA4 purchase — includes product + revenue + captured campaign source
+      var ga = { transaction_id: txn, currency: 'USD' };
+      if (value !== undefined) ga.value = value;
+      if (slug) ga.items = [{ item_id: slug, item_name: name, price: value, quantity: 1 }];
+      if (attr.utm_source) ga.source = attr.utm_source;
+      if (attr.utm_medium) ga.medium = attr.utm_medium;
+      if (attr.utm_campaign) ga.campaign = attr.utm_campaign;
+      window.gtag('event', 'purchase', ga);
       // Google Ads Purchase conversion (AW-972661273/2hWnCIW7tdscEJnE5s8D)
-      window.gtag('event', 'conversion', { send_to: 'AW-972661273/2hWnCIW7tdscEJnE5s8D', transaction_id: txn });
+      var conv = { send_to: 'AW-972661273/2hWnCIW7tdscEJnE5s8D', transaction_id: txn };
+      if (value !== undefined) { conv.value = value; conv.currency = 'USD'; }
+      window.gtag('event', 'conversion', conv);
     }
-    // Meta Purchase
-    if (window.fbq) window.fbq('track', 'Purchase', { currency: 'USD' });
+    if (window.fbq) {
+      // Meta Purchase — includes product + value
+      var fb = { currency: 'USD' };
+      if (value !== undefined) fb.value = value;
+      if (slug) { fb.content_type = 'product'; fb.content_ids = [slug]; fb.content_name = name; }
+      window.fbq('track', 'Purchase', fb);
+    }
   }
   firePurchase();
   var tries = 0, t = setInterval(function () { firePurchase(); if (fired || ++tries > 20) clearInterval(t); }, 400);
