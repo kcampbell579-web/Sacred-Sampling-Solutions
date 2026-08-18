@@ -26,13 +26,10 @@
   <div class="wrap nav">
     <a class="brand" href="index.html" aria-label="Sacred Sampling Solutions home"><img src="assets/logo.svg" alt="Sacred Sampling Solutions"></a>
     <nav class="nav-links" id="navLinks">
-      <a href="kits.html" class="active">Test Kits</a>
       <a href="index.html#how">How It Works</a>
       <a href="about.html">About</a>
       <a href="index.html#contaminants">What We Test</a>
       <a href="learn.html">Learn</a>
-      <a href="quiz.html">Find My Kit</a>
-      <a href="https://app.sacredsamplingsolutions.com/sampleregistration">Activate Kit</a>
       <a href="https://app.sacredsamplingsolutions.com/login">Sign In</a>
     </nav>
     <div class="nav-cta">
@@ -57,8 +54,24 @@
   </div>
 </section>
 
+<!-- KIT FILTER BAR -->
+<div class="kitfilter" id="kitFilter">
+  <div class="wrap kitfilter-inner">
+    <span class="kitfilter-label">Filter:</span>
+    <div class="kitfilter-chips" role="tablist" aria-label="Filter test kits">
+      <button class="chip active" data-cat="all" type="button">All kits</button>
+      <button class="chip" data-cat="water" type="button">Water</button>
+      <button class="chip" data-cat="air" type="button">Air &amp; IAQ</button>
+      <button class="chip" data-cat="asbestos" type="button">Asbestos</button>
+      <button class="chip" data-cat="cosmetic" type="button">Cosmetic</button>
+      <button class="chip" data-cat="surface" type="button">Surface residue</button>
+      <button class="chip" data-cat="soon" type="button">Coming soon</button>
+    </div>
+  </div>
+</div>
+
 <!-- WATER KITS -->
-<section id="kits">
+<section id="kits" class="kitsec" data-cat="water">
   <div class="wrap">
     <div class="section-head center reveal">
       <span class="eyebrow">Drinking water · six kits</span>
@@ -158,7 +171,7 @@
 
 
 <!-- SPECIALTY / MATERIAL & SAFETY KITS (live) -->
-<section id="specialty" class="tint">
+<section id="specialty" class="tint kitsec" data-cat="asbestos cosmetic surface">
   <div class="wrap">
     <div class="section-head center reveal">
       <span class="eyebrow">Home &amp; property safety · now available</span>
@@ -166,11 +179,11 @@
       <p>Lab-backed, mail-in analysis for the things a home inspection can&rsquo;t see. Same accredited-lab model, same documented chain of custody.</p>
     </div>
 
-    <div class="section-head reveal" style="margin-top:26px;text-align:left">
+    <div class="section-head reveal" style="margin-top:26px;text-align:left" data-sub="asbestos">
       <h3 style="font-size:1.25rem">Asbestos material testing</h3>
       <p>Know before you sand, drill or demo. Three tiers — match the method to your material.</p>
     </div>
-    <div class="kits">
+    <div class="kits" data-sub="asbestos">
       <div class="kit reveal">
         <a class="cardlink" href="kit-asbestos-core.html" aria-label="View Asbestos Core Kit"></a>
         <div class="kname">Asbestos · Core</div>
@@ -214,11 +227,11 @@
       </div>
     </div>
 
-    <div class="section-head reveal" style="margin-top:34px;text-align:left">
+    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="cosmetic">
       <h3 style="font-size:1.25rem">Cosmetic microbiology</h3>
       <p>Is anything growing in the makeup you actually use? An accredited-lab count — and, if you need it, the name.</p>
     </div>
-    <div class="kits">
+    <div class="kits" data-sub="cosmetic">
       <div class="kit reveal">
         <a class="cardlink" href="kit-cosmetic-screening.html" aria-label="View Cosmetic Screening Panel"></a>
         <div class="kname">Cosmetic · Screening</div>
@@ -248,11 +261,11 @@
       </div>
     </div>
 
-    <div class="section-head reveal" style="margin-top:34px;text-align:left">
+    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="surface">
       <h3 style="font-size:1.25rem">Surface residue</h3>
       <p>A documented, dated measurement for turnover, fleets, remediation clearance and property transactions.</p>
     </div>
-    <div class="kits">
+    <div class="kits" data-sub="surface">
       <div class="kit reveal">
         <a class="cardlink" href="kit-fentanyl-surface.html" aria-label="View Fentanyl Surface Residue Kit"></a>
         <div class="kname">Surface residue</div>
@@ -271,7 +284,7 @@
 </section>
 
 <!-- AIR KITS (live) -->
-<section id="air" class="tint">
+<section id="air" class="tint kitsec" data-cat="air">
   <div class="wrap">
     <div class="section-head center reveal">
       <span class="eyebrow">Air &amp; indoor air quality · now available</span>
@@ -378,7 +391,7 @@
 </section>
 
 <!-- COMING SOON — full line -->
-<section id="soon">
+<section id="soon" class="kitsec" data-cat="soon">
   <div class="wrap">
     <div class="section-head center reveal">
       <span class="eyebrow">The full Sacred Sampling line</span>
@@ -520,7 +533,7 @@
 </section>
 
 <!-- COMPARE MATRIX -->
-<section id="compare" class="tint">
+<section id="compare" class="tint kitsec" data-cat="water">
   <div class="wrap">
     <div class="section-head center reveal">
       <span class="eyebrow">Compare kits</span>
@@ -669,5 +682,35 @@
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script src="consent.js"></script>
+<script>
+(function () {
+  var bar = document.getElementById('kitFilter');
+  if (!bar) return;
+  var chips = bar.querySelectorAll('.chip');
+  function apply(cat) {
+    document.querySelectorAll('.kitsec').forEach(function (sec) {
+      var cats = (sec.getAttribute('data-cat') || '').split(' ');
+      sec.hidden = !(cat === 'all' || cats.indexOf(cat) !== -1);
+    });
+    document.querySelectorAll('[data-sub]').forEach(function (el) {
+      el.hidden = !(cat === 'all' || el.getAttribute('data-sub') === cat);
+    });
+    chips.forEach(function (c) { c.classList.toggle('active', c.getAttribute('data-cat') === cat); });
+  }
+  chips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      var cat = c.getAttribute('data-cat');
+      apply(cat);
+      if (cat !== 'all' && history.replaceState) history.replaceState(null, '', '#filter=' + cat);
+      else if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+    });
+  });
+  // Deep-link support: kits.html#filter=air  OR an existing section anchor (#air, #specialty…)
+  var m = (location.hash || '').match(/#filter=([a-z]+)/);
+  if (m) apply(m[1]);
+  else if (/^#(kits)$/.test(location.hash)) apply('water');
+  else if (/^#(air)$/.test(location.hash)) apply('air');
+})();
+</script>
 </body>
 </html>
