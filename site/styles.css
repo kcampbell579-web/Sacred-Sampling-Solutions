@@ -503,3 +503,14 @@ footer .brand img{height:40px}
 .artfeat .muted{color:rgba(255,255,255,.82);max-width:60ch}
 .artfeat .artcard-more{color:#8fc4ff;display:inline-block;margin-top:16px}
 @media(max-width:860px){.artgrid{grid-template-columns:1fr}.art-related ul{grid-template-columns:1fr}}
+
+/* ---- Kits filter bar ---- */
+.kitfilter{position:sticky;top:74px;z-index:50;background:var(--ground);border-bottom:1px solid var(--line);box-shadow:0 6px 18px -14px rgba(9,18,40,.4)}
+.kitfilter-inner{display:flex;align-items:center;gap:14px;padding:12px 24px}
+.kitfilter-label{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);flex:none}
+.kitfilter-chips{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.kitfilter-chips::-webkit-scrollbar{display:none}
+.kitfilter .chip{flex:none;cursor:pointer;font-family:var(--sans);font-size:.9rem;font-weight:600;color:var(--ink-2);background:var(--panel);border:1px solid var(--line-strong);border-radius:100px;padding:.5em 1.05em;transition:all .15s ease;white-space:nowrap}
+.kitfilter .chip:hover{border-color:var(--brand);color:var(--brand-ink)}
+.kitfilter .chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+@media(max-width:640px){.kitfilter-inner{padding:10px 16px;gap:10px}.kitfilter-label{display:none}}
