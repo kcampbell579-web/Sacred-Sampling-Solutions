@@ -141,11 +141,10 @@
       if (attr.utm_medium) ga.medium = attr.utm_medium;
       if (attr.utm_campaign) ga.campaign = attr.utm_campaign;
       window.gtag('event', 'purchase', ga);
-      // Google Ads Purchase conversion — new account AW-18399559838.
-      // Paste the Purchase conversion label from AW-18399559838 between the slashes to enable:
-      // var conv = { send_to: 'AW-18399559838/PASTE_NEW_LABEL', transaction_id: txn };
-      // if (value !== undefined) { conv.value = value; conv.currency = 'USD'; }
-      // window.gtag('event', 'conversion', conv);
+      // Google Ads Purchase conversion (AW-18399559838/JyO2CLaSvuQcEJ6BzMVE)
+      var conv = { send_to: 'AW-18399559838/JyO2CLaSvuQcEJ6BzMVE', transaction_id: txn, currency: 'USD' };
+      conv.value = (value !== undefined) ? value : 1.0;
+      window.gtag('event', 'conversion', conv);
     }
     if (window.fbq) {
       // Meta Purchase — includes product + value
