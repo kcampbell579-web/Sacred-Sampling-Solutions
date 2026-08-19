@@ -42,6 +42,79 @@
     document.body.appendChild(a);
   })();
 
+  // Email capture before Stripe checkout.
+  // Intercepts buy-button clicks, asks for an email once, stores the lead,
+  // pre-fills it into Stripe, then continues to secure checkout.
+  (function () {
+    var LEAD = 'sss_lead';
+    function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function withEmail(url, email) {
+      try { var u = new URL(url); if (email) u.searchParams.set('prefilled_email', email); return u.toString(); }
+      catch (e) { return url; }
+    }
+    function go(url, email) { window.location.href = withEmail(url, email); }
+    function ctx() {
+      var h1 = document.querySelector('.page-hero h1');
+      var amt = document.querySelector('.page-hero .price .amt, .buycard .price .amt');
+      return { product: h1 ? h1.textContent.trim() : document.title, price: amt ? amt.textContent.trim() : '', page: location.pathname };
+    }
+    function capture(email, c) {
+      try { localStorage.setItem(LEAD, email); } catch (e) {}
+      try {
+        fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ _subject: 'New checkout lead — ' + c.product, email: email, product: c.product, price: c.price, page: c.page })
+        }).catch(function () {});
+      } catch (e) {}
+      if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD' });
+      if (window.fbq) window.fbq('track', 'Lead');
+    }
+    function openModal(stripe) {
+      var c = ctx();
+      var ov = document.createElement('div');
+      ov.className = 'cogate';
+      ov.innerHTML =
+        '<div class="cogate-card" role="dialog" aria-modal="true" aria-label="Enter your email to continue">' +
+        '<button type="button" class="cogate-x" aria-label="Close">&times;</button>' +
+        '<span class="eyebrow">Almost there</span>' +
+        '<h3>Where should we send your receipt &amp; results?</h3>' +
+        '<p class="cogate-sub">Enter your email and we’ll take you to secure checkout' + (c.price ? ' — ' + c.product + ' (' + c.price + ')' : '') + '.</p>' +
+        '<form class="cogate-form" novalidate>' +
+        '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Email" required>' +
+        '<div class="cogate-err" hidden>Please enter a valid email.</div>' +
+        '<button type="submit" class="btn btn-gold">Continue to secure checkout <span class="arrow">&rarr;</span></button>' +
+        '</form>' +
+        '<p class="cogate-fine">We’ll email your receipt and kit updates. Secure payment by Stripe. No spam.</p>' +
+        '</div>';
+      document.body.appendChild(ov);
+      document.body.style.overflow = 'hidden';
+      var input = ov.querySelector('input[name=email]');
+      var err = ov.querySelector('.cogate-err');
+      setTimeout(function () { input.focus(); }, 30);
+      function close() { document.body.style.overflow = ''; ov.remove(); }
+      ov.querySelector('.cogate-x').addEventListener('click', close);
+      ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+      document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
+      ov.querySelector('.cogate-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = input.value.trim();
+        if (!validEmail(email)) { err.hidden = false; input.focus(); return; }
+        capture(email, c);
+        close();
+        go(stripe, email);
+      });
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="buy.stripe.com"]');
+      if (!a) return;
+      var stripe = a.getAttribute('href');
+      var saved = null; try { saved = localStorage.getItem(LEAD); } catch (x) {}
+      e.preventDefault();
+      if (saved && validEmail(saved)) { go(stripe, saved); return; } // already captured
+      openModal(stripe);
+    });
+  })();
+
   // Reveal on scroll
   var els = [].slice.call(document.querySelectorAll('.reveal'));
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
