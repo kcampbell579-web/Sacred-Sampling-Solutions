@@ -1,9 +1,19 @@
 # Lamplight
 
-A capture-first personal to-do list. One HTML file — no build step, no server, no account.
-
-Open `index.html` in a browser and it works. Your list is stored in that browser's
+Two personal tools. Each is one HTML file — no build step, no server, no account.
+Open the file in a browser and it works. Everything is stored in that browser's
 local storage; nothing is sent anywhere.
+
+| File | What it is |
+| --- | --- |
+| `index.html` | **Lamplight** — a capture-first to-do list |
+| `calendar.html` | **Lamplight Calendar** — a click-to-add month calendar that prints |
+
+They share one visual system but are independent; neither needs the other.
+
+---
+
+# Lamplight — the to-do list
 
 ## The idea
 
@@ -70,3 +80,45 @@ close the tab.
 
 Any current browser. No dependencies; the only network request is the Google
 Fonts stylesheet, and there are real fallback stacks if it doesn't load.
+
+---
+
+# Lamplight Calendar
+
+`calendar.html`. A month grid where scheduling something takes one click and one
+line of typing.
+
+## Adding
+
+Click any day. It's selected, and the cursor lands in the add field below the
+grid — type what's happening, optionally set a time, press Enter. The cursor
+stays put so you can keep going.
+
+Everything below the grid is live: change a title or a time and it updates as you
+type. Click the round swatch to cycle an event's colour (five, for sorting by eye).
+Clearing an event's title deletes it, as does the × on its row.
+
+Clicking a day in a greyed adjacent month jumps to that month.
+
+| Key | Does |
+| --- | --- |
+| `←` / `→` | Previous / next month |
+| `T` | Back to today |
+| `P` | Print |
+
+## Printing and PDF
+
+Two routes, because embedded views sometimes block one of them:
+
+- **Print** opens the browser's print dialog, where every OS offers *Save as PDF*.
+  The print stylesheet drops the buttons and panel, prints the grid in landscape
+  black-on-white with **every** event shown (no "+2 more"), and adds a
+  three-column agenda of the whole month underneath.
+- **PDF** writes the PDF directly — a grid page plus agenda pages, in Helvetica
+  with colour dots — without going near the print dialog. Use this one if Print
+  is unavailable.
+
+## Your data
+
+`localStorage`, key `lamplight.cal.v1`. Export and Import work exactly as they do
+in the to-do list, and the two tools keep separate files.
