@@ -35,7 +35,7 @@
   // Fire ViewContent on a kit product page (kit-<slug>.html).
   function trackViewContent() {
     if (!window.fbq) return;
-    var m = location.pathname.match(/kit-([a-z0-9-]+)\.html$/);
+    var m = location.pathname.match(/kit-([a-z0-9-]+)(?:\.html)?$/);
     if (!m) return;
     var nameEl = document.querySelector(".page-hero h1");
     var amtEl = document.querySelector(".page-hero .price .amt");
