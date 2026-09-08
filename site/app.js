@@ -126,6 +126,74 @@
     });
   })();
 
+  // $25-off welcome popup — captures the email in the background (AJAX, no
+  // page reload) and reveals the discount code. Shows once per visitor.
+  (function () {
+    var SEEN = 'sss_promo_seen', LEAD = 'sss_lead', CODE = 'WELCOME25';
+    var path = location.pathname.replace(/\.html$/, '');
+    // Don't interrupt checkout confirmation, the dedicated guide opt-in, or repeat visitors/leads.
+    if (/\/(thank-you|home-safety-check)$/.test(path)) return;
+    var seen = false, lead = false;
+    try { seen = !!localStorage.getItem(SEEN); lead = !!localStorage.getItem(LEAD); } catch (e) {}
+    if (seen || lead) return;
+    function mark() { try { localStorage.setItem(SEEN, '1'); } catch (e) {} }
+    function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    var shown = false;
+    function show() {
+      if (shown) return; shown = true; mark();
+      var ov = document.createElement('div');
+      ov.className = 'promo-pop';
+      ov.innerHTML =
+        '<div class="promo-card" role="dialog" aria-modal="true" aria-label="$25 off your first order">' +
+        '<button type="button" class="promo-x" aria-label="Close">&times;</button>' +
+        '<span class="eyebrow">Welcome offer</span>' +
+        '<h3>$25 off your first order</h3>' +
+        '<p class="promo-sub">Join our list for lab-backed testing tips — and take $25 off your first kit.</p>' +
+        '<form class="promo-form" novalidate>' +
+        '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Email" required>' +
+        '<button type="submit" class="btn btn-gold">Get my $25 code</button>' +
+        '<div class="promo-err" hidden>Please enter a valid email.</div>' +
+        '</form>' +
+        '<p class="promo-fine">No spam — unsubscribe anytime.</p>' +
+        '</div>';
+      document.body.appendChild(ov);
+      var input = ov.querySelector('input[name=email]');
+      var err = ov.querySelector('.promo-err');
+      function close() { ov.remove(); }
+      ov.querySelector('.promo-x').addEventListener('click', close);
+      ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+      ov.querySelector('.promo-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var email = input.value.trim();
+        if (!validEmail(email)) { err.hidden = false; input.focus(); return; }
+        try { localStorage.setItem(LEAD, email); } catch (x) {}
+        try {
+          fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ _subject: 'New $25-off signup', email: email, offer: CODE, page: location.pathname })
+          }).catch(function () {});
+        } catch (x) {}
+        if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 25 });
+        if (window.fbq) window.fbq('track', 'Lead');
+        ov.querySelector('.promo-card').innerHTML =
+          '<button type="button" class="promo-x" aria-label="Close">&times;</button>' +
+          '<span class="eyebrow">You\'re in</span>' +
+          '<h3>Here\'s your code</h3>' +
+          '<div class="promo-code">' + CODE + '</div>' +
+          '<p class="promo-sub">Apply it at checkout for <b>$25 off</b> your first kit.</p>' +
+          '<a class="btn btn-gold" href="/kits">Shop kits &rarr;</a>';
+        ov.querySelector('.promo-x').addEventListener('click', close);
+      });
+    }
+
+    // Trigger: after 15s, or on exit-intent (mouse leaves toward the top), whichever comes first.
+    var t = setTimeout(show, 15000);
+    document.addEventListener('mouseout', function onOut(e) {
+      if (!e.relatedTarget && e.clientY <= 0) { clearTimeout(t); document.removeEventListener('mouseout', onOut); show(); }
+    });
+  })();
+
   // Reveal on scroll
   var els = [].slice.call(document.querySelectorAll('.reveal'));
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
