@@ -537,3 +537,15 @@ footer .brand img{height:40px}
 .samplereport-cap b{display:block;color:var(--brand-ink);font-size:1rem;margin-bottom:4px}
 .samplereport-cap span{color:var(--ink-2);font-size:.9rem;line-height:1.45}
 @media(max-width:520px){.samplereport{flex-direction:column;align-items:flex-start}.samplereport img{width:100%;max-width:220px}}
+
+/* ---- Guide author byline ---- */
+.art-byline{display:flex;align-items:center;gap:12px;margin:8px 0 4px}
+.art-byline-av{flex:none;width:40px;height:40px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.92rem}
+.art-byline-txt b{display:block;color:var(--ink);font-size:.95rem}
+.art-byline-txt span{color:var(--ink-3);font-size:.8rem;line-height:1.45}
+
+/* ---- Homepage: beyond-water cards ---- */
+.beyond-card{display:block;text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .2s ease}
+.beyond-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--brand)}
+.beyond-card h3{margin:6px 0 6px}
+.beyond-card .mmeta{color:var(--brand-ink);font-weight:700}
