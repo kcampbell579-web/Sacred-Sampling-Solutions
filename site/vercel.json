@@ -3,23 +3,95 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "redirects": [
-    { "source": "/services-3/sampleregistration", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
-    { "source": "/services-3/sampleregistration/:path*", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*", "permanent": false },
-    { "source": "/sampleregistration", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
-    { "source": "/sampleregistration.html", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration", "permanent": false },
-    { "source": "/sampleregistration/:path*", "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*", "permanent": false },
-    { "source": "/chain-of-custody", "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody", "permanent": false },
-    { "source": "/chain-of-custody/:path*", "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody/:path*", "permanent": false },
-
-    { "source": "/go/fb", "destination": "/kits?utm_source=facebook&utm_medium=paid_social&utm_campaign=shop", "permanent": false },
-    { "source": "/go/fb-post", "destination": "/kits?utm_source=facebook&utm_medium=social&utm_campaign=shop", "permanent": false },
-    { "source": "/go/ig", "destination": "/kits?utm_source=instagram&utm_medium=social&utm_campaign=shop", "permanent": false },
-    { "source": "/go/pfas", "destination": "/kit-pfas?utm_source=facebook&utm_medium=paid_social&utm_campaign=pfas", "permanent": false },
-    { "source": "/go/essentials", "destination": "/kit-essentials?utm_source=facebook&utm_medium=paid_social&utm_campaign=essentials", "permanent": false },
-    { "source": "/go/heavy-metals", "destination": "/kit-heavy-metals?utm_source=facebook&utm_medium=paid_social&utm_campaign=heavy-metals", "permanent": false },
-    { "source": "/go/metals-minerals", "destination": "/kit-metals-minerals?utm_source=facebook&utm_medium=paid_social&utm_campaign=metals-minerals", "permanent": false },
-    { "source": "/go/comprehensive", "destination": "/kit-comprehensive?utm_source=facebook&utm_medium=paid_social&utm_campaign=comprehensive", "permanent": false },
-    { "source": "/go/professional", "destination": "/kit-professional?utm_source=facebook&utm_medium=paid_social&utm_campaign=professional", "permanent": false },
-    { "source": "/go/google", "destination": "/kits?utm_source=google&utm_medium=cpc&utm_campaign=search", "permanent": false }
+    {
+      "source": "/services-3/sampleregistration",
+      "destination": "https://app.sacredsamplingsolutions.com/sampleregistration",
+      "permanent": false
+    },
+    {
+      "source": "/services-3/sampleregistration/:path*",
+      "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/sampleregistration",
+      "destination": "https://app.sacredsamplingsolutions.com/sampleregistration",
+      "permanent": false
+    },
+    {
+      "source": "/sampleregistration.html",
+      "destination": "https://app.sacredsamplingsolutions.com/sampleregistration",
+      "permanent": false
+    },
+    {
+      "source": "/sampleregistration/:path*",
+      "destination": "https://app.sacredsamplingsolutions.com/sampleregistration/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/chain-of-custody",
+      "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody",
+      "permanent": false
+    },
+    {
+      "source": "/chain-of-custody/:path*",
+      "destination": "https://app.sacredsamplingsolutions.com/chain-of-custody/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/go/fb",
+      "destination": "/kits?utm_source=facebook&utm_medium=paid_social&utm_campaign=shop",
+      "permanent": false
+    },
+    {
+      "source": "/go/fb-post",
+      "destination": "/kits?utm_source=facebook&utm_medium=social&utm_campaign=shop",
+      "permanent": false
+    },
+    {
+      "source": "/go/ig",
+      "destination": "/kits?utm_source=instagram&utm_medium=social&utm_campaign=shop",
+      "permanent": false
+    },
+    {
+      "source": "/go/pfas",
+      "destination": "/kit-pfas?utm_source=facebook&utm_medium=paid_social&utm_campaign=pfas",
+      "permanent": false
+    },
+    {
+      "source": "/go/essentials",
+      "destination": "/kit-essentials?utm_source=facebook&utm_medium=paid_social&utm_campaign=essentials",
+      "permanent": false
+    },
+    {
+      "source": "/go/heavy-metals",
+      "destination": "/kit-heavy-metals?utm_source=facebook&utm_medium=paid_social&utm_campaign=heavy-metals",
+      "permanent": false
+    },
+    {
+      "source": "/go/metals-minerals",
+      "destination": "/kit-metals-minerals?utm_source=facebook&utm_medium=paid_social&utm_campaign=metals-minerals",
+      "permanent": false
+    },
+    {
+      "source": "/go/comprehensive",
+      "destination": "/kit-comprehensive?utm_source=facebook&utm_medium=paid_social&utm_campaign=comprehensive",
+      "permanent": false
+    },
+    {
+      "source": "/go/professional",
+      "destination": "/kit-professional?utm_source=facebook&utm_medium=paid_social&utm_campaign=professional",
+      "permanent": false
+    },
+    {
+      "source": "/go/google",
+      "destination": "/kits?utm_source=google&utm_medium=cpc&utm_campaign=search",
+      "permanent": false
+    },
+    {
+      "source": "/go/pfas-li",
+      "destination": "/pfas-long-island?utm_source=google&utm_medium=cpc&utm_campaign=pfas-long-island",
+      "permanent": false
+    }
   ]
 }
