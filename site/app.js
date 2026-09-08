@@ -115,6 +115,17 @@
     });
   })();
 
+  // Waitlist confirmation (coming-soon kit pages)
+  (function () {
+    if (new URLSearchParams(location.search).get('waitlisted') !== '1') return;
+    document.querySelectorAll('.waitlist-form').forEach(function (form) {
+      var d = document.createElement('div');
+      d.className = 'waitlist-done';
+      d.innerHTML = '✓ You\'re on the list — we\'ll email you the moment this kit launches.';
+      form.parentNode.replaceChild(d, form);
+    });
+  })();
+
   // Reveal on scroll
   var els = [].slice.call(document.querySelectorAll('.reveal'));
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
