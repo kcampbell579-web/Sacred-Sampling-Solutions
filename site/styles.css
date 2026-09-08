@@ -529,3 +529,11 @@ footer .brand img{height:40px}
 .cogate-form .btn{width:100%;justify-content:center;margin-top:2px}
 .cogate-err{color:#c0362c;font-size:.85rem;font-weight:600}
 .cogate-fine{color:var(--ink-3);font-size:.78rem;margin:14px 0 0;text-align:center;line-height:1.5}
+
+/* ---- Sample report block (kit pages) ---- */
+.samplereport{display:flex;gap:16px;align-items:center;text-decoration:none;border:1px solid var(--line);border-radius:var(--radius);padding:12px;background:var(--panel);box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .2s ease}
+.samplereport:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.samplereport img{width:120px;height:auto;border-radius:8px;border:1px solid var(--line);flex:none}
+.samplereport-cap b{display:block;color:var(--brand-ink);font-size:1rem;margin-bottom:4px}
+.samplereport-cap span{color:var(--ink-2);font-size:.9rem;line-height:1.45}
+@media(max-width:520px){.samplereport{flex-direction:column;align-items:flex-start}.samplereport img{width:100%;max-width:220px}}
