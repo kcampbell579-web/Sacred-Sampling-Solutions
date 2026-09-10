@@ -126,10 +126,13 @@
     });
   })();
 
-  // $25-off welcome popup — captures the email in the background (AJAX, no
-  // page reload) and reveals the discount code. Shows once per visitor.
+  // Water Safety Guide + $25-off welcome popup — captures the email in the
+  // background (AJAX, no page reload), then delivers the free guide and the
+  // discount code. Shows once per visitor.
   (function () {
     var SEEN = 'sss_promo_seen', LEAD = 'sss_lead', CODE = 'WELCOME25';
+    var HERO = '/assets/pfas-box-01.jpg';                 // swap for a lifestyle hero anytime
+    var GUIDE = '/assets/whole-home-safety-check.pdf';    // the free Water Safety Guide (PDF)
     var path = location.pathname.replace(/\.html$/, '');
     // Don't interrupt checkout confirmation, the dedicated guide opt-in, or repeat visitors/leads.
     if (/\/(thank-you|home-safety-check)$/.test(path)) return;
@@ -139,23 +142,40 @@
     function mark() { try { localStorage.setItem(SEEN, '1'); } catch (e) {} }
     function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
+    // Trust badges (icon + label), matching the lineup under the form.
+    var BADGES = [
+      ['<path d="M9 3h6M10 3v5l-5 9a3 3 0 0 0 3 4h8a3 3 0 0 0 3-4l-5-9V3"/><path d="M7 15h10"/>', 'Accredited Laboratory Analysis'],
+      ['<rect x="3" y="7" width="18" height="13" rx="1.5"/><path d="M3 10h18M9 7V4h6v3"/>', 'Easy Mail-In Sample Collection'],
+      ['<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>', 'Easy-to-Understand Results'],
+      ['<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>', 'EPA Method Testing']
+    ];
+    function badgesHtml() {
+      return '<div class="promo-badges">' + BADGES.map(function (b) {
+        return '<div class="promo-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + b[0] + '</svg><span>' + b[1] + '</span></div>';
+      }).join('') + '</div>';
+    }
+
     var shown = false;
     function show() {
       if (shown) return; shown = true; mark();
       var ov = document.createElement('div');
       ov.className = 'promo-pop';
       ov.innerHTML =
-        '<div class="promo-card" role="dialog" aria-modal="true" aria-label="$25 off your first order">' +
+        '<div class="promo-card" role="dialog" aria-modal="true" aria-label="Free Water Safety Guide plus $25 off your first order">' +
         '<button type="button" class="promo-x" aria-label="Close">&times;</button>' +
-        '<span class="eyebrow">Welcome offer</span>' +
-        '<h3>$25 off your first order</h3>' +
-        '<p class="promo-sub">Join our list for lab-backed testing tips — and take $25 off your first kit.</p>' +
+        '<img class="promo-hero" src="' + HERO + '" alt="Sacred Sampling Solutions water test kit">' +
+        '<div class="promo-body">' +
+        '<h3>Concerned About PFAS, Lead, or Well Water?</h3>' +
+        '<p class="promo-sub">Get our <b>free Home Water Safety Guide</b> plus <b>$25 off</b> your first laboratory water test.</p>' +
+        '<p class="promo-mini">Learn what to test for, how often to test, and how to understand your results.</p>' +
         '<form class="promo-form" novalidate>' +
-        '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Email" required>' +
-        '<button type="submit" class="btn btn-gold">Get my $25 code</button>' +
+        '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="Enter your email address" aria-label="Email" required>' +
+        '<button type="submit" class="btn btn-gold">Get My Guide + $25 Off <span class="arrow">&rarr;</span></button>' +
         '<div class="promo-err" hidden>Please enter a valid email.</div>' +
         '</form>' +
-        '<p class="promo-fine">No spam — unsubscribe anytime.</p>' +
+        badgesHtml() +
+        '<p class="promo-fine">No spam. Just water safety insights and your exclusive discount.</p>' +
+        '</div>' +
         '</div>';
       document.body.appendChild(ov);
       var input = ov.querySelector('input[name=email]');
@@ -171,19 +191,19 @@
         try {
           fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
             method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ _subject: 'New $25-off signup', email: email, offer: CODE, page: location.pathname })
+            body: JSON.stringify({ _subject: 'New Water Safety Guide + $25-off signup', email: email, offer: CODE, page: location.pathname })
           }).catch(function () {});
         } catch (x) {}
         if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 25 });
         if (window.fbq) window.fbq('track', 'Lead');
-        ov.querySelector('.promo-card').innerHTML =
-          '<button type="button" class="promo-x" aria-label="Close">&times;</button>' +
+        ov.querySelector('.promo-body').innerHTML =
           '<span class="eyebrow">You\'re in</span>' +
-          '<h3>Here\'s your code</h3>' +
+          '<h3>Your guide is ready &mdash; and here\'s your $25 code</h3>' +
           '<div class="promo-code">' + CODE + '</div>' +
-          '<p class="promo-sub">Apply it at checkout for <b>$25 off</b> your first kit.</p>' +
-          '<a class="btn btn-gold" href="/kits">Shop kits &rarr;</a>';
-        ov.querySelector('.promo-x').addEventListener('click', close);
+          '<p class="promo-sub">Apply <b>' + CODE + '</b> at checkout for <b>$25 off</b> your first water test.</p>' +
+          '<a class="btn btn-gold" href="' + GUIDE + '" target="_blank" rel="noopener">Download my Water Safety Guide <span class="arrow">&rarr;</span></a>' +
+          '<a class="promo-shop" href="/kits#kits">Shop water kits &rarr;</a>';
+        ov.querySelector('.promo-x') && ov.querySelector('.promo-x').addEventListener('click', close);
       });
     }
 
