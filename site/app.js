@@ -131,7 +131,7 @@
   // discount code. Shows once per visitor.
   (function () {
     var SEEN = 'sss_promo_seen', LEAD = 'sss_lead', CODE = 'WELCOME25';
-    var HERO = '/assets/pfas-box-01.jpg';                 // swap for a lifestyle hero anytime
+    var HERO = '/assets/popup-hero.jpg';                  // glass-of-water lifestyle hero
     var GUIDE = '/assets/whole-home-safety-check.pdf';    // the free Water Safety Guide (PDF)
     var path = location.pathname.replace(/\.html$/, '');
     // Don't interrupt checkout confirmation, the dedicated guide opt-in, or repeat visitors/leads.
