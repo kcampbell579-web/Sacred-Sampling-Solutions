@@ -135,8 +135,9 @@
     var GUIDE = '/assets/home-environmental-testing-guide.pdf'; // The Home Environmental Testing Guide (PDF)
     var MJ = 'https://15q4o.mjt.lu/wgt/15q4o/0yyg/subscribe?c=603a85a3'; // Mailjet list subscribe endpoint
     var path = location.pathname.replace(/\.html$/, '');
-    // Don't interrupt checkout confirmation, the dedicated guide opt-in, or repeat visitors/leads.
-    if (/\/(thank-you|home-safety-check)$/.test(path)) return;
+    // Don't interrupt checkout confirmation, the dedicated guide opt-in, the
+    // unsubscribe page, or repeat visitors/leads.
+    if (/\/(thank-you|home-safety-check|unsubscribed)$/.test(path)) return;
     var seen = false, lead = false;
     try { seen = !!localStorage.getItem(SEEN); lead = !!localStorage.getItem(LEAD); } catch (e) {}
     if (seen || lead) return;
