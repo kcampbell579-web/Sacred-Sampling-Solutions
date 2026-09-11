@@ -133,6 +133,7 @@
     var SEEN = 'sss_promo_seen', LEAD = 'sss_lead', CODE = 'WELCOME25';
     var HERO = '/assets/popup-hero.jpg';                  // glass-of-water lifestyle hero
     var GUIDE = '/assets/whole-home-safety-check.pdf';    // the free Water Safety Guide (PDF)
+    var MJ = 'https://15q4o.mjt.lu/wgt/15q4o/0yyg/subscribe?c=603a85a3'; // Mailjet list subscribe endpoint
     var path = location.pathname.replace(/\.html$/, '');
     // Don't interrupt checkout confirmation, the dedicated guide opt-in, or repeat visitors/leads.
     if (/\/(thank-you|home-safety-check)$/.test(path)) return;
@@ -188,10 +189,13 @@
         var email = input.value.trim();
         if (!validEmail(email)) { err.hidden = false; input.focus(); return; }
         try { localStorage.setItem(LEAD, email); } catch (x) {}
+        // Add the subscriber to Mailjet (fire-and-forget; text/plain avoids a
+        // CORS preflight, response is opaque — we optimistically continue).
         try {
-          fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
-            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ _subject: 'New Water Safety Guide + $25-off signup', email: email, offer: CODE, page: location.pathname })
+          fetch(MJ, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify({ Email: email, Fields: [] })
           }).catch(function () {});
         } catch (x) {}
         if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 25 });
