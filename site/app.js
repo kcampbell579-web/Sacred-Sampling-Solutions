@@ -49,77 +49,216 @@
     document.body.appendChild(a);
   })();
 
-  // Email capture before Stripe checkout.
-  // Intercepts buy-button clicks, asks for an email once, stores the lead,
-  // pre-fills it into Stripe, then continues to secure checkout.
+  // ── Shopping cart ────────────────────────────────────────────────────
+  // Client-side cart (localStorage) + slide-out drawer + Stripe Checkout.
+  // Add-to-cart buttons are the legacy per-kit "Buy now" links, upgraded in
+  // place (see below). Prices shown here are display-only — /api/checkout
+  // re-prices every line from its own server catalog before charging.
   (function () {
-    var LEAD = 'sss_lead';
+    var KEY = 'sss_cart', LEAD = 'sss_lead';
     function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-    function withEmail(url, email) {
-      try { var u = new URL(url); if (email) u.searchParams.set('prefilled_email', email); return u.toString(); }
-      catch (e) { return url; }
-    }
-    function go(url, email) { window.location.href = withEmail(url, email); }
-    function ctx() {
-      var h1 = document.querySelector('.page-hero h1');
-      var amt = document.querySelector('.page-hero .price .amt, .buycard .price .amt');
-      return { product: h1 ? h1.textContent.trim() : document.title, price: amt ? amt.textContent.trim() : '', page: location.pathname };
-    }
-    function capture(email, c) {
-      try { localStorage.setItem(LEAD, email); } catch (e) {}
-      try {
-        fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ _subject: 'New checkout lead — ' + c.product, email: email, product: c.product, price: c.price, page: c.page })
-        }).catch(function () {});
-      } catch (e) {}
-      if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD' });
-      if (window.fbq) window.fbq('track', 'Lead');
-    }
-    function openModal(stripe) {
-      var c = ctx();
-      var ov = document.createElement('div');
-      ov.className = 'cogate';
-      ov.innerHTML =
-        '<div class="cogate-card" role="dialog" aria-modal="true" aria-label="Enter your email to continue">' +
-        '<button type="button" class="cogate-x" aria-label="Close">&times;</button>' +
-        '<span class="eyebrow">Almost there</span>' +
-        '<h3>Where should we send your receipt &amp; results?</h3>' +
-        '<p class="cogate-sub">Enter your email and we’ll take you to secure checkout' + (c.price ? ' — ' + c.product + ' (' + c.price + ')' : '') + '.</p>' +
-        '<form class="cogate-form" novalidate>' +
-        '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Email" required>' +
-        '<div class="cogate-err" hidden>Please enter a valid email.</div>' +
-        '<button type="submit" class="btn btn-gold">Continue to secure checkout <span class="arrow">&rarr;</span></button>' +
-        '</form>' +
-        '<p class="cogate-fine">We’ll email your receipt and kit updates. Secure payment by Stripe. No spam.</p>' +
-        '</div>';
-      document.body.appendChild(ov);
-      document.body.style.overflow = 'hidden';
-      var input = ov.querySelector('input[name=email]');
-      var err = ov.querySelector('.cogate-err');
-      setTimeout(function () { input.focus(); }, 30);
-      function close() { document.body.style.overflow = ''; ov.remove(); }
-      ov.querySelector('.cogate-x').addEventListener('click', close);
-      ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
-      document.addEventListener('keydown', function esc(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); } });
-      ov.querySelector('.cogate-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var email = input.value.trim();
-        if (!validEmail(email)) { err.hidden = false; input.focus(); return; }
-        capture(email, c);
-        close();
-        go(stripe, email);
+    function read() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+    function write(items) { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {} render(); }
+    function count() { return read().reduce(function (n, i) { return n + i.qty; }, 0); }
+    function subtotalCents() { return read().reduce(function (n, i) { return n + i.price * i.qty; }, 0); }
+    function money(cents) {
+      return '$' + (cents / 100).toLocaleString('en-US', {
+        minimumFractionDigits: (cents % 100 ? 2 : 0), maximumFractionDigits: 2
       });
     }
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href*="buy.stripe.com"]');
-      if (!a) return;
-      var stripe = a.getAttribute('href');
-      var saved = null; try { saved = localStorage.getItem(LEAD); } catch (x) {}
-      e.preventDefault();
-      if (saved && validEmail(saved)) { go(stripe, saved); return; } // already captured
-      openModal(stripe);
+    function add(slug, name, price) {
+      if (!slug || !(price > 0)) return;
+      var items = read(), found = null;
+      items.forEach(function (i) { if (i.slug === slug) found = i; });
+      if (found) found.qty = Math.min(10, found.qty + 1);
+      else items.push({ slug: slug, name: name, price: price, qty: 1 });
+      write(items);
+    }
+    function setQty(slug, qty) {
+      var items = read().map(function (i) {
+        if (i.slug === slug) i.qty = Math.max(0, Math.min(10, qty));
+        return i;
+      }).filter(function (i) { return i.qty > 0; });
+      write(items);
+    }
+    function removeItem(slug) { write(read().filter(function (i) { return i.slug !== slug; })); }
+
+    // Clear the cart once the purchase completes (Stripe → /thank-you).
+    if (/\/thank-you$/.test(location.pathname.replace(/\.html$/, ''))) {
+      try { localStorage.removeItem(KEY); } catch (e) {}
+    }
+
+    // ── Header cart button ────────────────────────────────────────────
+    var navCta = document.querySelector('header .nav-cta');
+    var cartBtn = null;
+    if (navCta) {
+      cartBtn = document.createElement('button');
+      cartBtn.type = 'button';
+      cartBtn.className = 'cart-btn';
+      cartBtn.id = 'cartBtn';
+      cartBtn.setAttribute('aria-label', 'Open cart');
+      cartBtn.setAttribute('aria-haspopup', 'dialog');
+      cartBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<path d="M4 4h2l2.4 12.2a1.5 1.5 0 0 0 1.5 1.2h8.1a1.5 1.5 0 0 0 1.5-1.2L23 7H6"/>' +
+        '<circle cx="10" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg>' +
+        '<span class="cart-count" hidden>0</span>';
+      var toggle = navCta.querySelector('.nav-toggle');
+      if (toggle) navCta.insertBefore(cartBtn, toggle);
+      else navCta.appendChild(cartBtn);
+      cartBtn.addEventListener('click', openDrawer);
+    }
+
+    // ── Drawer ────────────────────────────────────────────────────────
+    var drawer = document.createElement('div');
+    drawer.className = 'cart-drawer';
+    drawer.id = 'cartDrawer';
+    drawer.hidden = true;
+    drawer.innerHTML =
+      '<div class="cart-overlay" data-act="close"></div>' +
+      '<aside class="cart-panel" role="dialog" aria-modal="true" aria-label="Your cart">' +
+        '<div class="cart-head"><h2>Your cart</h2>' +
+        '<button type="button" class="cart-x" data-act="close" aria-label="Close cart">&times;</button></div>' +
+        '<div class="cart-body"></div>' +
+        '<div class="cart-foot">' +
+          '<div class="cart-row"><span>Subtotal</span><b class="cart-sub-amt">$0</b></div>' +
+          '<div class="cart-ship">✓ Free U.S. shipping &amp; prepaid return label</div>' +
+          '<div class="cart-promo">Have a code? Enter <b>WELCOME25</b> at checkout for $25 off your first order.</div>' +
+          '<input type="email" class="cart-email" inputmode="email" autocomplete="email" placeholder="Email for your receipt &amp; results">' +
+          '<button type="button" class="btn btn-gold btn-lg cart-checkout">Checkout <span class="arrow">&rarr;</span></button>' +
+          '<div class="cart-err" hidden></div>' +
+          '<p class="cart-fine">Secure payment by Stripe. You choose your kits, then pay on Stripe’s hosted checkout.</p>' +
+        '</div>' +
+      '</aside>';
+    document.body.appendChild(drawer);
+    var body = drawer.querySelector('.cart-body');
+    var subAmt = drawer.querySelector('.cart-sub-amt');
+    var errEl = drawer.querySelector('.cart-err');
+    var checkoutBtn = drawer.querySelector('.cart-checkout');
+    var emailInput = drawer.querySelector('.cart-email');
+    try { var savedLead = localStorage.getItem(LEAD); if (savedLead) emailInput.value = savedLead; } catch (e) {}
+
+    function openDrawer() {
+      render();
+      drawer.hidden = false;
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(function () { drawer.classList.add('open'); });
+    }
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(function () { drawer.hidden = true; }, 260);
+    }
+    drawer.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest('[data-act]');
+      var act = el && el.getAttribute('data-act');
+      if (act === 'close') { closeDrawer(); return; }
+      var line = e.target.closest && e.target.closest('.cart-line');
+      if (!line) return;
+      var slug = line.getAttribute('data-slug');
+      if (act === 'inc') setQty(slug, itemQty(slug) + 1);
+      else if (act === 'dec') setQty(slug, itemQty(slug) - 1);
+      else if (act === 'rm') removeItem(slug);
     });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !drawer.hidden) closeDrawer();
+    });
+    function itemQty(slug) { var q = 0; read().forEach(function (i) { if (i.slug === slug) q = i.qty; }); return q; }
+
+    function render() {
+      var items = read(), n = count();
+      if (cartBtn) {
+        var badge = cartBtn.querySelector('.cart-count');
+        badge.textContent = n;
+        badge.hidden = n === 0;
+        cartBtn.setAttribute('aria-label', n ? ('Open cart, ' + n + ' item' + (n === 1 ? '' : 's')) : 'Open cart');
+      }
+      subAmt.textContent = money(subtotalCents());
+      if (!items.length) {
+        body.innerHTML = '<div class="cart-empty"><p>Your cart is empty.</p>' +
+          '<a class="btn btn-ghost" href="/kits" data-act="close">Browse test kits</a></div>';
+        checkoutBtn.disabled = true;
+        return;
+      }
+      checkoutBtn.disabled = false;
+      body.innerHTML = items.map(function (i) {
+        return '<div class="cart-line" data-slug="' + i.slug + '">' +
+          '<div class="cart-line-main">' +
+            '<a class="cart-line-name" href="/' + i.slug + '">' + i.name + '</a>' +
+            '<div class="cart-line-price">' + money(i.price) + ' each</div>' +
+          '</div>' +
+          '<div class="cart-qty">' +
+            '<button type="button" data-act="dec" aria-label="Decrease quantity">&minus;</button>' +
+            '<span aria-live="polite">' + i.qty + '</span>' +
+            '<button type="button" data-act="inc" aria-label="Increase quantity">+</button>' +
+          '</div>' +
+          '<button type="button" class="cart-line-rm" data-act="rm" aria-label="Remove ' + i.name + '">Remove</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function showErr(msg) {
+      errEl.textContent = msg || 'Something went wrong. Please try again.';
+      errEl.hidden = false;
+    }
+    function checkout() {
+      var items = read();
+      if (!items.length) return;
+      errEl.hidden = true;
+      var email = (emailInput.value || '').trim();
+      if (email && validEmail(email)) { try { localStorage.setItem(LEAD, email); } catch (e) {} }
+      checkoutBtn.disabled = true;
+      checkoutBtn.innerHTML = 'Redirecting…';
+      if (window.gtag) window.gtag('event', 'begin_checkout', { currency: 'USD', value: subtotalCents() / 100 });
+      if (window.fbq) window.fbq('track', 'InitiateCheckout');
+      fetch('/api/checkout', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(function (i) { return { slug: i.slug, qty: i.qty }; }),
+          email: (email && validEmail(email)) ? email : undefined
+        })
+      }).then(function (r) {
+        return r.json().then(function (d) { return { ok: r.ok, d: d }; }, function () { return { ok: false, d: {} }; });
+      }).then(function (res) {
+        if (res.ok && res.d && res.d.url) { window.location.href = res.d.url; return; }
+        showErr(res.d && res.d.error);
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = 'Checkout <span class="arrow">&rarr;</span>';
+      }).catch(function () {
+        showErr();
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = 'Checkout <span class="arrow">&rarr;</span>';
+      });
+    }
+    checkoutBtn.addEventListener('click', checkout);
+
+    // ── Upgrade the legacy per-kit "Buy now" links into Add-to-cart ────
+    // Every sellable kit page carries buy.stripe.com links; on a kit page
+    // they all refer to that one kit, so slug/name/price come from the page.
+    (function () {
+      var slug = location.pathname.replace(/^\//, '').replace(/\.html$/, '');
+      if (!/^kit-[a-z0-9-]+$/.test(slug)) return;
+      var nameEl = document.querySelector('.page-hero h1');
+      var amtEl = document.querySelector('.page-hero .price .amt');
+      if (!nameEl || !amtEl) return;
+      var name = nameEl.textContent.trim();
+      var priceCents = Math.round(parseFloat(amtEl.textContent.replace(/[^0-9.]/g, '')) * 100);
+      if (!(priceCents > 0)) return;
+      [].forEach.call(document.querySelectorAll('a[href*="buy.stripe.com"]'), function (a) {
+        a.removeAttribute('href');
+        a.setAttribute('role', 'button');
+        a.style.cursor = 'pointer';
+        a.innerHTML = 'Add to cart <span class="arrow">&rarr;</span>';
+        a.addEventListener('click', function (e) {
+          e.preventDefault();
+          add(slug, name, priceCents);
+          openDrawer();
+        });
+      });
+    })();
+
+    render();
+    window.SSSCart = { add: add, open: openDrawer, count: count };
   })();
 
   // Waitlist confirmation (coming-soon kit pages)
@@ -240,9 +379,11 @@
     if (!heroBtn || !nameEl || !priceEl) return;               // sellable kits only (skip coming-soon)
     if (!('IntersectionObserver' in window)) return;
 
-    var href = heroBtn.getAttribute('href');
-    var name = nameEl.textContent.trim().replace(/\s+Kit$/i, ''); // abbreviate: drop trailing "Kit"
+    var fullName = nameEl.textContent.trim();
+    var name = fullName.replace(/\s+Kit$/i, '');       // abbreviate: drop trailing "Kit"
     var price = priceEl.textContent.trim();
+    var slug = path.replace(/^\//, '');
+    var priceCents = Math.round(parseFloat(price.replace(/[^0-9.]/g, '')) * 100);
 
     var bar = document.createElement('div');
     bar.className = 'buybar';
@@ -252,9 +393,12 @@
       '<div class="buybar-name">' + name + '</div>' +
       '<div class="buybar-price">' + price + '</div>' +
       '</div>' +
-      '<a class="buybar-btn" href="' + href + '" tabindex="-1" aria-label="Add ' + name + ' kit to cart — ' + price + '">Add to cart</a>';
+      '<button type="button" class="buybar-btn" tabindex="-1" aria-label="Add ' + name + ' kit to cart — ' + price + '">Add to cart</button>';
     document.body.appendChild(bar);
     var btn = bar.querySelector('.buybar-btn');
+    btn.addEventListener('click', function () {
+      if (window.SSSCart) { window.SSSCart.add(slug, fullName, priceCents); window.SSSCart.open(); }
+    });
 
     var past = false, atFooter = false;
     function update() {
