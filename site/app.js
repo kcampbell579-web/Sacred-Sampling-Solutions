@@ -2,6 +2,13 @@
 (function () {
   var root = document.documentElement;
 
+  // Single source of truth for the stated lab turnaround time.
+  // Change it here once and every [data-turnaround] element updates.
+  var TURNAROUND = '7–10 business days';
+  [].forEach.call(document.querySelectorAll('[data-turnaround]'), function (el) {
+    el.textContent = TURNAROUND;
+  });
+
   // Theme toggle (persists for the session)
   var themeBtn = document.getElementById('themeBtn');
   if (themeBtn) {
