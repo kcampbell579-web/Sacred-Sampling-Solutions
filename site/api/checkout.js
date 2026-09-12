@@ -109,7 +109,10 @@ module.exports = async function handler(req, res) {
   var host = req.headers['x-forwarded-host'] || req.headers.host;
   var base = proto + '://' + host;
 
+  // Embedded Checkout: the payment form mounts on our own /checkout page and
+  // Stripe redirects the top window to return_url once payment completes.
   var payload = {
+    ui_mode: 'embedded',
     mode: 'payment',
     line_items: lineItems,
     allow_promotion_codes: true,                       // WELCOME25 etc.
@@ -121,8 +124,7 @@ module.exports = async function handler(req, res) {
         display_name: 'Free shipping'
       }
     }],
-    success_url: base + '/thank-you?session_id={CHECKOUT_SESSION_ID}',
-    cancel_url: base + '/kits'
+    return_url: base + '/thank-you?session_id={CHECKOUT_SESSION_ID}'
   };
   if (email) payload.customer_email = email;
 
@@ -136,11 +138,14 @@ module.exports = async function handler(req, res) {
       body: encodeForm(payload).toString()
     });
     var data = await resp.json();
-    if (!resp.ok || !data || !data.url) {
+    if (!resp.ok || !data || !data.client_secret) {
       var msg = (data && data.error && data.error.message) || 'Could not create checkout session.';
       return res.status(502).json({ error: msg });
     }
-    return res.status(200).json({ url: data.url });
+    return res.status(200).json({
+      clientSecret: data.client_secret,
+      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || ''
+    });
   } catch (e) {
     return res.status(502).json({ error: 'Could not reach the payment processor. Please try again.' });
   }

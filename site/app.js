@@ -127,7 +127,7 @@
           '<input type="email" class="cart-email" inputmode="email" autocomplete="email" placeholder="Email for your receipt &amp; results">' +
           '<button type="button" class="btn btn-gold btn-lg cart-checkout">Checkout <span class="arrow">&rarr;</span></button>' +
           '<div class="cart-err" hidden></div>' +
-          '<p class="cart-fine">Secure payment by Stripe. You choose your kits, then pay on Stripe’s hosted checkout.</p>' +
+          '<p class="cart-fine">Secure checkout on our site — card processing powered by Stripe.</p>' +
         '</div>' +
       '</aside>';
     document.body.appendChild(drawer);
@@ -197,38 +197,15 @@
       }).join('');
     }
 
-    function showErr(msg) {
-      errEl.textContent = msg || 'Something went wrong. Please try again.';
-      errEl.hidden = false;
-    }
     function checkout() {
       var items = read();
       if (!items.length) return;
-      errEl.hidden = true;
       var email = (emailInput.value || '').trim();
       if (email && validEmail(email)) { try { localStorage.setItem(LEAD, email); } catch (e) {} }
-      checkoutBtn.disabled = true;
-      checkoutBtn.innerHTML = 'Redirecting…';
       if (window.gtag) window.gtag('event', 'begin_checkout', { currency: 'USD', value: subtotalCents() / 100 });
       if (window.fbq) window.fbq('track', 'InitiateCheckout');
-      fetch('/api/checkout', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: items.map(function (i) { return { slug: i.slug, qty: i.qty }; }),
-          email: (email && validEmail(email)) ? email : undefined
-        })
-      }).then(function (r) {
-        return r.json().then(function (d) { return { ok: r.ok, d: d }; }, function () { return { ok: false, d: {} }; });
-      }).then(function (res) {
-        if (res.ok && res.d && res.d.url) { window.location.href = res.d.url; return; }
-        showErr(res.d && res.d.error);
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = 'Checkout <span class="arrow">&rarr;</span>';
-      }).catch(function () {
-        showErr();
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = 'Checkout <span class="arrow">&rarr;</span>';
-      });
+      // Payment happens on our own /checkout page (embedded Stripe).
+      window.location.href = '/checkout';
     }
     checkoutBtn.addEventListener('click', checkout);
 
@@ -283,7 +260,7 @@
     var path = location.pathname.replace(/\.html$/, '');
     // Don't interrupt checkout confirmation, the dedicated guide opt-in, the
     // unsubscribe page, or repeat visitors/leads.
-    if (/\/(thank-you|home-safety-check|unsubscribed)$/.test(path)) return;
+    if (/\/(thank-you|home-safety-check|unsubscribed|checkout)$/.test(path)) return;
     var seen = false, lead = false;
     try { seen = !!localStorage.getItem(SEEN); lead = !!localStorage.getItem(LEAD); } catch (e) {}
     if (seen || lead) return;
