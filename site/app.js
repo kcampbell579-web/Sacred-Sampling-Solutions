@@ -226,6 +226,56 @@
     });
   })();
 
+  // Mobile sticky purchase bar on product (kit) pages.
+  // Appears once the hero Buy CTA scrolls out of view; hides at the footer.
+  // CSS hides it entirely on desktop (min-width:821px), so it never affects
+  // desktop behavior.
+  (function () {
+    var path = location.pathname.replace(/\.html$/, '');
+    if (!/\/kit-[a-z0-9-]+$/.test(path)) return;               // product pages only
+    var heroBtn = document.querySelector('.page-hero a[href*="buy.stripe.com"]');
+    var nameEl = document.querySelector('.page-hero h1');
+    var priceEl = document.querySelector('.page-hero .price .amt');
+    var footer = document.querySelector('footer');
+    if (!heroBtn || !nameEl || !priceEl) return;               // sellable kits only (skip coming-soon)
+    if (!('IntersectionObserver' in window)) return;
+
+    var href = heroBtn.getAttribute('href');
+    var name = nameEl.textContent.trim().replace(/\s+Kit$/i, ''); // abbreviate: drop trailing "Kit"
+    var price = priceEl.textContent.trim();
+
+    var bar = document.createElement('div');
+    bar.className = 'buybar';
+    bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML =
+      '<div class="buybar-info">' +
+      '<div class="buybar-name">' + name + '</div>' +
+      '<div class="buybar-price">' + price + '</div>' +
+      '</div>' +
+      '<a class="buybar-btn" href="' + href + '" tabindex="-1" aria-label="Add ' + name + ' kit to cart — ' + price + '">Add to cart</a>';
+    document.body.appendChild(bar);
+    var btn = bar.querySelector('.buybar-btn');
+
+    var past = false, atFooter = false;
+    function update() {
+      var show = past && !atFooter;
+      bar.classList.toggle('show', show);
+      bar.setAttribute('aria-hidden', show ? 'false' : 'true');
+      btn.tabIndex = show ? 0 : -1;
+    }
+    var anchor = document.querySelector('.page-hero .hero-cta') || heroBtn;
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { past = !e.isIntersecting && e.boundingClientRect.top < 0; });
+      update();
+    }, { threshold: 0 }).observe(anchor);
+    if (footer) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { atFooter = e.isIntersecting; });
+        update();
+      }, { threshold: 0 }).observe(footer);
+    }
+  })();
+
   // Reveal on scroll
   var els = [].slice.call(document.querySelectorAll('.reveal'));
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
