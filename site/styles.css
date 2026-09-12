@@ -582,3 +582,20 @@ footer .brand img{height:40px}
 .promo-body .btn-gold{width:100%;justify-content:center;margin-top:4px}
 .promo-shop{display:inline-block;margin-top:14px;color:var(--brand-ink);font-weight:600;font-size:.9rem}
 @media(max-width:420px){.promo-hero{height:150px}.promo-badges{grid-template-columns:repeat(2,1fr);gap:12px 6px}}
+
+/* ---- Mobile sticky purchase bar (product pages) ---- */
+.buybar{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;align-items:center;gap:12px;
+  background:#0E0E0E;color:#fff;padding:11px 16px;padding-bottom:calc(11px + env(safe-area-inset-bottom));
+  box-shadow:0 -6px 22px rgba(0,0,0,.30);transform:translateY(140%);transition:transform .26s ease;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,var(--sans),sans-serif}
+.buybar.show{transform:translateY(0)}
+.buybar-info{min-width:0;flex:1 1 auto}
+.buybar-name{font-size:.92rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;color:#fff}
+.buybar-price{font-size:.82rem;color:#8fc4ff;font-weight:600;margin-top:1px}
+.buybar-btn{flex:0 0 auto;background:#2C94FC;color:#fff;font-weight:700;font-size:.86rem;letter-spacing:.04em;
+  text-transform:uppercase;border:none;border-radius:10px;padding:13px 20px;text-decoration:none;white-space:nowrap}
+.buybar-btn:hover{background:#1f83ee}
+.buybar-btn:active{background:#1a76d8}
+.buybar-btn:focus-visible{outline:3px solid #bcdcff;outline-offset:2px}
+@media(min-width:821px){.buybar{display:none!important}}
+@media(prefers-reduced-motion:reduce){.buybar{transition:none}}
