@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample Lab Report — Sacred Sampling Solutions</title>
+<meta name="description" content="See exactly what your results look like: a realistic sample Essentials water report with EPA limit comparisons, below-limit / over-limit flags, a plain-language summary, and chain-of-custody details.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230E0E0E'/%3E%3Cellipse cx='50' cy='30' rx='17' ry='6' fill='none' stroke='%236fb6ff' stroke-width='4'/%3E%3Crect x='46' y='22' width='8' height='26' fill='%236fb6ff'/%3E%3Crect x='38' y='30' width='24' height='7' fill='%236fb6ff'/%3E%3Ccircle cx='50' cy='66' r='20' fill='none' stroke='%232C94FC' stroke-width='5'/%3E%3Cpath d='M50 52 C58 64 60 70 60 74 a10 10 0 1 1 -20 0 C40 70 42 64 50 52 Z' fill='%238fc4f0'/%3E%3C/svg%3E">
+<link rel="canonical" href="https://www.sacredsamplingsolutions.com/sample-report">
+<meta property="og:title" content="Sample Lab Report — Sacred Sampling Solutions">
+<meta property="og:description" content="A realistic sample water report: EPA limit comparisons, below/over-limit flags, plain-language summary, and chain-of-custody.">
+<meta property="og:image" content="https://www.sacredsamplingsolutions.com/assets/og/og-default.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* Sample report document */
+  .srep-wrap{max-width:860px;margin:0 auto}
+  .srep-doc{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden}
+  .srep-head{background:#0E0E0E;color:#fff;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .srep-head .brandline{display:flex;align-items:center;gap:12px}
+  .srep-head .brandline b{font-size:1.05rem;letter-spacing:.02em}
+  .srep-head .brandline span{display:block;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#8fc4ff}
+  .srep-badge-verified{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#8fc4ff;border:1px solid rgba(143,196,255,.5);border-radius:999px;padding:6px 12px;white-space:nowrap}
+  .srep-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 22px;padding:20px 28px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+  .srep-meta div{font-size:.82rem;color:var(--ink-2)}
+  .srep-meta b{display:block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px;font-weight:700}
+  .srep-body{padding:22px 28px}
+  .srep-h{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-ink);font-weight:700;margin:0 0 12px}
+  .rtable{width:100%;border-collapse:collapse;font-size:.92rem}
+  .rtable th{text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700;padding:8px 10px;border-bottom:2px solid var(--line-strong)}
+  .rtable td{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .rtable .analyte b{color:var(--ink)}
+  .rtable .analyte span{display:block;font-size:.76rem;color:var(--ink-3)}
+  .rtable .num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink);white-space:nowrap}
+  .rtable .mcl{color:var(--ink-2);white-space:nowrap}
+  .rbadge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.02em;padding:5px 11px;border-radius:999px;white-space:nowrap}
+  .rbadge.ok{background:#e7f6ec;color:#1a7a3d;border:1px solid #b6e2c4}
+  .rbadge.over{background:#fdeceb;color:#c0362c;border:1px solid #f3c3bf}
+  .rbadge.info{background:var(--brand-wash);color:var(--brand-ink);border:1px solid #cfe4fb}
+  .srep-summary{margin:22px 0 4px;background:var(--brand-wash);border:1px solid #cfe4fb;border-left:4px solid var(--brand);border-radius:12px;padding:18px 20px}
+  .srep-summary h4{margin:0 0 8px;color:var(--ink);font-size:1rem}
+  .srep-summary p{margin:0 0 8px;font-size:.9rem;line-height:1.6;color:var(--ink-2)}
+  .srep-summary p:last-child{margin-bottom:0}
+  .srep-foot{border-top:1px solid var(--line);background:var(--panel-2);padding:18px 28px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 22px}
+  .srep-foot div{font-size:.76rem;color:var(--ink-2)}
+  .srep-foot b{display:block;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:2px;font-weight:700}
+  .srep-note{max-width:860px;margin:16px auto 0;font-size:.78rem;color:var(--ink-3);text-align:center}
+  .srep-legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:0 0 20px}
+  .srep-legend span{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;color:var(--ink-2)}
+  .srep-dot{width:11px;height:11px;border-radius:50%}
+  @media(max-width:560px){.rtable .hide-sm{display:none}.srep-head,.srep-meta,.srep-body,.srep-foot{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="Sacred Sampling Solutions home"><img src="/assets/logo.svg" alt="Sacred Sampling Solutions"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="/#how">How It Works</a>
+      <a href="/about">About</a>
+      <a href="/#contaminants">What We Test</a>
+      <a href="/learn">Learn</a>
+      <a href="https://app.sacredsamplingsolutions.com/login">Sign In</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="https://app.sacredsamplingsolutions.com/sampleregistration" class="btn btn-ghost btn-sm hide-sm">Activate kit</a>
+      <a href="/kits" class="btn btn-primary btn-sm">Shop kits</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="page-hero on-dark">
+  <div class="wrap center">
+    <span class="eyebrow">See what you get</span>
+    <h1>What your results actually look like</h1>
+    <p style="max-width:64ch;margin:12px auto 0;color:rgba(255,255,255,.9)">This is a realistic sample <b>Essentials</b> water report (personal details redacted). Every kit comes back the same way — each result compared to the EPA limit, flagged in plain language, and signed off by an accredited lab.</p>
+  </div>
+</section>
+
+<section class="prod">
+  <div class="srep-wrap">
+
+    <div class="srep-legend">
+      <span><span class="srep-dot" style="background:#1a7a3d"></span> Below limit — no action needed</span>
+      <span><span class="srep-dot" style="background:#c0362c"></span> Over limit — worth attention</span>
+      <span><span class="srep-dot" style="background:#2C94FC"></span> No health limit set</span>
+    </div>
+
+    <div class="srep-doc">
+      <div class="srep-head">
+        <div class="brandline">
+          <img src="/assets/logo-light.png" alt="" width="40" style="width:40px;height:auto">
+          <div><b>Certified Results Report</b><span>Sacred Sampling Solutions</span></div>
+        </div>
+        <div class="srep-badge-verified">✓ Chain-of-custody verified</div>
+      </div>
+
+      <div class="srep-meta">
+        <div><b>Sample ID</b>SS-ESS-024871</div>
+        <div><b>Kit</b>Essentials Water Panel</div>
+        <div><b>Client</b>[ REDACTED ]</div>
+        <div><b>Sampling point</b>Kitchen cold tap, first draw</div>
+        <div><b>Collected</b>Apr 14, 2026</div>
+        <div><b>Reported</b>Apr 22, 2026</div>
+      </div>
+
+      <div class="srep-body">
+        <p class="srep-h">Results vs. EPA limits</p>
+        <div style="overflow-x:auto">
+        <table class="rtable">
+          <thead>
+            <tr><th>Analyte</th><th>Your result</th><th class="hide-sm">EPA limit (MCL)</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="analyte"><b>Total Coliform Bacteria</b><span>Indicator of contamination</span></td>
+              <td class="num">Absent</td><td class="mcl hide-sm">Absent / 100 mL</td>
+              <td><span class="rbadge ok">✓ Below limit</span></td>
+            </tr>
+            <tr>
+              <td class="analyte"><b>E. coli</b><span>Fecal contamination marker</span></td>
+              <td class="num">Absent</td><td class="mcl hide-sm">Absent / 100 mL</td>
+              <td><span class="rbadge ok">✓ Below limit</span></td>
+            </tr>
+            <tr>
+              <td class="analyte"><b>Nitrate</b><span>as Nitrogen</span></td>
+              <td class="num">11.4 mg/L</td><td class="mcl hide-sm">10 mg/L</td>
+              <td><span class="rbadge over">⚠ Over limit</span></td>
+            </tr>
+            <tr>
+              <td class="analyte"><b>Chloride</b></td>
+              <td class="num">38 mg/L</td><td class="mcl hide-sm">250 mg/L*</td>
+              <td><span class="rbadge ok">✓ Below limit</span></td>
+            </tr>
+            <tr>
+              <td class="analyte"><b>Fluoride</b></td>
+              <td class="num">0.7 mg/L</td><td class="mcl hide-sm">4.0 mg/L</td>
+              <td><span class="rbadge ok">✓ Below limit</span></td>
+            </tr>
+            <tr>
+              <td class="analyte"><b>pH</b></td>
+              <td class="num">7.3</td><td class="mcl hide-sm">6.5 – 8.5*</td>
+              <td><span class="rbadge ok">✓ Within range</span></td>
+            </tr>
+            <tr>
+              <td class="analyte"><b>Total Hardness</b><span>as CaCO₃</span></td>
+              <td class="num">128 mg/L</td><td class="mcl hide-sm">—</td>
+              <td><span class="rbadge info">Hard — no health limit</span></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <p style="font-size:.74rem;color:var(--ink-3);margin:10px 2px 0">* Secondary (SMCL) — an aesthetic/taste guideline, not a health-based limit. MCL = EPA Maximum Contaminant Level.</p>
+
+        <div class="srep-summary">
+          <h4>What this means, in plain language</h4>
+          <p><b>One result needs attention.</b> Your <b>nitrate</b> came back at 11.4 mg/L, just above the EPA limit of 10 mg/L. Elevated nitrate usually points to fertilizer runoff, a nearby septic system, or animal waste reaching the water. It matters most for infants under six months and pregnant women. A recommended next step is to retest, consider a certified nitrate-removal system (reverse osmosis or ion exchange), and avoid using this tap for infant formula until it's resolved.</p>
+          <p><b>Everything else looks good.</b> No bacteria or E. coli were detected, and chloride, fluoride, and pH are all within safe, normal ranges. Your water is on the harder side, which is a taste/scale issue — not a health one.</p>
+        </div>
+      </div>
+
+      <div class="srep-foot">
+        <div><b>Laboratory</b>Long Island Analytical Laboratories, Holbrook, NY</div>
+        <div><b>Accreditation</b>NYSDOH ELAP #11693</div>
+        <div><b>Methods</b>SM 9223B · EPA 300.0 · SM 4500</div>
+        <div><b>Received</b>Apr 15, 2026 · 4.0 °C, intact</div>
+        <div><b>Analyst</b>[ REDACTED ], Lab Director</div>
+        <div><b>Report status</b>Final · signed &amp; released</div>
+      </div>
+    </div>
+
+    <p class="srep-note">Sample document for illustration. Values are representative, not from a real client. For informational &amp; screening purposes — not a medical diagnosis.</p>
+
+    <div class="hero-cta center" style="margin-top:28px;justify-content:center;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn btn-gold btn-lg" href="/kits">Get your own report <span class="arrow">→</span></a>
+      <a class="btn btn-ghost btn-lg" href="/quiz">Not sure which kit? Take the quiz</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="/" aria-label="Sacred Sampling Solutions home"><img src="/assets/logo.svg" alt="Sacred Sampling Solutions"></a>
+        <p class="foot-about">Certified laboratory environmental testing delivered to your door. Built on science, rooted in faith. Real results — no strips, no guesswork.</p>
+      </div>
+      <div>
+        <h4>Water Kits</h4>
+        <a href="/kits#kits">Heavy Metals &middot; Metals &amp; Minerals</a>
+        <a href="/kits#kits">Essentials</a>
+        <a href="/kits#kits">Comprehensive &middot; PFAS</a>
+        <a href="/kits#kits">Complete Home Inspection (all-in-one)</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="/#how">How it works</a>
+        <a href="/#contaminants">What we test</a>
+        <a href="/learn">Learn &amp; guides</a>
+        <a href="/quiz">Find my kit</a>
+        <a href="https://app.sacredsamplingsolutions.com/sampleregistration">Activate a kit</a>
+        <a href="/contact">Contact</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/refund">Refund &amp; Returns</a>
+        <a href="/shipping">Shipping Policy</a>
+        <a href="/disclaimer">Disclaimer</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Sacred Sampling Solutions LLC &middot; Assembled in the USA</span>
+      <span class="mono">For informational &amp; screening purposes. Not a medical diagnosis.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/app.js"></script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/consent.js"></script>
+</body>
+</html>
