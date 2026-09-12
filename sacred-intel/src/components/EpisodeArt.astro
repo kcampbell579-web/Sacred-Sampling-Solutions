@@ -2,23 +2,26 @@
 import { seriesInfo } from '../lib/series.js';
 const { number, title, series, image, square = false, showPlay = false } = Astro.props;
 const info = seriesInfo(series);
-const gradient = `linear-gradient(145deg, ${info.color} -10%, #1a1a1f 70%)`;
+const num = String(number).padStart(2, '0');
 ---
-<div class:list={['ep-art', { square }]}>
+<div class:list={['ep-art', { square }]} style={`--dot:${info.color}`}>
   {image ? (
     <img src={image} alt={title} loading="lazy" />
   ) : (
-    <div class="gen" style={`background:${gradient}`}>
-      <div style="display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1">
-        <span class="ser">{series}</span>
-        <span class="num">{String(number).padStart(2, '0')}</span>
+    <>
+      <span class="wm">{num}</span>
+      <div class="gen">
+        <div class="top">
+          <span class="ser">{series}</span>
+          <span class="no">EP {num}</span>
+        </div>
+        <div class="ttl">{title}</div>
       </div>
-      <div class="ttl">{title}</div>
-    </div>
+    </>
   )}
   {showPlay && (
     <span class="play" aria-hidden="true">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
     </span>
   )}
 </div>

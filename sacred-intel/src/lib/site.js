@@ -4,7 +4,7 @@ export const SITE = {
   tagline: 'The stories behind safety, science, engineering, and environmental health.',
   description:
     'Sacred Intel is a 20-minute podcast and content platform covering environmental health, workplace safety, engineering failures, disasters, emerging contaminants, and the science behind major headlines.',
-  email: 'hello@sacredintel.com',
+  email: 'hello@sacredintel.org',
   // Podcast subscription links — replace the "#" placeholders once your show
   // is live on each platform. The RSS feed is generated at /podcast.xml.
   subscribe: [

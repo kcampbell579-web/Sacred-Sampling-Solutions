@@ -5,12 +5,12 @@ const date = data.date.toLocaleDateString('en-US', { month: 'short', day: 'numer
 ---
 <article class="ep-card" data-article data-title={data.title.toLowerCase()} data-topics={data.topics.join('|').toLowerCase()}>
   <a href={`/articles/${slug}/`}>
-    <div class="ep-art">
+    <div class="ep-art" style="--dot:#8b5cf6">
       {data.image ? (
         <img src={data.image} alt={data.title} loading="lazy" />
       ) : (
-        <div class="gen" style="background:linear-gradient(145deg,#8b5cf6 -10%,#1a1a1f 70%)">
-          <span class="ser">{data.category}</span>
+        <div class="gen">
+          <div class="top"><span class="ser">{data.category}</span></div>
           <div class="ttl">{data.title}</div>
         </div>
       )}

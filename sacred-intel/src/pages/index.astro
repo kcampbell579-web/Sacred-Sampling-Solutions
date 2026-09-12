@@ -84,7 +84,7 @@ const fdate = fd?.date.toLocaleDateString('en-US', { month: 'long', day: 'numeri
       </div>
       <div class="grid grid-3">
         {seriesList.map((s) => (
-          <a class="series-card" href={`/series/${s.slug}/`} style={`background:linear-gradient(150deg, ${s.color} -20%, #141418 75%)`}>
+          <a class="series-card" href={`/series/${s.slug}/`} style={`--dot:${s.color}`}>
             <span class="eyebrow">Series</span>
             <h3>{s.name}</h3>
             <p>{s.blurb}</p>
