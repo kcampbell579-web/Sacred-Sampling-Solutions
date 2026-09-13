@@ -14,27 +14,30 @@
 var ORDER_START = 91001;       // first sequential number (global across kits)
 
 // Kit abbreviation used in the order number: SS-<ABBR>-<number>.
-// Keyed by the product name Stripe stores on each line item. Edit freely.
+// These are Sacred Sampling's official Sample ID codes, so an order number
+// lines up with the kit's Sample ID (e.g. Heavy Metals -> SS-BAS-91001).
+// Keyed by the product name Stripe stores on each line item.
 // A cart with more than one distinct kit uses 'MIX'.
 var ABBREV = {
-  'Ammonia Monitor': 'AMM',
-  'Asbestos Advanced Kit': 'ASBA',
-  'Asbestos Core Kit': 'ASBC',
-  'Asbestos Standard Kit': 'ASBS',
-  'Comprehensive Kit': 'COMP',
-  'Cosmetic Identification Panel': 'COSI',
-  'Cosmetic Screening Panel': 'COSS',
-  'Essentials Kit': 'ESS',
-  'Fentanyl Surface Residue Kit': 'FEN',
-  'Aldehyde & Formaldehyde Monitor': 'FORM',
-  'Heavy Metals Kit': 'HM',
-  'Baseline Residential IAQ Kit': 'IAQB',
-  'Comprehensive Residential IAQ Kit': 'IAQC',
-  'Standard Residential IAQ Kit': 'IAQS',
-  'Metals & Minerals Kit': 'MM',
+  'Heavy Metals Kit': 'BAS',
+  'Metals & Minerals Kit': 'MNM',
+  'Comprehensive Kit': 'COM',
   'PFAS Kit': 'PFAS',
-  'Complete Home Inspection Water Kit': 'CHI',
-  'VOC Monitor': 'VOC'
+  'Essentials Kit': 'ESS',
+  'Complete Home Inspection Water Kit': 'PRO',   // "Professional Water Kit"
+  'Baseline Residential IAQ Kit': 'IAB',
+  'Standard Residential IAQ Kit': 'IAS',
+  'Comprehensive Residential IAQ Kit': 'IAC',
+  'Aldehyde & Formaldehyde Monitor': 'ALD',
+  'VOC Monitor': 'VOC',
+  'Ammonia Monitor': 'AMM',
+  'Asbestos Core Kit': 'ASB',                    // Bulk — Core (PLM)
+  'Asbestos Standard Kit': 'ASP',                // Bulk — Standard (PLM+PC)
+  'Asbestos Advanced Kit': 'AST',                // Bulk — Advanced (TEM)
+  // Best-guess mappings — confirm these:
+  'Cosmetic Screening Panel': 'CSM',             // Cosmetic Contamination Analysis
+  'Cosmetic Identification Panel': 'CSM',
+  'Fentanyl Surface Residue Kit': 'SRC'          // Surface Residue — Chemical
 };
 function abbrevFor(items) {
   var names = {};
