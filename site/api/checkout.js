@@ -84,24 +84,18 @@ module.exports = async function handler(req, res) {
   var items = (body && Array.isArray(body.items)) ? body.items : [];
   var email = body && typeof body.email === 'string' ? body.email.trim() : '';
 
-  var lineItems = [];
+  // Validate + normalize the cart against the server-side catalog.
+  var valid = [];
   items.forEach(function (it) {
     var product = it && CATALOG[it.slug];
     if (!product) return;
     var qty = parseInt(it.qty, 10);
     if (!(qty > 0)) qty = 1;
     qty = Math.min(qty, 10);
-    lineItems.push({
-      quantity: qty,
-      price_data: {
-        currency: 'usd',
-        unit_amount: product.amount,
-        product_data: { name: product.name }
-      }
-    });
+    valid.push({ name: product.name, amount: product.amount, qty: qty });
   });
 
-  if (!lineItems.length) {
+  if (!valid.length) {
     return res.status(400).json({ error: 'Your cart is empty or contains no valid kits.' });
   }
 
@@ -112,39 +106,64 @@ module.exports = async function handler(req, res) {
   // Embedded Checkout: the payment form mounts on our own /checkout page and
   // Stripe redirects the top window to return_url once payment completes.
   // (Stripe 2026-03-25 renamed ui_mode 'embedded' -> 'embedded_page'.)
-  var payload = {
-    ui_mode: 'embedded_page',
-    mode: 'payment',
-    line_items: lineItems,
-    allow_promotion_codes: true,                       // WELCOME25 etc.
-    shipping_address_collection: { allowed_countries: ['US'] },
-    shipping_options: [{
-      shipping_rate_data: {
-        type: 'fixed_amount',
-        fixed_amount: { amount: 0, currency: 'usd' },
-        display_name: 'Free shipping'
+  function buildPayload(withTax) {
+    var lineItems = valid.map(function (v) {
+      var product_data = { name: v.name };
+      var price_data = { currency: 'usd', unit_amount: v.amount, product_data: product_data };
+      if (withTax) {
+        price_data.tax_behavior = 'exclusive';           // tax added on top of the price
+        product_data.tax_code = 'txcd_99999999';         // General - Tangible Goods
       }
-    }],
-    return_url: base + '/thank-you?session_id={CHECKOUT_SESSION_ID}'
-  };
-  if (email) payload.customer_email = email;
+      return { quantity: v.qty, price_data: price_data };
+    });
+    var p = {
+      ui_mode: 'embedded_page',
+      mode: 'payment',
+      line_items: lineItems,
+      allow_promotion_codes: true,                       // WELCOME25 etc.
+      shipping_address_collection: { allowed_countries: ['US'] },
+      shipping_options: [{
+        shipping_rate_data: {
+          type: 'fixed_amount',
+          fixed_amount: { amount: 0, currency: 'usd' },
+          display_name: 'Free shipping'
+        }
+      }],
+      return_url: base + '/thank-you?session_id={CHECKOUT_SESSION_ID}'
+    };
+    if (withTax) p.automatic_tax = { enabled: true };
+    if (email) p.customer_email = email;
+    return p;
+  }
 
-  try {
+  async function createSession(payload) {
     var resp = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + key,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
+      headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/x-www-form-urlencoded' },
       body: encodeForm(payload).toString()
     });
     var data = await resp.json();
-    if (!resp.ok || !data || !data.client_secret) {
-      var msg = (data && data.error && data.error.message) || 'Could not create checkout session.';
+    return { ok: resp.ok && data && !!data.client_secret, data: data };
+  }
+
+  try {
+    // Try with automatic tax on. If the Stripe account isn't set up for Stripe
+    // Tax yet, that specific call fails — so we retry once WITHOUT tax rather
+    // than break checkout. Tax then starts applying automatically the moment
+    // Stripe Tax is enabled in the dashboard, with no code change.
+    var result = await createSession(buildPayload(true));
+    if (!result.ok) {
+      var m = (result.data && result.data.error && result.data.error.message) || '';
+      if (/tax|origin address|registrations?/i.test(m)) {
+        result = await createSession(buildPayload(false));
+      }
+    }
+    if (!result.ok) {
+      var msg = (result.data && result.data.error && result.data.error.message) || 'Could not create checkout session.';
       return res.status(502).json({ error: msg });
     }
     return res.status(200).json({
-      clientSecret: data.client_secret,
+      clientSecret: result.data.client_secret,
       publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || ''
     });
   } catch (e) {
