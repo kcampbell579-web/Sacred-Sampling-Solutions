@@ -133,7 +133,9 @@
     if (!window.Stripe) { showErr('Could not load the payment library.'); return; }
     try {
       var stripe = Stripe(res.d.publishableKey);
-      stripe.initEmbeddedCheckout({ clientSecret: res.d.clientSecret }).then(function (ec) {
+      // Stripe 2026-03-25 renamed initEmbeddedCheckout() -> createEmbeddedCheckoutPage().
+      var start = stripe.createEmbeddedCheckoutPage || stripe.initEmbeddedCheckout;
+      start.call(stripe, { clientSecret: res.d.clientSecret }).then(function (ec) {
         mount.innerHTML = '';
         ec.mount('#checkout');
       }, function () { showErr(); });
