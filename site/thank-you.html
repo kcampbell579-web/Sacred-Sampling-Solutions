@@ -43,6 +43,7 @@
     <span class="eyebrow">Order confirmed</span>
     <h1>Thank you for your order!</h1>
     <p style="max-width:60ch;margin:12px auto 0;color:rgba(255,255,255,.9)">Your payment went through and your kit is on its way. A confirmation email with your receipt is headed to your inbox now.</p>
+    <p id="orderNo" hidden style="margin:16px auto 0;font-family:var(--mono);font-size:.9rem;letter-spacing:.06em;color:#8fc4ff">Order number: <b id="orderNoVal" style="color:#fff"></b></p>
   </div>
 </section>
 
@@ -123,42 +124,79 @@
     'iaq-comprehensive': 'Comprehensive Residential IAQ Kit'
   };
   var params = new URLSearchParams(location.search);
-  var txn = params.get('session_id') || params.get('order') || undefined;
-  var slug = params.get('product') || undefined;
-  var name = slug ? (NAMES[slug] || slug) : undefined;
-  var value = parseFloat(params.get('value'));
-  if (isNaN(value)) value = undefined;
+  var sessionId = params.get('session_id') || undefined;
   var attr = {}; try { attr = JSON.parse(localStorage.getItem('sss_attr') || '{}'); } catch (e) {}
+
+  // Order details. Seeded from the URL, then enriched from Stripe (real amount
+  // paid + our own order number) via /api/order before the conversion fires.
+  var order = {
+    txn: sessionId || params.get('order') || undefined,   // transaction_id / dedup key
+    value: parseFloat(params.get('value')),               // fallback if the fetch fails
+    slug: params.get('product') || undefined,
+    items: undefined
+  };
+  if (isNaN(order.value)) order.value = undefined;
 
   var fired = false;
   function firePurchase() {
     if (fired) return;
     if (!window.gtag && !window.fbq) return;
     fired = true;
+    var name = order.slug ? (NAMES[order.slug] || order.slug) : undefined;
     if (window.gtag) {
-      // GA4 purchase — includes product + revenue + captured campaign source
-      var ga = { transaction_id: txn, currency: 'USD' };
-      if (value !== undefined) ga.value = value;
-      if (slug) ga.items = [{ item_id: slug, item_name: name, price: value, quantity: 1 }];
+      var ga = { transaction_id: order.txn, currency: 'USD' };
+      if (order.value !== undefined) ga.value = order.value;
+      if (order.items) ga.items = order.items;
+      else if (order.slug) ga.items = [{ item_id: order.slug, item_name: name, price: order.value, quantity: 1 }];
       if (attr.utm_source) ga.source = attr.utm_source;
       if (attr.utm_medium) ga.medium = attr.utm_medium;
       if (attr.utm_campaign) ga.campaign = attr.utm_campaign;
       window.gtag('event', 'purchase', ga);
       // Google Ads Purchase conversion (AW-18399559838/JyO2CLaSvuQcEJ6BzMVE)
-      var conv = { send_to: 'AW-18399559838/JyO2CLaSvuQcEJ6BzMVE', transaction_id: txn, currency: 'USD' };
-      conv.value = (value !== undefined) ? value : 1.0;
+      var conv = { send_to: 'AW-18399559838/JyO2CLaSvuQcEJ6BzMVE', transaction_id: order.txn, currency: 'USD' };
+      conv.value = (order.value !== undefined) ? order.value : 1.0;
       window.gtag('event', 'conversion', conv);
     }
     if (window.fbq) {
-      // Meta Purchase — includes product + value
       var fb = { currency: 'USD' };
-      if (value !== undefined) fb.value = value;
-      if (slug) { fb.content_type = 'product'; fb.content_ids = [slug]; fb.content_name = name; }
+      if (order.value !== undefined) fb.value = order.value;
+      if (order.slug) { fb.content_type = 'product'; fb.content_ids = [order.slug]; fb.content_name = name; }
       window.fbq('track', 'Purchase', fb);
     }
   }
-  firePurchase();
-  var tries = 0, t = setInterval(function () { firePurchase(); if (fired || ++tries > 20) clearInterval(t); }, 400);
+  function startFiring() {
+    firePurchase();
+    var tries = 0, t = setInterval(function () { firePurchase(); if (fired || ++tries > 20) clearInterval(t); }, 400);
+  }
+
+  function showOrderNo(num) {
+    if (!num) return;
+    var el = document.getElementById('orderNo'), v = document.getElementById('orderNoVal');
+    if (el && v) { v.textContent = num; el.hidden = false; }
+  }
+
+  // Enrich from Stripe, then fire. A short timeout guarantees the conversion
+  // still fires (with the fallback value) if the lookup is slow or fails.
+  if (sessionId) {
+    var done = false;
+    function proceed() { if (done) return; done = true; startFiring(); }
+    fetch('/api/order?session_id=' + encodeURIComponent(sessionId))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (d) {
+          if (typeof d.amount_total === 'number') order.value = d.amount_total;
+          if (d.order_number) { order.txn = d.order_number; showOrderNo(d.order_number); }
+          if (d.items && d.items.length) {
+            order.items = d.items.map(function (i) { return { item_name: i.name, quantity: i.quantity }; });
+          }
+        }
+        proceed();
+      })
+      .catch(proceed);
+    setTimeout(proceed, 2500);
+  } else {
+    startFiring();
+  }
 })();
 </script>
 </body>
