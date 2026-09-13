@@ -31,6 +31,47 @@
     });
   }
 
+  // Mega-menu — rebuild the header nav into grouped dropdowns (desktop) /
+  // accordion (mobile). Injected here so every page shares one nav source.
+  if (navLinks) {
+    var MENU = [
+      ['Shop Tests', [['All Tests', '/kits'], ['Water', '/kits#filter=water'], ['Indoor Air', '/kits#filter=air'], ['Asbestos', '/kits#filter=asbestos'], ['Surface & Dust', '/kits#filter=surface'], ['Cosmetics', '/kits#filter=cosmetic']]],
+      ['What Should I Test?', [['Find My Test — 60-sec quiz', '/quiz'], ['Private Well', '/well-water'], ['Older Home / Plumbing', '/older-home'], ['Buying a Home', '/buying-a-home'], ['Near Landfill / Airport / Industry', '/near-industry'], ['Renovating', '/renovating'], ['New Furniture / Chemical Odor', '/chemical-odor']]],
+      ['How It Works', [['How It Works', '/#how'], ['Sample Reports', '/sample-report'], ['Laboratory & Methods', '/laboratory'], ['Shipping & Turnaround', '/shipping']]],
+      ['Learn', [['Education Center', '/learn'], ['Water', '/learn#water'], ['Indoor Air', '/learn#air'], ['Asbestos', '/learn#asbestos'], ['News / Sacred Intel', '/learn']]],
+      ['About', [['About Sacred', '/about'], ['Our Laboratory', '/laboratory'], ['For Professionals', '/professionals'], ['Contact', '/contact']]]
+    ];
+    var chev = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+    var html = MENU.map(function (g, i) {
+      var rightClass = (i >= MENU.length - 2) ? ' nav-right' : '';
+      var items = g[1].map(function (it) { return '<a href="' + it[1] + '">' + it[0] + '</a>'; }).join('');
+      return '<div class="navgroup' + rightClass + '">' +
+        '<button type="button" class="navgroup-btn" aria-expanded="false" data-href="' + g[1][0][1] + '">' + g[0] + ' ' + chev + '</button>' +
+        '<div class="navdrop">' + items + '</div></div>';
+    }).join('');
+    html += '<a class="nav-signin" href="https://app.sacredsamplingsolutions.com/login">My Results</a>';
+    navLinks.innerHTML = html;
+
+    navLinks.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.navgroup-btn');
+      if (!btn) return;
+      if (window.matchMedia('(min-width:981px)').matches) {
+        // Desktop: hover reveals the dropdown; a click goes to the section landing.
+        var href = btn.getAttribute('data-href');
+        if (href) window.location.href = href;
+        return;
+      }
+      // Mobile: toggle this group's accordion.
+      var group = btn.parentNode;
+      var open = group.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    // Turn the header's primary CTA into "Find my test".
+    var primaryCta = document.querySelector('header .nav-cta a.btn-primary');
+    if (primaryCta) { primaryCta.setAttribute('href', '/quiz'); primaryCta.textContent = 'Find my test'; }
+  }
+
   // Floating WhatsApp chat button (opens a chat to the business number)
   (function () {
     var PHONE = '16313171295'; // WhatsApp Business — country code + number, digits only
