@@ -25,9 +25,8 @@ var ABBREV = {
   'PFAS Kit': 'PFAS',
   'Essentials Kit': 'ESS',
   'Complete Home Inspection Water Kit': 'PRO',   // "Professional Water Kit"
-  'Baseline Residential IAQ Kit': 'IAB',
-  'Standard Residential IAQ Kit': 'IAS',
-  'Comprehensive Residential IAQ Kit': 'IAC',
+  'Complete Air Quality Kit': 'IAC',
+  'NO₂ Monitor': 'NO2',                          // confirm Sample ID code
   'Aldehyde & Formaldehyde Monitor': 'ALD',
   'VOC Monitor': 'VOC',
   'Ammonia Monitor': 'AMM',

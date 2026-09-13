@@ -221,7 +221,7 @@
       var name = nameEl.textContent.trim();
       var priceCents = Math.round(parseFloat(amtEl.textContent.replace(/[^0-9.]/g, '')) * 100);
       if (!(priceCents > 0)) return;
-      [].forEach.call(document.querySelectorAll('a[href*="buy.stripe.com"]'), function (a) {
+      [].forEach.call(document.querySelectorAll('a[href*="buy.stripe.com"], [data-addcart]'), function (a) {
         a.removeAttribute('href');
         a.setAttribute('role', 'button');
         a.style.cursor = 'pointer';
@@ -349,7 +349,7 @@
   (function () {
     var path = location.pathname.replace(/\.html$/, '');
     if (!/\/kit-[a-z0-9-]+$/.test(path)) return;               // product pages only
-    var heroBtn = document.querySelector('.page-hero a[href*="buy.stripe.com"]');
+    var heroBtn = document.querySelector('.page-hero a[href*="buy.stripe.com"], .page-hero [data-addcart]');
     var nameEl = document.querySelector('.page-hero h1');
     var priceEl = document.querySelector('.page-hero .price .amt');
     var footer = document.querySelector('footer');

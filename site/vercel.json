@@ -9,6 +9,16 @@
       "statusCode": 301
     },
     {
+      "source": "/kit-iaq-baseline",
+      "destination": "/kit-voc-air",
+      "statusCode": 301
+    },
+    {
+      "source": "/kit-iaq-standard",
+      "destination": "/kits#air",
+      "statusCode": 301
+    },
+    {
       "source": "/services-3/sampleregistration",
       "destination": "https://app.sacredsamplingsolutions.com/sampleregistration",
       "permanent": false
