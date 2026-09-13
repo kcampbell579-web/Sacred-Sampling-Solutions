@@ -682,3 +682,15 @@ footer .brand img{height:40px}
   .navdrop a{color:var(--ink-3);padding:9px 0}
   .nav-signin{padding:14px 0;border-bottom:1px solid var(--line);color:var(--ink-2)}
 }
+
+/* ---- Homepage: Shop by Concern ---- */
+.concern-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+@media(max-width:900px){.concern-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:440px){.concern-grid{grid-template-columns:1fr}}
+.concern-card{display:flex;flex-direction:column;gap:11px;align-items:flex-start;text-align:left;
+  background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);
+  transition:border-color .15s ease,transform .12s ease,box-shadow .2s ease;color:var(--ink);min-height:132px}
+.concern-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.concern-ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:var(--brand-wash);color:var(--brand-ink);flex:none}
+.concern-card b{font-size:1rem;line-height:1.25;color:var(--ink)}
+.concern-card .go{color:var(--brand);font-weight:700;margin-top:auto;font-size:.84rem;font-family:var(--mono);letter-spacing:.02em}
