@@ -111,8 +111,9 @@ module.exports = async function handler(req, res) {
 
   // Embedded Checkout: the payment form mounts on our own /checkout page and
   // Stripe redirects the top window to return_url once payment completes.
+  // (Stripe 2026-03-25 renamed ui_mode 'embedded' -> 'embedded_page'.)
   var payload = {
-    ui_mode: 'embedded',
+    ui_mode: 'embedded_page',
     mode: 'payment',
     line_items: lineItems,
     allow_promotion_codes: true,                       // WELCOME25 etc.
