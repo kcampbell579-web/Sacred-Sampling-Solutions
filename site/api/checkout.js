@@ -29,7 +29,7 @@ var CATALOG = {
   'kit-iaq-standard':           { name: 'Standard Residential IAQ Kit',       amount: 34900 },
   'kit-metals-minerals':        { name: 'Metals & Minerals Kit',              amount: 24900 },
   'kit-pfas':                   { name: 'PFAS Kit',                           amount: 32900 },
-  'kit-professional':           { name: 'Complete Home Inspection Water Kit', amount: 119500 },
+  'kit-professional':           { name: 'Complete Home Inspection Water Kit', amount: 80000 },
   'kit-voc-air':                { name: 'VOC Monitor',                        amount: 19900 }
 };
 
