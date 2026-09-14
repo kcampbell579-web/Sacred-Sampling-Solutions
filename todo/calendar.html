@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lamplight Calendar</title>
+<meta name="description" content="A click-to-add month calendar that prints clean and exports a PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ── tokens ─────────────────────────────────────────────────── */
+:root{
+  color-scheme: light;
+  --ground:#ECEEF2;
+  --surface:#F9FAFC;
+  --surface-2:#E2E6EC;
+  --ink:#131A24;
+  --ink-2:#47535F;
+  --ink-3:#7B8794;
+  --line:#D2D9E1;
+  --line-2:#C0C9D4;
+  --accent:#9A6A0C;
+  --accent-hi:#8A5E08;
+  --accent-soft:#F3E3BE;
+  --accent-ink:#FFFFFF;
+  --danger:#A03224;
+  --c1:#B4801A; --c2:#2E6E6B; --c3:#A63D5A; --c4:#5A4B9E; --c5:#4A7A3E;
+  --shadow:0 1px 2px rgba(19,26,36,.05), 0 14px 34px -24px rgba(19,26,36,.45);
+  --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:'Karla', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0F151D; --surface:#161E28; --surface-2:#1E2833;
+    --ink:#E8EDF3; --ink-2:#A8B4C1; --ink-3:#78838F;
+    --line:#28323E; --line-2:#38434F;
+    --accent:#E8B33C; --accent-hi:#F3C25C; --accent-soft:#3A2E14; --accent-ink:#181204;
+    --danger:#E4796C;
+    --c1:#E8B33C; --c2:#5FBFB8; --c3:#E88AA0; --c4:#A597E8; --c5:#8FC97F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -26px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0F151D; --surface:#161E28; --surface-2:#1E2833;
+  --ink:#E8EDF3; --ink-2:#A8B4C1; --ink-3:#78838F;
+  --line:#28323E; --line-2:#38434F;
+  --accent:#E8B33C; --accent-hi:#F3C25C; --accent-soft:#3A2E14; --accent-ink:#181204;
+  --danger:#E4796C;
+  --c1:#E8B33C; --c2:#5FBFB8; --c3:#E88AA0; --c4:#A597E8; --c5:#8FC97F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -26px rgba(0,0,0,.9);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+::selection{background:var(--accent-soft);color:var(--ink)}
+.page{max-width:1120px;margin:0 auto;padding:24px 20px 70px;display:flex;flex-direction:column;gap:16px}
+
+/* ── masthead ───────────────────────────────────────────────── */
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.title-block{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.month{font-family:var(--font-display);font-optical-sizing:auto;font-weight:600;font-size:30px;letter-spacing:-.02em;margin:0;line-height:1.1}
+.year{font-family:var(--font-mono);font-size:14px;color:var(--ink-3);letter-spacing:.12em}
+.nav{display:flex;align-items:center;gap:5px}
+.nav button{
+  height:32px;min-width:32px;padding:0 11px;border-radius:8px;border:1px solid var(--line);
+  color:var(--ink-2);font-size:13px;font-weight:600;transition:.15s;display:grid;place-items:center;
+}
+.nav button:hover{border-color:var(--line-2);color:var(--ink);background:var(--surface)}
+.nav svg{width:15px;height:15px}
+.tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tool{
+  font-size:12.5px;font-weight:600;color:var(--ink-2);padding:7px 12px;border-radius:8px;
+  border:1px solid var(--line);transition:.15s;display:inline-flex;align-items:center;gap:6px;
+}
+.tool:hover{border-color:var(--line-2);color:var(--ink);background:var(--surface)}
+.tool.solid{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tool.solid:hover{background:var(--accent-hi);border-color:var(--accent-hi)}
+.tool svg{width:14px;height:14px}
+
+/* ── grid ───────────────────────────────────────────────────── */
+.cal{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--line)}
+.dow div{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);padding:9px 10px;text-align:left;
+}
+.weeks{display:grid;grid-template-columns:repeat(7,1fr)}
+.day{
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  min-height:104px;padding:6px 7px 8px;display:flex;flex-direction:column;gap:4px;
+  text-align:left;align-items:stretch;transition:background .12s;position:relative;
+}
+.day:nth-child(7n){border-right:0}
+.weeks .day:nth-last-child(-n+7){border-bottom:0}
+.day:hover{background:var(--surface-2)}
+.day .num{
+  font-family:var(--font-mono);font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink-2);
+  width:23px;height:23px;display:grid;place-items:center;border-radius:50%;flex:none;
+}
+.day.out{background:transparent;opacity:.42}
+.day.today .num{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.day.sel{background:var(--accent-soft)}
+.day.sel::after{
+  content:"";position:absolute;inset:0;border:2px solid var(--accent);pointer-events:none;
+}
+.day .evs{display:flex;flex-direction:column;gap:2px;min-width:0}
+.chip{
+  display:flex;align-items:center;gap:5px;font-size:11.5px;line-height:1.35;
+  padding:1px 4px;border-radius:4px;min-width:0;width:100%;text-align:left;color:var(--ink);
+}
+.chip:hover{background:var(--surface)}
+.day.sel .chip:hover{background:rgba(255,255,255,.45)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--c1)}
+.chip .t{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);flex:none}
+.chip .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.day .evs .chip:nth-of-type(n+4){display:none}
+.more{font-size:10.5px;color:var(--ink-3);padding:0 4px;text-align:left}
+
+/* ── day panel ──────────────────────────────────────────────── */
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+  padding:15px 16px 14px;display:flex;flex-direction:column;gap:12px;
+}
+.panel h2{font-family:var(--font-display);font-weight:600;font-size:18px;margin:0;letter-spacing:-.01em}
+.panel .sub{font-family:var(--font-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.rows{display:flex;flex-direction:column;gap:6px}
+.row{
+  display:grid;grid-template-columns:auto 84px 1fr auto;align-items:center;gap:8px;
+  padding:5px 6px;border-radius:8px;
+}
+.row:hover{background:var(--surface-2)}
+.swatch{width:16px;height:16px;border-radius:50%;background:var(--c1);border:1px solid rgba(0,0,0,.12)}
+.row input[type=time]{
+  font-family:var(--font-mono);font-size:12px;border:1px solid transparent;background:transparent;
+  border-radius:6px;padding:3px 4px;width:100%;min-width:0;
+}
+.row input[type=text]{
+  border:1px solid transparent;background:transparent;border-radius:6px;padding:3px 6px;
+  font-size:14px;width:100%;min-width:0;
+}
+.row input:hover{border-color:var(--line)}
+.row input:focus{outline:none;border-color:var(--accent);background:var(--ground)}
+.row .del{
+  width:26px;height:26px;display:grid;place-items:center;border-radius:6px;color:var(--ink-3);opacity:0;transition:.12s;
+}
+.row:hover .del,.row:focus-within .del{opacity:1}
+.row .del:hover{color:var(--danger);background:var(--surface)}
+.row .del svg{width:14px;height:14px}
+.add{
+  display:grid;grid-template-columns:auto 84px 1fr auto;align-items:center;gap:8px;
+  border-top:1px dashed var(--line);padding-top:11px;
+}
+.add input[type=text],.add input[type=time]{
+  border:1px solid var(--line);background:var(--ground);border-radius:8px;padding:7px 9px;width:100%;min-width:0;
+}
+.add input[type=time]{font-family:var(--font-mono);font-size:12px}
+.add input:focus{outline:none;border-color:var(--accent)}
+.add .go{
+  background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:13px;
+  padding:8px 15px;border-radius:8px;transition:background .15s;
+}
+.add .go:hover{background:var(--accent-hi)}
+.swatches{display:flex;gap:4px}
+.swatches button{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.12);opacity:.35;transition:.12s}
+.swatches button[aria-pressed="true"]{opacity:1;box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px currentColor}
+.none{font-family:var(--font-display);font-style:italic;color:var(--ink-3);font-size:14px;padding:2px 6px}
+
+.foot{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-3);
+  border-top:1px solid var(--line);padding-top:14px;
+}
+.foot .spacer{flex:1}
+.saved{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.saved.warn{color:var(--danger)}
+
+/* ── print sheet (screen copy is hidden) ────────────────────── */
+.agenda{display:none}
+
+dialog{
+  border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);
+  box-shadow:var(--shadow);padding:0;max-width:520px;width:calc(100% - 32px);
+}
+dialog::backdrop{background:rgba(9,13,19,.55)}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:13px}
+.dlg h3{font-family:var(--font-display);font-weight:600;font-size:19px;margin:0}
+.dlg p{margin:0;font-size:13.5px;color:var(--ink-2);max-width:62ch}
+.dlg textarea{
+  width:100%;min-height:150px;font-family:var(--font-mono);font-size:11.5px;line-height:1.5;
+  background:var(--ground);border:1px solid var(--line);border-radius:9px;padding:10px;resize:vertical;
+}
+.dlg textarea:focus{outline:none;border-color:var(--accent)}
+.dlg-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dlg-row .spacer{flex:1}
+.btn{font-size:13px;font-weight:600;padding:7px 14px;border-radius:8px;border:1px solid var(--line);color:var(--ink);transition:.15s}
+.btn:hover{border-color:var(--line-2);background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:var(--accent-hi);border-color:var(--accent-hi)}
+.btn.quiet{border-color:transparent;color:var(--ink-2)}
+
+#toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  background:var(--ink);color:var(--ground);font-size:13px;font-weight:500;
+  padding:9px 16px;border-radius:9px;box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:60;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+@media (max-width:760px){
+  .page{padding:18px 12px 60px}
+  .month{font-size:25px}
+  .day{min-height:76px;padding:4px 4px 6px}
+  .dow div{padding:7px 5px;font-size:9.5px}
+  .chip .t{display:none}
+  .day .evs .chip:nth-of-type(n+3){display:none}
+  .row,.add{grid-template-columns:auto 76px 1fr auto;gap:6px}
+}
+
+/* ── print ──────────────────────────────────────────────────── */
+@page{ size: letter landscape; margin: 11mm; }
+@media print{
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]){
+    color-scheme: light;
+    --ground:#fff; --surface:#fff; --surface-2:#fff;
+    --ink:#000; --ink-2:#333; --ink-3:#666;
+    --line:#b9b9b9; --line-2:#8f8f8f;
+    --accent:#000; --accent-soft:#fff; --accent-ink:#fff;
+    --c1:#B4801A; --c2:#2E6E6B; --c3:#A63D5A; --c4:#5A4B9E; --c5:#4A7A3E;
+    --shadow:none;
+  }
+  body{background:#fff}
+  .page{max-width:none;padding:0;gap:8px}
+  .no-print{display:none !important}
+  .masthead{gap:8px;margin-bottom:2px}
+  .month{font-size:20pt}
+  .year{font-size:10pt}
+  .cal{border-radius:0;border-color:#8f8f8f;box-shadow:none;break-inside:avoid}
+  .dow div{padding:3pt 4pt;font-size:7.5pt;color:#333}
+  .day{min-height:74pt;padding:3pt 4pt;break-inside:avoid}
+  .day.out{opacity:.45}
+  .day.sel{background:#fff}
+  .day.sel::after{display:none}
+  .day.today .num{background:#000;color:#fff}
+  .day .num{font-size:8.5pt;width:15pt;height:15pt}
+  .chip{font-size:7.5pt;padding:0 1pt;gap:3pt}
+  .chip .t{font-size:6.5pt;display:inline}
+  .day .evs .chip:nth-of-type(n+4){display:flex}
+  .dot{width:5pt;height:5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .more{display:none}
+  .agenda{display:block;margin-top:10pt;break-before:auto}
+  .agenda h2{
+    font-family:var(--font-display);font-size:11pt;font-weight:600;margin:0 0 5pt;
+    border-bottom:1px solid #8f8f8f;padding-bottom:3pt;
+  }
+  .agenda ul{list-style:none;margin:0;padding:0;columns:3;column-gap:16pt}
+  .agenda li{font-size:8pt;line-height:1.5;break-inside:avoid;display:flex;gap:5pt}
+  .agenda .d{font-family:var(--font-mono);font-size:7.5pt;color:#333;flex:none;min-width:44pt}
+  .agenda .tm{font-family:var(--font-mono);font-size:7.5pt;color:#333;flex:none;min-width:38pt}
+  .agenda .n{min-width:0}
+  .agenda .empty{font-style:italic;color:#666;font-size:8pt}
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+  <header class="masthead">
+    <div class="title-block">
+      <h1 class="month" id="monthName">Month</h1>
+      <span class="year" id="yearName">0000</span>
+      <div class="nav no-print">
+        <button type="button" id="prevBtn" aria-label="Previous month">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <button type="button" id="todayBtn">Today</button>
+        <button type="button" id="nextBtn" aria-label="Next month">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="tools no-print">
+      <button type="button" class="tool solid" id="printBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-6h16v6h-2M8 14h8v7H8z"/></svg>
+        Print
+      </button>
+      <button type="button" class="tool" id="pdfBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 19h16"/></svg>
+        PDF
+      </button>
+      <button type="button" class="tool" id="exportBtn">Export</button>
+      <button type="button" class="tool" id="importBtn">Import</button>
+    </div>
+  </header>
+
+  <section class="cal">
+    <div class="dow" id="dow"></div>
+    <div class="weeks" id="weeks"></div>
+  </section>
+
+  <section class="panel no-print" id="panel"></section>
+
+  <section class="agenda" id="agenda"></section>
+
+  <footer class="foot no-print">
+    <span class="saved" id="savedNote">&nbsp;</span>
+    <span class="spacer"></span>
+    <span>Click a day to add · <kbd>P</kbd> prints</span>
+  </footer>
+</main>
+
+<dialog id="dataDlg">
+  <div class="dlg">
+    <h3 id="dlgTitle">Import</h3>
+    <p id="dlgBody">Choose a calendar export, or paste one below.</p>
+    <input type="file" id="fileIn" accept="application/json,.json">
+    <textarea id="jsonArea" spellcheck="false" aria-label="JSON data"></textarea>
+    <div class="dlg-row" id="dlgActions"></div>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ── constants ──────────────────────────────────────────────── */
+var KEY = "lamplight.cal.v1";
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var MON3 = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var DOW = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var DOW3 = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var COLORS = ["c1","c2","c3","c4","c5"];
+var COLOR_RGB = { c1:[0.706,0.502,0.102], c2:[0.180,0.431,0.420], c3:[0.651,0.239,0.353], c4:[0.353,0.294,0.620], c5:[0.290,0.478,0.243] };
+
+var state = { v:1, events:[] };
+var view = { y:0, m:0, sel:null, storage:true };
+
+function uid(){ return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ── dates ──────────────────────────────────────────────────── */
+function ymd(d){
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function fromYMD(s){ var p = s.split("-"); return new Date(Number(p[0]), Number(p[1])-1, Number(p[2])); }
+function todayYMD(){ return ymd(new Date()); }
+function isYMD(s){ return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s); }
+
+function prettyTime(t){
+  if(!t) return "";
+  var p = t.split(":"), h = Number(p[0]), m = p[1];
+  var ap = h < 12 ? "am" : "pm";
+  var h12 = h % 12; if(h12 === 0) h12 = 12;
+  return h12 + (m === "00" ? "" : ":" + m) + ap;
+}
+
+/* ── storage ────────────────────────────────────────────────── */
+function storageWorks(){
+  try{ localStorage.setItem("lamplight.probe","1"); localStorage.removeItem("lamplight.probe"); return true; }
+  catch(e){ return false; }
+}
+function load(){
+  if(!view.storage) return;
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    var p = JSON.parse(raw);
+    if(p && Array.isArray(p.events)) state = normalize(p);
+  }catch(e){ /* unreadable — start clean rather than crash */ }
+}
+var saveTimer = null;
+function save(){
+  if(!view.storage) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){ view.storage = false; renderFoot(); }
+  }, 150);
+}
+function normalize(raw){
+  var seen = {};
+  var events = raw.events.map(function(e){
+    var id = typeof e.id === "string" && e.id && !seen[e.id] ? e.id : uid();
+    seen[id] = true;
+    return {
+      id: id,
+      date: isYMD(e.date) ? e.date : todayYMD(),
+      time: typeof e.time === "string" && /^\d{2}:\d{2}$/.test(e.time) ? e.time : "",
+      title: String(e.title == null ? "" : e.title).slice(0,300),
+      color: COLORS.indexOf(e.color) >= 0 ? e.color : "c1"
+    };
+  }).filter(function(e){ return e.title.trim() !== ""; });
+  return { v:1, events: events };
+}
+
+function eventsOn(date){
+  return state.events.filter(function(e){ return e.date === date; }).sort(cmpEvent);
+}
+function cmpEvent(a,b){
+  if(!a.time && b.time) return -1;
+  if(a.time && !b.time) return 1;
+  if(a.time !== b.time) return a.time < b.time ? -1 : 1;
+  return a.title.localeCompare(b.title);
+}
+function byId(id){
+  for(var i=0;i<state.events.length;i++) if(state.events[i].id === id) return state.events[i];
+  return null;
+}
+
+/* ── helpers ────────────────────────────────────────────────── */
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove("show"); }, 2100);
+}
+
+/* Weeks covering the displayed month, as arrays of {date, out}. */
+function monthGrid(y, m){
+  var first = new Date(y, m, 1);
+  var start = new Date(y, m, 1 - first.getDay());
+  var last = new Date(y, m+1, 0);
+  var cells = Math.ceil((first.getDay() + last.getDate()) / 7) * 7;
+  var out = [];
+  for(var i=0;i<cells;i++){
+    var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    out.push({ date: ymd(d), out: d.getMonth() !== m });
+  }
+  return out;
+}
+
+/* ── render ─────────────────────────────────────────────────── */
+function render(){
+  document.getElementById("monthName").textContent = MONTHS[view.m];
+  document.getElementById("yearName").textContent = String(view.y);
+  renderDow();
+  renderGrid();
+  renderPanel();
+  renderAgenda();
+  renderFoot();
+}
+
+function renderDow(){
+  var h = "";
+  for(var i=0;i<7;i++) h += "<div>" + DOW3[i] + "</div>";
+  document.getElementById("dow").innerHTML = h;
+}
+
+function renderGrid(){
+  var cells = monthGrid(view.y, view.m);
+  var today = todayYMD();
+  var h = "";
+  for(var i=0;i<cells.length;i++){
+    var c = cells[i];
+    var evs = eventsOn(c.date);
+    var cls = "day" + (c.out ? " out" : "") + (c.date === today ? " today" : "") + (c.date === view.sel ? " sel" : "");
+    var d = fromYMD(c.date);
+    h += '<button type="button" class="' + cls + '" data-date="' + c.date + '" aria-label="' +
+         DOW[d.getDay()] + ", " + MON3[d.getMonth()] + " " + d.getDate() + ", " + evs.length + ' scheduled">';
+    h += '<span class="num">' + d.getDate() + "</span>";
+    h += '<span class="evs">';
+    for(var j=0;j<evs.length;j++){
+      var e = evs[j];
+      h += '<span class="chip" data-id="' + esc(e.id) + '">' +
+           '<span class="dot" style="background:var(--' + e.color + ')"></span>' +
+           (e.time ? '<span class="t">' + esc(prettyTime(e.time)) + "</span>" : "") +
+           '<span class="n">' + esc(e.title) + "</span></span>";
+    }
+    h += "</span>";
+    if(evs.length > 3) h += '<span class="more">+' + (evs.length - 3) + " more</span>";
+    h += "</button>";
+  }
+  document.getElementById("weeks").innerHTML = h;
+}
+
+function renderPanel(){
+  var panel = document.getElementById("panel");
+  var date = view.sel || todayYMD();
+  var d = fromYMD(date);
+  var evs = eventsOn(date);
+  var h = "";
+  h += '<div><div class="sub">' + (date === todayYMD() ? "Today" : DOW[d.getDay()]) + "</div>" +
+       "<h2>" + MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + "</h2></div>";
+
+  h += '<div class="rows">';
+  if(!evs.length){
+    h += '<div class="none">Nothing scheduled. Add the first thing below.</div>';
+  } else {
+    for(var i=0;i<evs.length;i++){
+      var e = evs[i];
+      h += '<div class="row" data-id="' + esc(e.id) + '">';
+      h += '<button type="button" class="swatch" data-act="cycle" style="background:var(--' + e.color +
+           ')" aria-label="Change colour"></button>';
+      h += '<input type="time" value="' + esc(e.time) + '" data-act="time" aria-label="Time">';
+      h += '<input type="text" value="' + esc(e.title) + '" data-act="title" aria-label="What">';
+      h += '<button type="button" class="del" data-act="del" aria-label="Delete">' +
+           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
+      h += "</div>";
+    }
+  }
+  h += "</div>";
+
+  h += '<form class="add" id="addForm">';
+  h += '<div class="swatches" id="swatches">';
+  for(var c=0;c<COLORS.length;c++){
+    h += '<button type="button" data-color="' + COLORS[c] + '" style="background:var(--' + COLORS[c] +
+         ');color:var(--' + COLORS[c] + ')" aria-pressed="' + (COLORS[c] === addColor ? "true" : "false") +
+         '" aria-label="Colour ' + (c+1) + '"></button>';
+  }
+  h += "</div>";
+  h += '<input type="time" id="addTime" aria-label="Time (optional)">';
+  h += '<input type="text" id="addTitle" placeholder="What\'s happening?" autocomplete="off" aria-label="What">';
+  h += '<button type="submit" class="go">Add</button>';
+  h += "</form>";
+
+  panel.innerHTML = h;
+}
+
+function renderAgenda(){
+  var cells = monthGrid(view.y, view.m);
+  var inMonth = {};
+  cells.forEach(function(c){ if(!c.out) inMonth[c.date] = true; });
+  var list = state.events.filter(function(e){ return inMonth[e.date]; })
+    .sort(function(a,b){ return a.date === b.date ? cmpEvent(a,b) : (a.date < b.date ? -1 : 1); });
+  var h = "<h2>" + MONTHS[view.m] + " " + view.y + " — everything scheduled</h2>";
+  if(!list.length){
+    h += '<p class="empty">Nothing scheduled this month.</p>';
+  } else {
+    h += "<ul>";
+    for(var i=0;i<list.length;i++){
+      var e = list[i], d = fromYMD(e.date);
+      h += "<li><span class=\"d\">" + DOW3[d.getDay()] + " " + d.getDate() + '</span><span class="tm">' +
+           esc(e.time ? prettyTime(e.time) : "—") + '</span><span class="n">' + esc(e.title) + "</span></li>";
+    }
+    h += "</ul>";
+  }
+  document.getElementById("agenda").innerHTML = h;
+}
+
+function renderFoot(){
+  var note = document.getElementById("savedNote");
+  if(!view.storage){
+    note.textContent = "Not saving in this view — export to keep your calendar";
+    note.className = "saved warn";
+    return;
+  }
+  var n = state.events.length;
+  note.className = "saved";
+  note.textContent = n === 0 ? "Empty calendar" : n + (n === 1 ? " event" : " events") + " · saved on this device";
+}
+
+/* ── interaction ────────────────────────────────────────────── */
+var addColor = "c1";
+
+document.getElementById("weeks").addEventListener("click", function(e){
+  var cell = e.target.closest(".day");
+  if(!cell) return;
+  var date = cell.dataset.date;
+  var d = fromYMD(date);
+  view.sel = date;
+  if(d.getMonth() !== view.m || d.getFullYear() !== view.y){
+    view.y = d.getFullYear(); view.m = d.getMonth();
+    render();
+  } else {
+    renderGrid(); renderPanel();
+  }
+  var chip = e.target.closest(".chip");
+  var focusEl;
+  if(chip){
+    focusEl = document.querySelector('.row[data-id="' + chip.dataset.id + '"] input[data-act="title"]');
+  }
+  if(!focusEl) focusEl = document.getElementById("addTitle");
+  if(focusEl){ focusEl.focus(); if(focusEl.select) focusEl.select(); }
+});
+
+document.getElementById("panel").addEventListener("submit", function(e){
+  e.preventDefault();
+  if(e.target.id !== "addForm") return;
+  var title = document.getElementById("addTitle").value.trim();
+  if(!title){ document.getElementById("addTitle").focus(); return; }
+  state.events.push({
+    id: uid(),
+    date: view.sel || todayYMD(),
+    time: document.getElementById("addTime").value || "",
+    title: title.slice(0,300),
+    color: addColor
+  });
+  save();
+  renderGrid(); renderPanel(); renderAgenda(); renderFoot();
+  var t = document.getElementById("addTitle");
+  if(t) t.focus();
+});
+
+document.getElementById("panel").addEventListener("click", function(e){
+  var btn = e.target.closest("[data-act],[data-color]");
+  if(!btn) return;
+  if(btn.dataset.color){
+    addColor = btn.dataset.color;
+    var all = document.querySelectorAll("#swatches button");
+    for(var i=0;i<all.length;i++) all[i].setAttribute("aria-pressed", all[i].dataset.color === addColor ? "true" : "false");
+    return;
+  }
+  var row = btn.closest(".row");
+  if(!row) return;
+  var ev = byId(row.dataset.id);
+  if(!ev) return;
+  if(btn.dataset.act === "del"){
+    state.events = state.events.filter(function(x){ return x.id !== ev.id; });
+    save(); renderGrid(); renderPanel(); renderAgenda(); renderFoot();
+    toast("Removed");
+  } else if(btn.dataset.act === "cycle"){
+    ev.color = COLORS[(COLORS.indexOf(ev.color) + 1) % COLORS.length];
+    save(); renderGrid();
+    btn.style.background = "var(--" + ev.color + ")";
+  }
+});
+
+/* Typing a title updates the grid but never re-renders the panel — that would
+   pull the caret out of the field mid-word. */
+document.getElementById("panel").addEventListener("input", function(e){
+  var f = e.target;
+  if(!f.dataset || !f.dataset.act) return;
+  var row = f.closest(".row");
+  if(!row) return;
+  var ev = byId(row.dataset.id);
+  if(!ev) return;
+  if(f.dataset.act === "title"){
+    ev.title = f.value.slice(0,300);
+    save(); renderGrid(); renderAgenda();
+  } else if(f.dataset.act === "time"){
+    ev.time = f.value || "";
+    save(); renderGrid(); renderAgenda();
+  }
+});
+
+document.getElementById("panel").addEventListener("focusout", function(e){
+  var f = e.target;
+  if(!f.dataset || f.dataset.act !== "title") return;
+  var row = f.closest(".row");
+  if(!row) return;
+  var ev = byId(row.dataset.id);
+  if(ev && !ev.title.trim()){
+    state.events = state.events.filter(function(x){ return x.id !== ev.id; });
+    save();
+    setTimeout(function(){ renderGrid(); renderPanel(); renderAgenda(); renderFoot(); }, 0);
+  }
+});
+
+function step(delta){
+  var d = new Date(view.y, view.m + delta, 1);
+  view.y = d.getFullYear(); view.m = d.getMonth();
+  render();
+}
+document.getElementById("prevBtn").addEventListener("click", function(){ step(-1); });
+document.getElementById("nextBtn").addEventListener("click", function(){ step(1); });
+document.getElementById("todayBtn").addEventListener("click", function(){
+  var n = new Date();
+  view.y = n.getFullYear(); view.m = n.getMonth(); view.sel = todayYMD();
+  render();
+});
+
+document.addEventListener("keydown", function(e){
+  var el = e.target;
+  if(el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+  if(e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.key === "ArrowLeft"){ e.preventDefault(); step(-1); }
+  else if(e.key === "ArrowRight"){ e.preventDefault(); step(1); }
+  else if(e.key === "t" || e.key === "T"){ document.getElementById("todayBtn").click(); }
+  else if(e.key === "p" || e.key === "P"){ e.preventDefault(); doPrint(); }
+});
+
+/* ── print ──────────────────────────────────────────────────── */
+function doPrint(){
+  try{
+    window.print();
+  }catch(err){
+    toast("This view blocks printing — use PDF instead");
+  }
+}
+document.getElementById("printBtn").addEventListener("click", doPrint);
+
+/* ── PDF ────────────────────────────────────────────────────── */
+/* A month grid is lines and text, so the PDF is written directly rather than
+   depending on the print dialog, which embedded views can block. */
+/* The fonts are declared WinAnsiEncoding, so the punctuation typed on this page
+   maps to real bytes instead of degrading to "?". */
+var WINANSI = {
+  0x2013:0x96, 0x2014:0x97, 0x2018:0x91, 0x2019:0x92, 0x201A:0x82,
+  0x201C:0x93, 0x201D:0x94, 0x201E:0x84, 0x2020:0x86, 0x2021:0x87,
+  0x2022:0x95, 0x2026:0x85, 0x2030:0x89, 0x2039:0x8B, 0x203A:0x9B,
+  0x20AC:0x80, 0x2122:0x99, 0x0152:0x8C, 0x0153:0x9C, 0x0160:0x8A,
+  0x0161:0x9A, 0x0178:0x9F, 0x017D:0x8E, 0x017E:0x9E, 0x0192:0x83,
+  0x02C6:0x88, 0x02DC:0x98
+};
+function pdfEsc(s){
+  var out = "";
+  for(var i=0;i<s.length;i++){
+    var c = s.charCodeAt(i);
+    if(WINANSI[c] !== undefined) c = WINANSI[c];
+    if(c === 40 || c === 41 || c === 92){ out += "\\" + String.fromCharCode(c); }
+    else if(c >= 32 && c <= 126) out += String.fromCharCode(c);
+    else if(c >= 0xA0 && c <= 0xFF) out += String.fromCharCode(c);
+    else if(c >= 0x80 && c <= 0x9F) out += String.fromCharCode(c);
+    else out += "?";
+  }
+  return out;
+}
+/* Helvetica averages ~0.5em per character — close enough to fit text to a box. */
+function fit(s, size, width){
+  var max = Math.max(1, Math.floor(width / (size * 0.5)));
+  return s.length > max ? s.slice(0, Math.max(1, max - 1)) + "…" : s;
+}
+function txt(x, y, size, font, s){
+  return "BT /" + font + " " + size + " Tf 1 0 0 1 " + x.toFixed(2) + " " + y.toFixed(2) +
+         " Tm (" + pdfEsc(s) + ") Tj ET\n";
+}
+
+function gridPage(){
+  var W = 792, H = 612, M = 34;
+  var s = "";
+  s += "0.1 0.1 0.1 rg\n";
+  s += txt(M, H - M - 14, 19, "F2", MONTHS[view.m] + " " + view.y);
+  s += "0.35 0.35 0.35 rg\n";
+
+  var cells = monthGrid(view.y, view.m);
+  var rows = cells.length / 7;
+  var top = H - M - 34;
+  var bottom = M + 12;
+  var colW = (W - 2*M) / 7;
+  var rowH = (top - 16 - bottom) / rows;
+  var gridTop = top - 16;
+
+  for(var i=0;i<7;i++){
+    s += "0.35 0.35 0.35 rg\n" + txt(M + i*colW + 3, top - 8, 8, "F1", DOW3[i].toUpperCase());
+  }
+
+  s += "0.6 0.6 0.6 RG 0.5 w\n";
+  for(var r=0;r<=rows;r++){
+    var y = gridTop - r*rowH;
+    s += M.toFixed(2) + " " + y.toFixed(2) + " m " + (W-M).toFixed(2) + " " + y.toFixed(2) + " l S\n";
+  }
+  for(var c=0;c<=7;c++){
+    var x = M + c*colW;
+    s += x.toFixed(2) + " " + gridTop.toFixed(2) + " m " + x.toFixed(2) + " " + (gridTop - rows*rowH).toFixed(2) + " l S\n";
+  }
+
+  var today = todayYMD();
+  var maxLines = Math.max(1, Math.floor((rowH - 20) / 8.6));
+  for(var k=0;k<cells.length;k++){
+    var cell = cells[k];
+    var cx = M + (k % 7) * colW;
+    var cy = gridTop - Math.floor(k / 7) * rowH;
+    var d = fromYMD(cell.date);
+
+    if(cell.date === today){
+      s += "0.1 0.1 0.1 rg\n" + (cx+2).toFixed(2) + " " + (cy-13.5).toFixed(2) + " 14 12 re f\n";
+      s += "1 1 1 rg\n" + txt(cx + (d.getDate() < 10 ? 7 : 4.5), cy - 11.5, 8.5, "F2", String(d.getDate()));
+    } else {
+      s += (cell.out ? "0.62 0.62 0.62 rg\n" : "0.15 0.15 0.15 rg\n");
+      s += txt(cx + 4, cy - 11.5, 8.5, cell.out ? "F1" : "F2", String(d.getDate()));
+    }
+
+    var evs = eventsOn(cell.date);
+    for(var j=0;j<evs.length && j<maxLines;j++){
+      var e = evs[j];
+      var ey = cy - 21 - j*8.6;
+      var rgb = COLOR_RGB[e.color] || COLOR_RGB.c1;
+      s += rgb[0] + " " + rgb[1] + " " + rgb[2] + " rg\n";
+      s += (cx + 4).toFixed(2) + " " + (ey - 0.5).toFixed(2) + " 3.2 3.2 re f\n";
+      s += (cell.out ? "0.55 0.55 0.55 rg\n" : "0.13 0.13 0.13 rg\n");
+      var label = (e.time ? prettyTime(e.time) + "  " : "") + e.title;
+      s += txt(cx + 10, ey, 7, "F1", fit(label, 7, colW - 14));
+    }
+    if(evs.length > maxLines){
+      s += "0.5 0.5 0.5 rg\n" + txt(cx + 10, cy - 21 - maxLines*8.6, 6.5, "F1", "+" + (evs.length - maxLines) + " more");
+    }
+  }
+  return s;
+}
+
+function agendaPages(){
+  var cells = monthGrid(view.y, view.m);
+  var inMonth = {};
+  cells.forEach(function(c){ if(!c.out) inMonth[c.date] = true; });
+  var list = state.events.filter(function(e){ return inMonth[e.date]; })
+    .sort(function(a,b){ return a.date === b.date ? cmpEvent(a,b) : (a.date < b.date ? -1 : 1); });
+  if(!list.length) return [];
+
+  var W = 792, H = 612, M = 34;
+  var colW = (W - 2*M) / 3;
+  var lineH = 12;
+  var startY = H - M - 44;
+  var perCol = Math.floor((startY - M) / lineH);
+  var perPage = perCol * 3;
+  var pages = [];
+
+  for(var p=0; p*perPage < list.length; p++){
+    var s = "0.1 0.1 0.1 rg\n";
+    s += txt(M, H - M - 14, 14, "F2", MONTHS[view.m] + " " + view.y + " — schedule" +
+      (list.length > perPage ? " (" + (p+1) + ")" : ""));
+    s += "0.6 0.6 0.6 RG 0.5 w\n" + M + " " + (H - M - 22) + " m " + (W - M) + " " + (H - M - 22) + " l S\n";
+    for(var i=0;i<perPage;i++){
+      var e = list[p*perPage + i];
+      if(!e) break;
+      var col = Math.floor(i / perCol);
+      var x = M + col * colW;
+      var y = startY - (i % perCol) * lineH;
+      var d = fromYMD(e.date);
+      var rgb = COLOR_RGB[e.color] || COLOR_RGB.c1;
+      s += rgb[0] + " " + rgb[1] + " " + rgb[2] + " rg\n";
+      s += x.toFixed(2) + " " + (y - 0.5).toFixed(2) + " 3.5 3.5 re f\n";
+      s += "0.35 0.35 0.35 rg\n" + txt(x + 8, y, 8, "F1", DOW3[d.getDay()] + " " + d.getDate());
+      s += txt(x + 46, y, 8, "F1", e.time ? prettyTime(e.time) : "—");
+      s += "0.1 0.1 0.1 rg\n" + txt(x + 84, y, 8.5, "F1", fit(e.title, 8.5, colW - 92));
+    }
+    pages.push(s);
+  }
+  return pages;
+}
+
+function buildPDF(){
+  var streams = [gridPage()].concat(agendaPages());
+  var objects = [];           // 1-indexed content, filled below
+  var pageIds = [];
+  var nextId = 3;             // 1 = catalog, 2 = pages
+  for(var i=0;i<streams.length;i++){ pageIds.push(nextId); nextId += 2; }  // page + contents
+  var fontF1 = nextId, fontF2 = nextId + 1;
+
+  objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+  objects[2] = "<< /Type /Pages /Kids [" + pageIds.map(function(id){ return id + " 0 R"; }).join(" ") +
+               "] /Count " + pageIds.length + " >>";
+  for(var p=0;p<streams.length;p++){
+    var pid = pageIds[p], cid = pid + 1;
+    objects[pid] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 " +
+                   fontF1 + " 0 R /F2 " + fontF2 + " 0 R >> >> /Contents " + cid + " 0 R >>";
+    objects[cid] = "<< /Length " + streams[p].length + " >>\nstream\n" + streams[p] + "endstream";
+  }
+  objects[fontF1] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
+  objects[fontF2] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
+
+  var count = fontF2;
+  var out = "%PDF-1.4\n";
+  var offsets = [];
+  for(var n=1;n<=count;n++){
+    offsets[n] = out.length;
+    out += n + " 0 obj\n" + objects[n] + "\nendobj\n";
+  }
+  var xref = out.length;
+  out += "xref\n0 " + (count + 1) + "\n0000000000 65535 f \n";
+  for(var q=1;q<=count;q++){
+    out += String(offsets[q]).padStart(10,"0") + " 00000 n \n";
+  }
+  out += "trailer\n<< /Size " + (count + 1) + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF\n";
+
+  var bytes = new Uint8Array(out.length);
+  for(var b=0;b<out.length;b++) bytes[b] = out.charCodeAt(b) & 0xff;
+  return bytes;
+}
+
+function pdfName(){
+  return "calendar-" + view.y + "-" + String(view.m + 1).padStart(2,"0") + ".pdf";
+}
+
+document.getElementById("pdfBtn").addEventListener("click", async function(){
+  var bytes;
+  try{ bytes = buildPDF(); }
+  catch(err){ toast("Couldn't build the PDF — try Print instead"); return; }
+
+  if(window.claude && typeof window.claude.use === "function"){
+    var dl = null;
+    try{ dl = await window.claude.use("downloads"); }catch(err){ dl = null; }
+    if(dl){
+      try{
+        await dl.save({ filename: pdfName(), data: bytes.buffer });
+        toast("Saved");
+        return;
+      }catch(err){
+        if(err && err.code === "declined") return;
+        toast("PDF downloads aren't allowed here — use Print, then Save as PDF");
+        return;
+      }
+    }
+    toast("Downloads aren't available here — use Print, then Save as PDF");
+    return;
+  }
+  try{
+    var blob = new Blob([bytes], { type:"application/pdf" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = pdfName();
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    toast("PDF saved");
+  }catch(err){
+    toast("Couldn't save the PDF — use Print, then Save as PDF");
+  }
+});
+
+/* ── export / import ────────────────────────────────────────── */
+var dlg = document.getElementById("dataDlg");
+var dlgTitle = document.getElementById("dlgTitle");
+var dlgBody = document.getElementById("dlgBody");
+var dlgActions = document.getElementById("dlgActions");
+var jsonArea = document.getElementById("jsonArea");
+var fileIn = document.getElementById("fileIn");
+
+function openDlg(){ if(dlg.showModal){ dlg.showModal(); } else { dlg.setAttribute("open",""); } }
+function closeDlg(){ if(dlg.close){ dlg.close(); } else { dlg.removeAttribute("open"); } }
+
+document.getElementById("exportBtn").addEventListener("click", async function(){
+  var data = JSON.stringify(state, null, 2);
+  var name = "calendar-" + todayYMD() + ".json";
+  if(window.claude && typeof window.claude.use === "function"){
+    var dl = null;
+    try{ dl = await window.claude.use("downloads"); }catch(err){ dl = null; }
+    if(dl){
+      try{ await dl.save({ filename:name, data:data }); toast("Saved"); return; }
+      catch(err){ if(err && err.code === "declined") return; }
+    }
+    showCopyDialog(data);
+    return;
+  }
+  try{
+    var blob = new Blob([data], { type:"application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    toast("Exported");
+  }catch(err){ showCopyDialog(data); }
+});
+
+function showCopyDialog(data){
+  dlgTitle.textContent = "Copy your calendar";
+  dlgBody.textContent = "Downloads aren't available here. Copy this and paste it into Import on your other device.";
+  fileIn.hidden = true;
+  jsonArea.value = data;
+  jsonArea.readOnly = true;
+  dlgActions.innerHTML = '<button type="button" class="btn primary" id="copyBtn">Copy</button>' +
+    '<span class="spacer"></span><button type="button" class="btn quiet" id="closeBtn">Close</button>';
+  openDlg();
+  document.getElementById("copyBtn").onclick = function(){
+    jsonArea.select();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(data).then(function(){ toast("Copied"); },
+        function(){ toast("Select the text and copy it"); });
+    } else {
+      try{ document.execCommand("copy"); toast("Copied"); }
+      catch(e){ toast("Select the text and copy it"); }
+    }
+  };
+  document.getElementById("closeBtn").onclick = closeDlg;
+}
+
+document.getElementById("importBtn").addEventListener("click", function(){
+  dlgTitle.textContent = "Import";
+  dlgBody.textContent = "Choose a calendar export, or paste one below. Merge keeps what you already have; Replace starts over from the file.";
+  fileIn.hidden = false;
+  fileIn.value = "";
+  jsonArea.value = "";
+  jsonArea.readOnly = false;
+  jsonArea.placeholder = '{ "v": 1, "events": [ ... ] }';
+  dlgActions.innerHTML = '<button type="button" class="btn primary" id="mergeBtn">Merge</button>' +
+    '<button type="button" class="btn" id="replaceBtn">Replace</button>' +
+    '<span class="spacer"></span><button type="button" class="btn quiet" id="cancelBtn">Cancel</button>';
+  openDlg();
+  document.getElementById("mergeBtn").onclick = function(){ doImport(false); };
+  document.getElementById("replaceBtn").onclick = function(){ doImport(true); };
+  document.getElementById("cancelBtn").onclick = closeDlg;
+});
+
+fileIn.addEventListener("change", function(){
+  var f = fileIn.files && fileIn.files[0];
+  if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){ jsonArea.value = String(reader.result || ""); };
+  reader.onerror = function(){ toast("Couldn't read that file"); };
+  reader.readAsText(f);
+});
+
+function doImport(replace){
+  var raw = jsonArea.value.trim();
+  if(!raw){ toast("Nothing to import yet"); return; }
+  var parsed;
+  try{ parsed = JSON.parse(raw); }
+  catch(e){ toast("That isn't valid JSON"); return; }
+  if(!parsed || !Array.isArray(parsed.events)){ toast("No events found in that file"); return; }
+  var incoming = normalize(parsed);
+  if(replace){
+    state = incoming;
+    toast("Replaced with " + state.events.length + " events");
+  } else {
+    var have = {};
+    state.events.forEach(function(e){ have[e.id] = true; });
+    var added = 0;
+    incoming.events.forEach(function(e){ if(!have[e.id]){ state.events.push(e); added++; } });
+    toast(added ? "Merged " + added + (added === 1 ? " event" : " events") : "Nothing new to merge");
+  }
+  save(); render(); closeDlg();
+}
+
+/* ── boot ───────────────────────────────────────────────────── */
+view.storage = storageWorks();
+load();
+var now = new Date();
+view.y = now.getFullYear();
+view.m = now.getMonth();
+view.sel = todayYMD();
+render();
+
+})();
+</script>
+</body>
+</html>
