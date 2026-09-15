@@ -72,22 +72,105 @@
     if (primaryCta) { primaryCta.setAttribute('href', '/quiz'); primaryCta.textContent = 'Find my test'; }
   }
 
-  // Floating WhatsApp chat button (opens a chat to the business number)
+  // Help widget — a floating "Questions?" button that opens a panel of common
+  // questions (tap to reveal the answer) with a "request a call" option.
   (function () {
-    var PHONE = '16313171295'; // WhatsApp Business — country code + number, digits only
-    var MSG = 'Hi Sacred Sampling — I have a question about your water test kits.';
-    if (document.querySelector('.wa-fab')) return;
-    var a = document.createElement('a');
-    a.className = 'wa-fab';
-    a.href = 'https://wa.me/' + PHONE + '?text=' + encodeURIComponent(MSG);
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.setAttribute('aria-label', 'Chat with us on WhatsApp');
-    a.innerHTML =
-      '<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true" fill="currentColor">' +
-      '<path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.7 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7.7.7-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.3 0-5.5 4.5-9.9 9.9-9.9 5.5 0 9.9 4.5 9.9 9.9.1 5.4-4.4 9.9-9.7 9.9zm5.5-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.3 5.2 4.6 2.9 1.2 2.9.8 3.5.8.5-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.2-.3-.2-.6-.4z"/></svg>' +
-      '<span class="wa-label">Chat with us</span>';
-    document.body.appendChild(a);
+    if (/\/checkout$/.test(location.pathname.replace(/\.html$/, ''))) return; // not during checkout
+    if (document.querySelector('.help-fab')) return;
+
+    var FAQ = [
+      ['How does it work?', 'Order online, collect your sample at home in a few minutes, and mail it back in the prepaid pouch. Your accredited-lab report arrives by email. <a href="/#how">See the steps &rarr;</a>'],
+      ['How long do results take?', 'Typically <b>7–10 business days</b> after the laboratory receives your sample.'],
+      ['Is this a real laboratory?', 'Yes — samples are analyzed by an accredited partner lab (NYSDOH ELAP #11693) using EPA-referenced methods. <a href="/laboratory">Our laboratory &rarr;</a>'],
+      ['Which test do I need?', 'Take the 60-second quiz and we’ll match you, or start from your situation. <a href="/quiz">Find my test &rarr;</a>'],
+      ['Is it hard to collect the sample?', 'No — every kit includes simple, step-by-step instructions, and most samples take just a few minutes.'],
+      ['What does shipping cost?', 'Return shipping is free — a prepaid label is in every kit. <a href="/shipping">Shipping policy &rarr;</a>'],
+      ['Can I use results for real estate or a dispute?', 'Yes — every sample carries a documented chain of custody, so the results are defensible.'],
+      ['Do you sell filters or treatment?', 'No. We’re independent — we only test, so a result never doubles as a sales pitch.']
+    ];
+
+    var fab = document.createElement('button');
+    fab.type = 'button';
+    fab.className = 'help-fab';
+    fab.setAttribute('aria-label', 'Questions? Open help');
+    fab.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M9.2 9.5a2.8 2.8 0 0 1 5.4 1c0 1.8-2.6 2.5-2.6 2.5"/><path d="M12 16.5h.01"/></svg><span class="help-fab-label">Questions?</span>';
+
+    var panel = document.createElement('div');
+    panel.className = 'help-panel';
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-label', 'Help');
+    panel.hidden = true;
+    panel.innerHTML =
+      '<div class="help-head"><div><b>How can we help?</b><span>Tap a question, or request a call.</span></div>' +
+      '<button type="button" class="help-x" aria-label="Close help">&times;</button></div>' +
+      '<div class="help-body">' +
+        '<div class="help-faq">' +
+        FAQ.map(function (q) {
+          return '<div class="help-q"><button type="button" class="help-qbtn">' + q[0] +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>' +
+            '<div class="help-a">' + q[1] + '</div></div>';
+        }).join('') +
+        '</div>' +
+        '<form class="help-callform" hidden novalidate>' +
+          '<a class="help-back" href="#">&larr; Back to questions</a>' +
+          '<p class="help-formlead">Leave your number and a good time — we’ll call you back.</p>' +
+          '<input name="name" type="text" placeholder="Your name" autocomplete="name" required>' +
+          '<input name="phone" type="tel" inputmode="tel" placeholder="Phone number" autocomplete="tel" required>' +
+          '<select name="time"><option value="">Best time to call…</option><option>Morning</option><option>Afternoon</option><option>Evening</option></select>' +
+          '<input name="email" type="email" inputmode="email" placeholder="Email (optional)" autocomplete="email">' +
+          '<div class="help-err" hidden>Please add your name and phone.</div>' +
+          '<button type="submit" class="btn btn-primary btn-block">Request my call</button>' +
+        '</form>' +
+      '</div>' +
+      '<div class="help-foot"><button type="button" class="help-callbtn">📞 Request a call</button>' +
+      '<a class="help-email" href="mailto:info@sacredsamplingsolutions.com">or email us</a></div>';
+
+    document.body.appendChild(fab);
+    document.body.appendChild(panel);
+
+    var body = panel.querySelector('.help-body');
+    var faq = panel.querySelector('.help-faq');
+    var form = panel.querySelector('.help-callform');
+    var foot = panel.querySelector('.help-foot');
+
+    function open() { panel.hidden = false; requestAnimationFrame(function () { panel.classList.add('open'); }); fab.classList.add('is-open'); }
+    function close() { panel.classList.remove('open'); fab.classList.remove('is-open'); setTimeout(function () { panel.hidden = true; }, 220); }
+    fab.addEventListener('click', function () { panel.hidden || !panel.classList.contains('open') ? open() : close(); });
+    panel.querySelector('.help-x').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel.classList.contains('open')) close(); });
+
+    // FAQ accordion
+    faq.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.help-qbtn');
+      if (!btn) return;
+      btn.parentNode.classList.toggle('open');
+    });
+
+    // Swap to the call-back form and back
+    function showForm(on) { faq.hidden = on; foot.hidden = on; form.hidden = !on; }
+    panel.querySelector('.help-callbtn').addEventListener('click', function () { showForm(true); });
+    panel.querySelector('.help-back').addEventListener('click', function (e) { e.preventDefault(); showForm(false); });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = form.elements['name'].value.trim(), phone = form.phone.value.trim();
+      var err = form.querySelector('.help-err');
+      if (!name || !phone) { err.hidden = false; return; }
+      err.hidden = true;
+      var btn = form.querySelector('button[type=submit]');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ _subject: 'Call-back request — ' + name, name: name, phone: phone, best_time: form.time.value, email: form.email.value.trim(), page: location.pathname })
+      }).then(finish, finish);
+      if (window.gtag) window.gtag('event', 'generate_lead', { event_label: 'callback' });
+      if (window.fbq) window.fbq('track', 'Lead', { content_name: 'callback' });
+      function finish() {
+        body.innerHTML = '<div class="help-done"><div class="help-done-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>' +
+          '<b>Thanks, ' + name.split(' ')[0] + '!</b><p>We’ll call you ' + (form.time.value ? form.time.value.toLowerCase() : 'shortly') + '. Talk soon.</p></div>';
+        foot.hidden = true;
+      }
+    });
   })();
 
   // ── Shopping cart ────────────────────────────────────────────────────
