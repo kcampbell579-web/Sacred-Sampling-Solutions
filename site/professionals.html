@@ -168,7 +168,7 @@
   function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var name = form.name.value.trim(), email = form.email.value.trim();
+    var name = form.elements['name'].value.trim(), email = form.email.value.trim();
     var err = form.querySelector('.cogate-err');
     if (!name || !validEmail(email)) { err.hidden = false; return; }
     err.hidden = true;
