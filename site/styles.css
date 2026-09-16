@@ -767,3 +767,12 @@ footer .brand img{height:40px}
 .sintel-tags{list-style:none;padding:0;margin:16px 0 0;color:rgba(255,255,255,.72);font-family:var(--mono);font-size:.76rem;letter-spacing:.14em}
 .sintel-tags li{margin-top:5px}
 .sintel-pub{margin-top:18px;font-size:.74rem;color:rgba(255,255,255,.55)}
+
+/* ---- Founder section (About) ---- */
+.founder-grid{display:grid;grid-template-columns:300px 1fr;gap:38px;align-items:center}
+@media(max-width:720px){.founder-grid{grid-template-columns:1fr;gap:22px;justify-items:center;text-align:center}}
+.founder-photo{width:100%}
+.founder-photo img{width:100%;max-width:320px;border-radius:16px;box-shadow:var(--shadow-lg);aspect-ratio:1/1;object-fit:cover;display:block}
+.founder-title{font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;color:var(--brand-ink);text-transform:uppercase;font-weight:600;margin:6px 0 16px}
+.founder-bio .prose p{margin-bottom:12px;color:var(--ink-2);line-height:1.72}
+.founder-bio .prose em{color:var(--ink);font-style:italic}
