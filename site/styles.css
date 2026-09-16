@@ -746,3 +746,24 @@ footer .brand img{height:40px}
 .help-done b{font-size:1.05rem}
 .help-done p{color:var(--ink-2);font-size:.9rem;margin-top:5px}
 @media(prefers-reduced-motion:reduce){.help-fab,.help-panel,.help-a{transition:none}}
+
+/* ---- Sacred Intel banner (Learn page → sacredintel.org) ---- */
+.sintel-band{position:relative;overflow:hidden;color:#fff;
+  background:linear-gradient(115deg,#0c1120 0%,#1a1f3d 46%,#3a2a5e 100%)}
+.sintel-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.35fr 1fr;gap:32px;align-items:center;padding:56px 0}
+@media(max-width:820px){.sintel-inner{grid-template-columns:1fr;gap:26px;padding:42px 0}}
+.sintel-eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:#c3b1ff;font-weight:600}
+.sintel-band h2{font-size:clamp(1.8rem,3.6vw,2.6rem);margin:12px 0 14px;color:#fff;line-height:1.08}
+.sintel-band p{color:rgba(255,255,255,.82);max-width:48ch;line-height:1.6;font-size:1rem}
+.sintel-btn{display:inline-flex;align-items:center;gap:.5em;margin-top:24px;
+  background:linear-gradient(180deg,#8f74f2,#6d4fd0);color:#fff;font-family:var(--sans);font-weight:700;font-size:1rem;
+  padding:.85em 1.5em;border-radius:11px;box-shadow:0 12px 28px -10px #6d4fd0;transition:filter .15s,transform .12s}
+.sintel-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.sintel-right{text-align:right}
+@media(max-width:820px){.sintel-right{text-align:left}}
+.sintel-logo{display:inline-flex;align-items:center;gap:12px;justify-content:flex-end;color:#fff}
+@media(max-width:820px){.sintel-logo{justify-content:flex-start}}
+.sintel-logo b{font-size:1.8rem;font-weight:800;letter-spacing:-.01em;line-height:.98;text-align:left}
+.sintel-tags{list-style:none;padding:0;margin:16px 0 0;color:rgba(255,255,255,.72);font-family:var(--mono);font-size:.76rem;letter-spacing:.14em}
+.sintel-tags li{margin-top:5px}
+.sintel-pub{margin-top:18px;font-size:.74rem;color:rgba(255,255,255,.55)}
