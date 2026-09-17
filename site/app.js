@@ -36,7 +36,7 @@
   if (navLinks) {
     var MENU = [
       ['Shop Tests', [['All Tests', '/kits'], ['Water', '/kits#filter=water'], ['Indoor Air', '/kits#filter=air'], ['Asbestos', '/kits#filter=asbestos'], ['Surface & Dust', '/kits#filter=surface'], ['Cosmetics', '/kits#filter=cosmetic']]],
-      ['What Should I Test?', [['Find My Test — 60-sec quiz', '/quiz'], ['Private Well', '/well-water'], ['Older Home / Plumbing', '/older-home'], ['Buying a Home', '/buying-a-home'], ['Near Landfill / Airport / Industry', '/near-industry'], ['Renovating', '/renovating'], ['New Furniture / Chemical Odor', '/chemical-odor']]],
+      ['What Should I Test?', [['Find My Test — 60-sec quiz', '/quiz'], ['ZIP Code Lookup — What\'s near you?', '/zip-lookup'], ['Private Well', '/well-water'], ['Older Home / Plumbing', '/older-home'], ['Buying a Home', '/buying-a-home'], ['Near Landfill / Airport / Industry', '/near-industry'], ['Renovating', '/renovating'], ['New Furniture / Chemical Odor', '/chemical-odor']]],
       ['How It Works', [['How It Works', '/#how'], ['Sample Reports', '/sample-report'], ['Laboratory & Methods', '/laboratory'], ['Shipping & Turnaround', '/shipping']]],
       ['Learn', [['Education Center', '/learn'], ['Water', '/learn#water'], ['Indoor Air', '/learn#air'], ['Asbestos', '/learn#asbestos'], ['News / Sacred Intel', '/learn']]],
       ['About', [['About Sacred', '/about'], ['Our Laboratory', '/laboratory'], ['For Professionals', '/professionals'], ['Contact', '/contact']]]
@@ -519,6 +519,214 @@
         update();
       }, { threshold: 0 }).observe(footer);
     }
+  })();
+
+  // ── ZIP Code Lookup — "What's in your water?" ────────────────────────
+  // Reads a bundled, public-data JSON (site/data/zip-lookup.json) and shows the
+  // documented area-level environmental profile for a ZIP, plus the right kit to
+  // start with. Screening only — never a claim about an individual home.
+  (function () {
+    var form = document.getElementById('zipForm');
+    var results = document.getElementById('zipResults');
+    if (!form || !results) return;                 // only on /zip-lookup
+    var input = document.getElementById('zipInput');
+    var countEl = document.getElementById('zipCount');
+    var DATA = null, loading = false;
+
+    // Kit copy for the info-only (non-purchasable) kits, so the CTA links out
+    // rather than fabricating a cart price.
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+      });
+    }
+
+    function load() {
+      if (DATA || loading) return Promise.resolve(DATA);
+      loading = true;
+      return fetch('/data/zip-lookup.json').then(function (r) { return r.json(); })
+        .then(function (j) {
+          DATA = j; loading = false;
+          if (countEl && j.count) countEl.textContent = j.count.toLocaleString() + ' ZIP codes in our screening database.';
+          return j;
+        }).catch(function () { loading = false; return null; });
+    }
+    load();
+
+    function dots(sd, strength) {
+      // sd is like "●●●●○"; color by strength.
+      var cls = 'ok';
+      if (/very high/i.test(strength)) cls = 'vhigh';
+      else if (/high/i.test(strength)) cls = 'high';
+      else if (/moderate/i.test(strength)) cls = 'mod';
+      return '<span class="zip-dots ' + cls + '" aria-hidden="true">' + esc(sd || '') + '</span>';
+    }
+
+    function chips(str) {
+      return String(str || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean)
+        .map(function (s) { return '<span class="zip-chip">' + esc(s) + '</span>'; }).join('');
+    }
+
+    function kitCard(rec) {
+      var kit = (DATA.kits && DATA.kits[rec.kit]) || {};
+      var name = kit.name || 'Recommended test';
+      var href = '/' + rec.kit;
+      if (kit.buy && kit.price) {
+        return '<div class="zip-kit">' +
+          '<div class="zip-kit-tag">Recommended starting point</div>' +
+          '<div class="zip-kit-row">' +
+            '<div><div class="zip-kit-name">' + esc(name) + '</div>' +
+            '<div class="zip-kit-price">$' + kit.price + '</div></div>' +
+            '<button type="button" class="btn btn-gold" data-zipbuy="' + esc(rec.kit) + '" data-zipname="' + esc(name) + '" data-zipprice="' + kit.price + '">Add to cart <span class="arrow">&rarr;</span></button>' +
+          '</div>' +
+          '<a class="zip-kit-learn" href="' + href + '">See what this kit covers &rarr;</a>' +
+        '</div>';
+      }
+      // Info-only kit (no published DTC price yet) — link to the kit page.
+      return '<div class="zip-kit">' +
+        '<div class="zip-kit-tag">Recommended starting point</div>' +
+        '<div class="zip-kit-row">' +
+          '<div><div class="zip-kit-name">' + esc(name) + '</div>' +
+          '<div class="zip-kit-price muted">See kit page</div></div>' +
+          '<a class="btn btn-gold" href="' + href + '">View the ' + esc(name) + ' <span class="arrow">&rarr;</span></a>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function render(zip, rec) {
+      var place = [rec.c, rec.s].filter(Boolean).join(', ');
+      var disc = 'This does not mean ' + esc(rec.pc) + ' is present in your home’s water. Your individual water can only be evaluated by testing a sample from your property.';
+      results.innerHTML =
+        '<div class="zip-card reveal in">' +
+          '<div class="zip-card-head">' +
+            '<div>' +
+              '<span class="eyebrow">ZIP ' + esc(zip) + '</span>' +
+              '<h2>' + esc(place) + (rec.co ? ' &middot; ' + esc(rec.co) + ' County' : '') + '</h2>' +
+            '</div>' +
+            '<div class="zip-signal">' +
+              '<span class="zip-signal-label">Signal strength</span>' +
+              dots(rec.sd, rec.ss) +
+              '<b>' + esc(rec.ss) + '</b>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="zip-alert">We found environmental factors worth knowing about in your area.</div>' +
+
+          '<div class="zip-primary">' +
+            '<span class="zip-primary-tag">Primary concern</span>' +
+            '<div class="zip-primary-name">' + esc(rec.pc) + '</div>' +
+            (rec.pcd ? '<p class="zip-primary-detail">' + esc(rec.pcd) + '</p>' : '') +
+          '</div>' +
+
+          '<div class="zip-facts">' +
+            (rec.lct ? '<div class="zip-fact"><h4>Local context</h4><p><b>' + esc(rec.lct) + '</b><br>' + esc(rec.lcd) + '</p></div>' : '') +
+            (rec.why ? '<div class="zip-fact"><h4>Why your area appears</h4><p>' + esc(rec.why) + '</p></div>' : '') +
+          '</div>' +
+
+          (rec.sc ? '<div class="zip-fact"><h4>Contaminants documented in the area</h4><div class="zip-chips">' + chips(rec.sc) + '</div></div>' : '') +
+          (rec.src ? '<div class="zip-fact"><h4>Associated source</h4><p>' + esc(rec.src) + '</p></div>' : '') +
+
+          '<div class="zip-source-toggle">' +
+            '<span>Your water comes from:</span>' +
+            '<div class="zip-seg" role="group" aria-label="Water source">' +
+              '<button type="button" class="zip-seg-btn is-on" data-src="city">City / municipal</button>' +
+              '<button type="button" class="zip-seg-btn" data-src="well">Private well</button>' +
+            '</div>' +
+            '<p class="zip-source-note" id="zipSrcNote"></p>' +
+          '</div>' +
+
+          kitCard(rec) +
+
+          '<p class="zip-disc">' + disc + '</p>' +
+
+          '<div class="zip-report">' +
+            '<div><b>Want this in writing?</b><span>Email me my area profile and a checklist of what to test.</span></div>' +
+            '<form class="zip-report-form" novalidate>' +
+              '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="you@email.com" aria-label="Email" required>' +
+              '<button type="submit" class="btn btn-primary">Email my profile</button>' +
+              '<span class="zip-report-msg" hidden></span>' +
+            '</form>' +
+          '</div>' +
+        '</div>';
+
+      results.hidden = false;
+
+      // Water-source note toggle.
+      var note = document.getElementById('zipSrcNote');
+      function setNote(kind) {
+        note.textContent = kind === 'well'
+          ? 'Private wells aren’t regulated or treated by a utility, so testing at the tap is the only way to know what’s there. A well owner should also check bacteria and nitrate at least once a year.'
+          : 'Municipal water is treated and monitored at the plant, but lead and other contaminants can still be picked up between the plant and your tap. Testing at your own tap is the only way to know what reaches your glass.';
+      }
+      setNote('city');
+      [].forEach.call(results.querySelectorAll('.zip-seg-btn'), function (b) {
+        b.addEventListener('click', function () {
+          results.querySelectorAll('.zip-seg-btn').forEach(function (x) { x.classList.remove('is-on'); });
+          b.classList.add('is-on');
+          setNote(b.getAttribute('data-src'));
+        });
+      });
+
+      // Add-to-cart for purchasable recommendation.
+      var buy = results.querySelector('[data-zipbuy]');
+      if (buy) buy.addEventListener('click', function () {
+        var cents = Math.round(parseFloat(buy.getAttribute('data-zipprice')) * 100);
+        if (window.SSSCart) { window.SSSCart.add(buy.getAttribute('data-zipbuy'), buy.getAttribute('data-zipname'), cents); window.SSSCart.open(); }
+      });
+
+      // Email-my-profile (fire-and-forget lead capture via formsubmit.co).
+      var rform = results.querySelector('.zip-report-form');
+      if (rform) rform.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var em = (rform.elements['email'].value || '').trim();
+        var msg = rform.querySelector('.zip-report-msg');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { msg.hidden = false; msg.textContent = 'Please enter a valid email.'; return; }
+        try {
+          fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ _subject: 'ZIP profile request — ' + zip, email: em, zip: zip, area: place, primary_concern: rec.pc })
+          }).catch(function () {});
+        } catch (x) {}
+        try { localStorage.setItem('sss_lead', em); } catch (x) {}
+        if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 0 });
+        rform.innerHTML = '<div class="zip-report-done">✓ On its way &mdash; check your inbox. Ready to test? <a href="/kits#kits">Shop kits &rarr;</a></div>';
+      });
+
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (window.gtag) window.gtag('event', 'zip_lookup', { zip: zip, primary_concern: rec.pc });
+    }
+
+    function notFound(zip) {
+      results.innerHTML =
+        '<div class="zip-card zip-card-empty reveal in">' +
+          '<h2>We don’t have area data for ' + esc(zip) + ' yet.</h2>' +
+          '<p>Our screening database is growing. That doesn’t mean your area is clear &mdash; it just means we don’t have a public-record match to show. The surest answer is always a laboratory test of your own water.</p>' +
+          '<div class="hero-cta"><a class="btn btn-gold btn-lg" href="/quiz">Find my test <span class="arrow">&rarr;</span></a>' +
+          '<a class="btn btn-ghost btn-lg" href="/kits">Browse all kits</a></div>' +
+        '</div>';
+      results.hidden = false;
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function lookup() {
+      var raw = (input.value || '').replace(/[^0-9]/g, '');
+      if (raw.length < 5) { input.focus(); return; }
+      var zip = raw.slice(0, 5);
+      results.hidden = false;
+      results.innerHTML = '<div class="zip-card zip-loading">Checking public records for ' + esc(zip) + '…</div>';
+      load().then(function (j) {
+        if (!j || !j.zips) { results.innerHTML = '<div class="zip-card zip-loading">Sorry &mdash; the lookup is unavailable right now. Please try again.</div>'; return; }
+        var rec = j.zips[zip];
+        if (rec) render(zip, rec); else notFound(zip);
+      });
+    }
+
+    form.addEventListener('submit', function (e) { e.preventDefault(); lookup(); });
+    input.addEventListener('input', function () { input.value = input.value.replace(/[^0-9]/g, '').slice(0, 5); });
+
+    // Deep link: /zip-lookup?zip=90210 runs the search on load.
+    var qz = new URLSearchParams(location.search).get('zip');
+    if (qz) { input.value = qz.replace(/[^0-9]/g, '').slice(0, 5); lookup(); }
   })();
 
   // Reveal on scroll
