@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Orders — Sacred Sampling Solutions</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230E0E0E'/%3E%3Crect x='46' y='22' width='8' height='26' fill='%236fb6ff'/%3E%3Ccircle cx='50' cy='66' r='20' fill='none' stroke='%232C94FC' stroke-width='5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0e1520;--ink-2:#455267;--ink-3:#727f93;--line:#dde5f0;--brand:#2C94FC;--brand-ink:#155ec2;--brand-wash:#e5f1ff;--good:#2b8a56;--amber:#a9700c;--amber-wash:#f6ecd4;--paper:#fff;--ground:#eef4fc;--radius:14px;--sans:"Manrope",system-ui,sans-serif;--mono:ui-monospace,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{font-family:var(--sans);color:var(--ink);background:var(--ground);margin:0;line-height:1.5}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 20px}
+  header{background:#0a1734;color:#fff;padding:18px 0}
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:0;padding-bottom:0}
+  header b{font-size:1.05rem}
+  header .tag{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#9fc4f5}
+  .btn{font-family:var(--sans);font-weight:600;font-size:.92rem;padding:.6em 1.1em;border-radius:9px;border:1px solid transparent;cursor:pointer;background:linear-gradient(180deg,#5aabff,#2C94FC);color:#fff}
+  .btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .gate{max-width:420px;margin:8vh auto;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:0 24px 60px -20px rgba(9,18,40,.3)}
+  .gate h1{font-size:1.3rem;margin:0 0 6px}
+  .gate p{color:var(--ink-2);font-size:.92rem;margin:0 0 16px}
+  .gate input{width:100%;font-family:var(--sans);font-size:1rem;padding:.7em .9em;border:1px solid var(--line);border-radius:9px;margin-bottom:12px}
+  .gate .btn{width:100%}
+  .gate .err{color:#c23a2e;font-size:.88rem;margin:10px 0 0;min-height:1.2em}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .toolbar input[type=search]{flex:1;min-width:180px;font-family:var(--sans);font-size:.95rem;padding:.55em .8em;border:1px solid var(--line);border-radius:9px}
+  .summary{color:var(--ink-2);font-size:.9rem;margin-left:auto}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:auto;box-shadow:0 1px 2px rgba(9,18,40,.05)}
+  table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:820px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);position:sticky;top:0;background:var(--ground)}
+  td.num{font-family:var(--mono);font-weight:600;color:var(--brand-ink);white-space:nowrap}
+  td.amt{font-weight:600;white-space:nowrap}
+  tr:hover td{background:#f7fafe}
+  .pill{display:inline-block;font-size:.72rem;font-weight:600;padding:.15em .6em;border-radius:999px}
+  .pill.paid{background:#e4f4ec;color:var(--good)}
+  .pill.unpaid{background:var(--amber-wash);color:var(--amber)}
+  .items{color:var(--ink-2);font-size:.85rem}
+  .addr{color:var(--ink-2);font-size:.82rem;white-space:nowrap}
+  .empty{padding:40px;text-align:center;color:var(--ink-2)}
+  .note{color:var(--ink-3);font-size:.8rem;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate">
+  <h1>Orders</h1>
+  <p>Enter the orders password to view your Sacred Sampling orders. (Set once in Vercel as <span style="font-family:var(--mono)">ORDERS_ADMIN_KEY</span>.)</p>
+  <form id="gateForm" novalidate>
+    <input type="password" id="pw" placeholder="Orders password" autocomplete="current-password" aria-label="Orders password">
+    <label style="display:flex;gap:8px;align-items:center;font-size:.85rem;color:var(--ink-2);margin-bottom:12px"><input type="checkbox" id="remember" style="width:auto;margin:0"> Remember on this device</label>
+    <button type="submit" class="btn">View orders</button>
+    <p class="err" id="gateErr"></p>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header><div class="wrap"><div><b>Sacred Sampling — Orders</b> <span class="tag">Private</span></div>
+    <button type="button" class="btn ghost" id="signout" style="color:#fff;border-color:rgba(255,255,255,.3)">Sign out</button></div></header>
+  <div class="wrap">
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search order #, name, email, ZIP, kit…" aria-label="Search orders">
+      <label style="font-size:.88rem;color:var(--ink-2);display:flex;gap:6px;align-items:center"><input type="checkbox" id="showUnpaid"> show unpaid</label>
+      <button type="button" class="btn ghost" id="refresh">Refresh</button>
+      <button type="button" class="btn ghost" id="csv">Export CSV</button>
+      <span class="summary" id="summary"></span>
+    </div>
+    <div class="card">
+      <table id="table">
+        <thead><tr>
+          <th>Order #</th><th>Date</th><th>Customer</th><th>Items</th><th>Ship to</th><th>Total</th><th>Status</th>
+        </tr></thead>
+        <tbody id="rows"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="note">Shows your most recent orders straight from Stripe (read-only). The order number matches the SS-code your customer received. Amounts are what the customer paid. This page is private (noindex) and requires the password each session unless you choose “remember.”</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var KEYSTORE = 'sss_orders_key';
+  var gate = document.getElementById('gate'), app = document.getElementById('app');
+  var pw = document.getElementById('pw'), gateErr = document.getElementById('gateErr');
+  var rows = document.getElementById('rows'), summary = document.getElementById('summary');
+  var search = document.getElementById('search'), showUnpaid = document.getElementById('showUnpaid');
+  var ALL = [];
+
+  function getKey() {
+    try { return sessionStorage.getItem(KEYSTORE) || localStorage.getItem(KEYSTORE); } catch (e) { return null; }
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function money(v,c){ return v==null?'—':('$'+Number(v).toFixed(2)+(c&&c!=='USD'?' '+c:'')); }
+  function fmtDate(ms){ if(!ms) return '—'; var d=new Date(ms); return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})+' '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); }
+  function addr(a){ if(!a) return ''; return [a.line1,a.line2,[a.city,a.state].filter(Boolean).join(', '),a.postal_code].filter(Boolean).join(' · '); }
+  function itemsText(it){ return (it||[]).map(function(i){return (i.quantity>1?i.quantity+'× ':'')+i.name;}).join(', '); }
+
+  function render(list) {
+    if (!list.length) { rows.innerHTML = '<tr><td colspan="7" class="empty">No orders found.</td></tr>'; summary.textContent=''; return; }
+    rows.innerHTML = list.map(function (o) {
+      return '<tr>' +
+        '<td class="num">' + esc(o.order_number) + '</td>' +
+        '<td class="addr">' + esc(fmtDate(o.created)) + '</td>' +
+        '<td>' + esc(o.name||'—') + '<div class="items">' + esc(o.email||'') + (o.phone?' · '+esc(o.phone):'') + '</div></td>' +
+        '<td class="items">' + esc(itemsText(o.items)) + '</td>' +
+        '<td class="addr">' + esc(addr(o.address)) + '</td>' +
+        '<td class="amt">' + money(o.amount_total,o.currency) + '</td>' +
+        '<td>' + (o.paid?'<span class="pill paid">Paid</span>':'<span class="pill unpaid">'+esc(o.payment_status||'unpaid')+'</span>') + '</td>' +
+      '</tr>';
+    }).join('');
+    var paid = list.filter(function(o){return o.paid;});
+    var sum = paid.reduce(function(a,o){return a+(o.amount_total||0);},0);
+    summary.textContent = list.length + ' orders · ' + paid.length + ' paid · $' + sum.toFixed(2) + ' total';
+  }
+
+  function applyFilter() {
+    var q = (search.value||'').trim().toLowerCase();
+    var list = ALL.filter(function(o){ return showUnpaid.checked || o.paid; });
+    if (q) list = list.filter(function(o){
+      var hay = [o.order_number,o.name,o.email,o.phone,itemsText(o.items),addr(o.address)].join(' ').toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+    render(list);
+  }
+
+  function load() {
+    var key = getKey();
+    if (!key) { showGate(); return; }
+    rows.innerHTML = '<tr><td colspan="7" class="empty">Loading…</td></tr>';
+    fetch('/api/orders?paid=' + (showUnpaid.checked?'0':'1') + '&key=' + encodeURIComponent(key))
+      .then(function(r){ return r.json().then(function(j){ return {ok:r.ok,status:r.status,j:j}; }); })
+      .then(function(res){
+        if (res.status === 401) { signOut('Wrong password — try again.'); return; }
+        if (!res.ok) { rows.innerHTML = '<tr><td colspan="7" class="empty">'+esc((res.j&&res.j.error)||'Could not load orders.')+'</td></tr>'; return; }
+        ALL = res.j.orders || [];
+        applyFilter();
+      })
+      .catch(function(){ rows.innerHTML = '<tr><td colspan="7" class="empty">Network error. Try Refresh.</td></tr>'; });
+  }
+
+  function showApp(){ gate.hidden = true; app.hidden = false; load(); }
+  function showGate(){ app.hidden = true; gate.hidden = false; pw.focus(); }
+  function signOut(msg){
+    try { sessionStorage.removeItem(KEYSTORE); localStorage.removeItem(KEYSTORE); } catch(e){}
+    ALL = []; showGate(); if (msg) gateErr.textContent = msg;
+  }
+
+  document.getElementById('gateForm').addEventListener('submit', function(e){
+    e.preventDefault(); gateErr.textContent='';
+    var v = (pw.value||'').trim(); if(!v){ pw.focus(); return; }
+    var store = document.getElementById('remember').checked ? localStorage : sessionStorage;
+    try { store.setItem(KEYSTORE, v); } catch(x){}
+    // Validate by attempting a load; 401 will bounce back to the gate.
+    fetch('/api/orders?key='+encodeURIComponent(v)+'&paid=1')
+      .then(function(r){ if(r.status===401){ signOut('Wrong password — try again.'); return; } showApp(); })
+      .catch(function(){ showApp(); });
+  });
+  document.getElementById('signout').addEventListener('click', function(){ signOut(''); });
+  document.getElementById('refresh').addEventListener('click', load);
+  search.addEventListener('input', applyFilter);
+  showUnpaid.addEventListener('change', load);
+
+  document.getElementById('csv').addEventListener('click', function(){
+    var q = (search.value||'').trim().toLowerCase();
+    var list = ALL.filter(function(o){ return showUnpaid.checked || o.paid; });
+    if (q) list = list.filter(function(o){ return [o.order_number,o.name,o.email,itemsText(o.items),addr(o.address)].join(' ').toLowerCase().indexOf(q)!==-1; });
+    var cols = ['order_number','date','name','email','phone','items','address','city','state','zip','total','currency','status'];
+    var lines = [cols.join(',')];
+    list.forEach(function(o){
+      var a=o.address||{};
+      var row = [o.order_number, fmtDate(o.created), o.name||'', o.email||'', o.phone||'', itemsText(o.items),
+        [a.line1,a.line2].filter(Boolean).join(' '), a.city||'', a.state||'', a.postal_code||'',
+        (o.amount_total==null?'':o.amount_total), o.currency||'', o.paid?'paid':(o.payment_status||'unpaid')];
+      lines.push(row.map(function(x){ x=String(x==null?'':x); return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x; }).join(','));
+    });
+    var blob = new Blob([lines.join('\n')], {type:'text/csv'});
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = 'sacred-orders-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  // Auto-enter if a key is already remembered.
+  if (getKey()) showApp(); else showGate();
+})();
+</script>
+</body>
+</html>
