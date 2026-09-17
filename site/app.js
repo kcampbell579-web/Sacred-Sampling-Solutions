@@ -23,12 +23,48 @@
   var navToggle = document.getElementById('navToggle');
   var navLinks = document.getElementById('navLinks');
   if (navToggle && navLinks) {
-    navToggle.addEventListener('click', function () {
-      navLinks.classList.toggle('open');
+    var headerEl = navToggle.closest('header');
+    function menuIsOpen() { return navLinks.classList.contains('open'); }
+    function openMenu() {
+      navLinks.classList.add('open');
+      navToggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('nav-open');      // lock background scroll
+    }
+    function closeMenu() {
+      navLinks.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('nav-open');
+      // collapse any open accordion groups so the menu reopens in a clean state
+      [].forEach.call(navLinks.querySelectorAll('.navgroup.open'), function (g) {
+        g.classList.remove('open');
+        var b = g.querySelector('.navgroup-btn'); if (b) b.setAttribute('aria-expanded', 'false');
+      });
+    }
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      menuIsOpen() ? closeMenu() : openMenu();
     });
+    // Close when a real navigation link is tapped.
     navLinks.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') navLinks.classList.remove('open');
+      if (e.target.closest && e.target.closest('a[href]')) closeMenu();
     });
+    // Close on tap outside the header (menu lives inside the header).
+    document.addEventListener('click', function (e) {
+      if (!menuIsOpen()) return;
+      if (headerEl && headerEl.contains(e.target)) return;
+      closeMenu();
+    });
+    // Close on Escape.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menuIsOpen()) closeMenu();
+    });
+    // If the viewport grows to desktop while open, reset cleanly.
+    window.addEventListener('resize', function () {
+      if (menuIsOpen() && window.matchMedia('(min-width:981px)').matches) closeMenu();
+    });
+    // Back/forward cache restore (bfcache) — never resurface a stuck-open menu.
+    window.addEventListener('pageshow', function () { if (menuIsOpen()) closeMenu(); });
   }
 
   // Mega-menu — rebuild the header nav into grouped dropdowns (desktop) /
@@ -133,11 +169,34 @@
     var form = panel.querySelector('.help-callform');
     var foot = panel.querySelector('.help-foot');
 
-    function open() { panel.hidden = false; requestAnimationFrame(function () { panel.classList.add('open'); }); fab.classList.add('is-open'); }
-    function close() { panel.classList.remove('open'); fab.classList.remove('is-open'); setTimeout(function () { panel.hidden = true; }, 220); }
-    fab.addEventListener('click', function () { panel.hidden || !panel.classList.contains('open') ? open() : close(); });
+    var hideTimer = null;
+    function open() {
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }  // cancel any pending hide (fixes rapid close→reopen)
+      panel.hidden = false;
+      requestAnimationFrame(function () { panel.classList.add('open'); });
+      fab.classList.add('is-open');
+      fab.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      panel.classList.remove('open');
+      fab.classList.remove('is-open');
+      fab.setAttribute('aria-expanded', 'false');
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(function () { panel.hidden = true; hideTimer = null; }, 220);
+    }
+    fab.setAttribute('aria-expanded', 'false');
+    fab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      panel.classList.contains('open') ? close() : open();
+    });
     panel.querySelector('.help-x').addEventListener('click', close);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && panel.classList.contains('open')) close(); });
+    // Tap outside the panel (and not on the FAB) closes it.
+    document.addEventListener('click', function (e) {
+      if (!panel.classList.contains('open')) return;
+      if (panel.contains(e.target) || fab.contains(e.target)) return;
+      close();
+    });
 
     // FAQ accordion
     faq.addEventListener('click', function (e) {
@@ -262,7 +321,9 @@
     var emailInput = drawer.querySelector('.cart-email');
     try { var savedLead = localStorage.getItem(LEAD); if (savedLead) emailInput.value = savedLead; } catch (e) {}
 
+    var drawerHideTimer = null;
     function openDrawer() {
+      if (drawerHideTimer) { clearTimeout(drawerHideTimer); drawerHideTimer = null; }  // cancel pending hide on reopen
       render();
       drawer.hidden = false;
       document.body.style.overflow = 'hidden';
@@ -271,7 +332,8 @@
     function closeDrawer() {
       drawer.classList.remove('open');
       document.body.style.overflow = '';
-      setTimeout(function () { drawer.hidden = true; }, 260);
+      if (drawerHideTimer) clearTimeout(drawerHideTimer);
+      drawerHideTimer = setTimeout(function () { drawer.hidden = true; drawerHideTimer = null; }, 260);
     }
     drawer.addEventListener('click', function (e) {
       var el = e.target.closest && e.target.closest('[data-act]');
