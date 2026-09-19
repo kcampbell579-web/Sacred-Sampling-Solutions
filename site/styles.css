@@ -120,9 +120,9 @@ p{margin:0}
 header{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,#0d2b52,#0a2038);
   backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid rgba(255,255,255,.10);color:#fff}
 .nav{display:flex;align-items:center;gap:20px;height:74px}
-.brand{display:flex;align-items:center;gap:11px}
-.brand img{height:42px;width:auto}
-.nav-links{display:flex;gap:18px;margin-left:6px}
+.brand{display:flex;align-items:center;gap:11px;flex:none}
+.brand img{height:48px;width:auto;flex:none;max-width:none}
+.nav-links{display:flex;gap:12px;margin-left:6px}
 .nav-links a{font-size:.92rem;color:rgba(255,255,255,.82);font-weight:600;transition:color .15s;white-space:nowrap}
 .nav-links a:hover,.nav-links a.active{color:#8fc4ff}
 .nav-cta{margin-left:auto;display:flex;align-items:center;gap:12px}
@@ -138,9 +138,14 @@ header{position:sticky;top:0;z-index:60;background:linear-gradient(180deg,#0d2b5
     max-height:0;overflow:hidden;transition:max-height .28s ease;pointer-events:none;opacity:0}
   .nav-links.open{max-height:420px;pointer-events:auto;opacity:1}
   body.nav-open{overflow:hidden}
+  /* On phones, the bigger logo + cart + menu fill the row — drop the redundant
+     header "Find my test" button (it's also in the menu and the hero) so the
+     logo has room and the page never zooms out to fit an oversized header. */
+  @media (max-width:520px){ .nav-cta a.btn-primary{display:none} }
   .nav-links a{padding:13px 0;font-size:1rem;border-bottom:1px solid var(--line);color:var(--ink-2)}
   .nav-toggle{display:grid}
   .hide-sm{display:none}
+  .brand img{height:46px}
 }
 
 /* legal / content pages */
@@ -181,6 +186,14 @@ section{padding:88px 0}
 .hero .eyebrow{color:var(--brand-2)}
 .hero p.lead{font-size:1.2rem;color:var(--dk-text-2);max-width:36ch}
 .hero-cta{display:flex;gap:12px;margin:30px 0 24px;flex-wrap:wrap}
+/* Small phones: stack hero CTAs full-width and let long button labels wrap, so
+   a wide button (e.g. "Find the right panel for my home") never runs off a
+   320px screen. Applies to every large button, wherever it sits. */
+@media (max-width:430px){
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .hero-cta .btn{width:100%}
+  .btn-lg{white-space:normal;max-width:100%}
+}
 .hero-trust{display:flex;flex-wrap:wrap;gap:10px 22px;padding-top:22px;border-top:1px solid var(--dk-line)}
 .ht{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--dk-text-2);font-weight:600}
 .ht svg{color:var(--gold-2);flex:none}
@@ -357,7 +370,7 @@ td.dash{color:var(--ink-3)}
 
 /* footer — dark */
 footer{background:linear-gradient(180deg,#0a1224,#070b16);border-top:1px solid var(--dk-line);color:var(--dk-text-2);padding:56px 0 34px;margin-top:20px}
-footer .brand img{height:40px}
+footer .brand img{height:48px}
 .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:32px}
 .foot-grid h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:#63739a;margin:0 0 14px;font-weight:600}
 .foot-grid a{display:block;color:var(--dk-text-2);font-size:.92rem;padding:5px 0}
