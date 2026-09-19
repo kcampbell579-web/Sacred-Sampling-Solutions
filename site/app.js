@@ -88,19 +88,41 @@
     html += '<a class="nav-signin" href="https://app.sacredsamplingsolutions.com/login">My Results</a>';
     navLinks.innerHTML = html;
 
+    // A device that can't hover (phones, tablets, touch laptops) must be able to
+    // OPEN a dropdown by tapping — hover-only menus are unreachable there. So we
+    // decide by hover capability, not screen width.
+    function canHover() { return window.matchMedia('(hover: hover) and (pointer: fine)').matches; }
     navLinks.addEventListener('click', function (e) {
       var btn = e.target.closest && e.target.closest('.navgroup-btn');
       if (!btn) return;
-      if (window.matchMedia('(min-width:981px)').matches) {
-        // Desktop: hover reveals the dropdown; a click goes to the section landing.
+      var wide = window.matchMedia('(min-width:981px)').matches;
+      if (wide && canHover()) {
+        // Mouse desktop: hover reveals the dropdown; a click goes to the section landing.
         var href = btn.getAttribute('data-href');
         if (href) window.location.href = href;
         return;
       }
-      // Mobile: toggle this group's accordion.
+      // Touch (any width) or narrow: tap toggles this group's dropdown.
+      e.preventDefault();
       var group = btn.parentNode;
-      var open = group.classList.toggle('open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var willOpen = !group.classList.contains('open');
+      // At desktop width, keep only one dropdown open at a time.
+      if (wide) {
+        [].forEach.call(navLinks.querySelectorAll('.navgroup.open'), function (g) {
+          if (g !== group) { g.classList.remove('open'); var gb = g.querySelector('.navgroup-btn'); if (gb) gb.setAttribute('aria-expanded', 'false'); }
+        });
+      }
+      group.classList.toggle('open', willOpen);
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+    // Tap outside an open dropdown closes it (covers desktop-width touch, where
+    // the whole nav bar is always visible rather than a toggled menu).
+    document.addEventListener('click', function (e) {
+      if (!navLinks.querySelector('.navgroup.open')) return;
+      if (e.target.closest && e.target.closest('.navgroup')) return;
+      [].forEach.call(navLinks.querySelectorAll('.navgroup.open'), function (g) {
+        g.classList.remove('open'); var gb = g.querySelector('.navgroup-btn'); if (gb) gb.setAttribute('aria-expanded', 'false');
+      });
     });
 
     // Turn the header's primary CTA into "Find my test".
