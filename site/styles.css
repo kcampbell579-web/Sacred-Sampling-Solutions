@@ -173,10 +173,18 @@ section{padding:88px 0}
 /* HERO — always dark */
 .hero{position:relative;overflow:hidden;color:var(--dk-text);
   background:
-    radial-gradient(120% 90% at 82% -10%, rgba(44,148,252,.16), transparent 55%),
-    radial-gradient(90% 120% at 8% 10%, rgba(47,134,255,.20), transparent 60%),
+    linear-gradient(100deg, rgba(6,13,33,.95) 0%, rgba(7,16,40,.86) 42%, rgba(8,20,48,.54) 74%, rgba(9,22,58,.42) 100%),
+    url('/assets/hero.jpg') center/cover no-repeat,
     linear-gradient(160deg, #060911 0%, #091530 55%, #0a1c44 100%);
   padding:64px 0 56px}
+/* On phones the hero stacks and text spans the full width, so use a uniform,
+   stronger scrim instead of the left-weighted desktop one. */
+@media (max-width:900px){
+  .hero{background:
+    linear-gradient(180deg, rgba(6,13,33,.72) 0%, rgba(7,16,40,.70) 45%, rgba(8,20,48,.82) 100%),
+    url('/assets/hero.jpg') center/cover no-repeat,
+    linear-gradient(160deg, #060911, #0a1c44);}
+}
 .hero::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(180deg,transparent 80%, rgba(6,9,17,.6))}
 .hero .wrap{position:relative;z-index:1}
