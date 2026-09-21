@@ -606,53 +606,64 @@
   })();
 
   // ── ZIP Code Lookup — "What's in your water?" ────────────────────────
-  // Reads a bundled, public-data JSON (site/data/zip-lookup.json) and shows the
-  // documented area-level environmental profile for a ZIP, plus the right kit to
-  // start with. Screening only — never a claim about an individual home.
+  // Reads a small per-prefix shard (site/data/zip/<first3>.json) for the entered
+  // ZIP, plus one meta file (site/data/zip-meta.json), and shows the documented
+  // area-level environmental screening for that ZIP with the right kit to start
+  // with. Screening only — never a claim about an individual home.
   (function () {
     var form = document.getElementById('zipForm');
     var results = document.getElementById('zipResults');
     if (!form || !results) return;                 // only on /zip-lookup
     var input = document.getElementById('zipInput');
     var countEl = document.getElementById('zipCount');
-    var DATA = null, loading = false;
+    var META = null, metaLoading = null;
+    var shardCache = {};                            // zip3 -> {zip:rec}
 
-    // Kit copy for the info-only (non-purchasable) kits, so the CTA links out
-    // rather than fabricating a cart price.
     function esc(s) {
       return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
       });
     }
 
-    function load() {
-      if (DATA || loading) return Promise.resolve(DATA);
-      loading = true;
-      return fetch('/data/zip-lookup.json').then(function (r) { return r.json(); })
+    function loadMeta() {
+      if (META) return Promise.resolve(META);
+      if (metaLoading) return metaLoading;
+      metaLoading = fetch('/data/zip-meta.json').then(function (r) { return r.json(); })
         .then(function (j) {
-          DATA = j; loading = false;
-          if (countEl && j.count) countEl.textContent = j.count.toLocaleString() + ' ZIP codes in our screening database.';
+          META = j;
+          if (countEl && j.count) countEl.textContent = j.count.toLocaleString() + ' U.S. ZIP codes in our screening database.';
           return j;
-        }).catch(function () { loading = false; return null; });
+        }).catch(function () { return null; });
+      return metaLoading;
     }
-    load();
+    loadMeta();
 
-    function dots(sd, strength) {
-      // sd is like "●●●●○"; color by strength.
-      var cls = 'ok';
-      if (/very high/i.test(strength)) cls = 'vhigh';
-      else if (/high/i.test(strength)) cls = 'high';
-      else if (/moderate/i.test(strength)) cls = 'mod';
-      return '<span class="zip-dots ' + cls + '" aria-hidden="true">' + esc(sd || '') + '</span>';
+    function loadShard(zip3) {
+      if (shardCache[zip3]) return Promise.resolve(shardCache[zip3]);
+      return fetch('/data/zip/' + zip3 + '.json').then(function (r) {
+        return r.ok ? r.json() : {};
+      }).then(function (j) { shardCache[zip3] = j; return j; }).catch(function () { return {}; });
     }
 
+    // Coverage → badge class (data confidence, not alarm).
+    function covClass(c) {
+      c = (c || '').toLowerCase();
+      if (c === 'strong') return 'high';
+      if (c === 'moderate') return 'mod';
+      return 'ok';
+    }
+    // all_concerns like "Lead [ZIP]; PFAS [DISTANT (12mi)]" → clean chips.
     function chips(str) {
-      return String(str || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean)
-        .map(function (s) { return '<span class="zip-chip">' + esc(s) + '</span>'; }).join('');
+      return String(str || '').split(/[;,]/).map(function (s) { return s.trim(); }).filter(Boolean)
+        .map(function (s) {
+          var name = s.replace(/\s*\[[^\]]*\]\s*/g, '').trim();
+          if (!name) return '';
+          return '<span class="zip-chip">' + esc(name) + '</span>';
+        }).join('');
     }
 
     function kitCard(rec) {
-      var kit = (DATA.kits && DATA.kits[rec.kit]) || {};
+      var kit = (META && META.kits && META.kits[rec.kit]) || {};
       var name = kit.name || 'Recommended test';
       var href = '/' + rec.kit;
       if (kit.buy && kit.price) {
@@ -666,7 +677,6 @@
           '<a class="zip-kit-learn" href="' + href + '">See what this kit covers &rarr;</a>' +
         '</div>';
       }
-      // Info-only kit (no published DTC price yet) — link to the kit page.
       return '<div class="zip-kit">' +
         '<div class="zip-kit-tag">Recommended starting point</div>' +
         '<div class="zip-kit-row">' +
@@ -677,9 +687,31 @@
       '</div>';
     }
 
+    function statRow(rec) {
+      var stats = [];
+      if (rec.ex > 0) stats.push([rec.ex, 'within your ZIP']);
+      if (rec.n10 > 0) stats.push([rec.n10, 'within 10 miles']);
+      if (rec.n25 > 0) stats.push([rec.n25, 'within 25 miles']);
+      if (rec.cty > 0) stats.push([rec.cty, 'in your county']);
+      if (!stats.length) return '';
+      return '<div class="zip-stats">' + stats.map(function (s) {
+        return '<div class="zip-stat"><b>' + s[0] + '</b><span>' + s[1] + '</span></div>';
+      }).join('') + '</div>';
+    }
+
+    function nearestCard(rec) {
+      var nd = rec.nd || {};
+      if (!nd.c && !nd.con) return '';
+      var place = [nd.c, nd.s].filter(Boolean).join(', ');
+      var dist = (nd.d || nd.d === 0) ? (' &middot; ' + esc(nd.d) + ' mi away') : '';
+      return '<div class="zip-fact"><h4>Nearest documented record</h4>' +
+        '<p><b>' + esc(nd.con || 'Environmental record') + '</b>' + (place ? ' near ' + esc(place) : '') + dist + '.' +
+        (nd.ctx ? ' ' + esc(nd.ctx) + '.' : '') + (nd.src ? ' <span class="zip-muted">Source: ' + esc(nd.src) + '</span>' : '') + '</p></div>';
+    }
+
     function render(zip, rec) {
       var place = [rec.c, rec.s].filter(Boolean).join(', ');
-      var disc = 'This does not mean ' + esc(rec.pc) + ' is present in your home’s water. Your individual water can only be evaluated by testing a sample from your property.';
+      var headline = (META && META.headlines && META.headlines[rec.h]) || 'Environmental screening for your ZIP.';
       results.innerHTML =
         '<div class="zip-card reveal in">' +
           '<div class="zip-card-head">' +
@@ -688,27 +720,23 @@
               '<h2>' + esc(place) + (rec.co ? ' &middot; ' + esc(rec.co) + ' County' : '') + '</h2>' +
             '</div>' +
             '<div class="zip-signal">' +
-              '<span class="zip-signal-label">Signal strength</span>' +
-              dots(rec.sd, rec.ss) +
-              '<b>' + esc(rec.ss) + '</b>' +
+              '<span class="zip-signal-label">Data coverage</span>' +
+              '<b class="zip-cov ' + covClass(rec.cov) + '">' + esc(rec.cov || 'Limited') + '</b>' +
             '</div>' +
           '</div>' +
 
-          '<div class="zip-alert">We found environmental factors worth knowing about in your area.</div>' +
+          '<div class="zip-alert">' + esc(headline) + '</div>' +
 
           '<div class="zip-primary">' +
-            '<span class="zip-primary-tag">Primary concern</span>' +
-            '<div class="zip-primary-name">' + esc(rec.pc) + '</div>' +
-            (rec.pcd ? '<p class="zip-primary-detail">' + esc(rec.pcd) + '</p>' : '') +
+            '<span class="zip-primary-tag">Primary concern' + (rec.pce ? ' &middot; ' + esc(rec.pce) : '') + '</span>' +
+            '<div class="zip-primary-name">' + esc(rec.pc || 'General screening') + '</div>' +
+            (rec.ab ? '<p class="zip-primary-detail">' + esc(rec.ab) + '</p>' : '') +
           '</div>' +
 
-          '<div class="zip-facts">' +
-            (rec.lct ? '<div class="zip-fact"><h4>Local context</h4><p><b>' + esc(rec.lct) + '</b><br>' + esc(rec.lcd) + '</p></div>' : '') +
-            (rec.why ? '<div class="zip-fact"><h4>Why your area appears</h4><p>' + esc(rec.why) + '</p></div>' : '') +
-          '</div>' +
+          statRow(rec) +
 
-          (rec.sc ? '<div class="zip-fact"><h4>Contaminants documented in the area</h4><div class="zip-chips">' + chips(rec.sc) + '</div></div>' : '') +
-          (rec.src ? '<div class="zip-fact"><h4>Associated source</h4><p>' + esc(rec.src) + '</p></div>' : '') +
+          (rec.ac ? '<div class="zip-fact"><h4>Concerns flagged in the area</h4><div class="zip-chips">' + chips(rec.ac) + '</div></div>' : '') +
+          nearestCard(rec) +
 
           '<div class="zip-source-toggle">' +
             '<span>Your water comes from:</span>' +
@@ -721,7 +749,8 @@
 
           kitCard(rec) +
 
-          '<p class="zip-disc">' + disc + '</p>' +
+          ((META && META.universal) ? '<div class="zip-fact"><h4>Worth testing almost anywhere</h4><p class="zip-muted">' + esc(META.universal) + '</p></div>' : '') +
+          '<p class="zip-disc">' + esc((META && META.disclaimer) || 'Screening uses public environmental records; it does not confirm what is in your home. Only a laboratory test of a sample from your property can do that.') + '</p>' +
 
           '<div class="zip-report">' +
             '<div><b>Want this in writing?</b><span>Email me my area profile and a checklist of what to test.</span></div>' +
@@ -735,7 +764,6 @@
 
       results.hidden = false;
 
-      // Water-source note toggle.
       var note = document.getElementById('zipSrcNote');
       function setNote(kind) {
         note.textContent = kind === 'well'
@@ -751,14 +779,12 @@
         });
       });
 
-      // Add-to-cart for purchasable recommendation.
       var buy = results.querySelector('[data-zipbuy]');
       if (buy) buy.addEventListener('click', function () {
         var cents = Math.round(parseFloat(buy.getAttribute('data-zipprice')) * 100);
         if (window.SSSCart) { window.SSSCart.add(buy.getAttribute('data-zipbuy'), buy.getAttribute('data-zipname'), cents); window.SSSCart.open(); }
       });
 
-      // Email-my-profile (fire-and-forget lead capture via formsubmit.co).
       var rform = results.querySelector('.zip-report-form');
       if (rform) rform.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -784,7 +810,7 @@
       results.innerHTML =
         '<div class="zip-card zip-card-empty reveal in">' +
           '<h2>We don’t have area data for ' + esc(zip) + ' yet.</h2>' +
-          '<p>Our screening database is growing. That doesn’t mean your area is clear &mdash; it just means we don’t have a public-record match to show. The surest answer is always a laboratory test of your own water.</p>' +
+          '<p>That doesn’t mean your area is clear &mdash; it just means we don’t have a public-record match to show. The surest answer is always a laboratory test of your own water.</p>' +
           '<div class="hero-cta"><a class="btn btn-gold btn-lg" href="/quiz">Find my test <span class="arrow">&rarr;</span></a>' +
           '<a class="btn btn-ghost btn-lg" href="/kits">Browse all kits</a></div>' +
         '</div>';
@@ -798,10 +824,12 @@
       var zip = raw.slice(0, 5);
       results.hidden = false;
       results.innerHTML = '<div class="zip-card zip-loading">Checking public records for ' + esc(zip) + '…</div>';
-      load().then(function (j) {
-        if (!j || !j.zips) { results.innerHTML = '<div class="zip-card zip-loading">Sorry &mdash; the lookup is unavailable right now. Please try again.</div>'; return; }
-        var rec = j.zips[zip];
+      Promise.all([loadMeta(), loadShard(zip.slice(0, 3))]).then(function (arr) {
+        var shard = arr[1] || {};
+        var rec = shard[zip];
         if (rec) render(zip, rec); else notFound(zip);
+      }).catch(function () {
+        results.innerHTML = '<div class="zip-card zip-loading">Sorry &mdash; the lookup is unavailable right now. Please try again.</div>';
       });
     }
 
