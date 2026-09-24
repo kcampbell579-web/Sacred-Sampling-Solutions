@@ -17,8 +17,9 @@ function videoKind(url) {
 
 export default function TrainingGate({ slug, sampleId, videoUrl, kitTitle }) {
   const vid = videoKind(videoUrl);
-  // If there's no video for this kit yet, don't block on it.
-  const [watched, setWatched] = useState(vid.type === "none");
+  // The training video is recommended, not a hard gate — the acknowledgment is
+  // available right away. (We still record the acknowledgment for chain of custody.)
+  const [watched, setWatched] = useState(true);
   const [a, setA] = useState(false);
   const [b, setB] = useState(false);
   const [c, setC] = useState(false);
@@ -31,8 +32,8 @@ export default function TrainingGate({ slug, sampleId, videoUrl, kitTitle }) {
       <span className="eyebrow">Required · watch before you collect</span>
       <h2 className="mt" style={{ marginBottom: 6 }}>{kitTitle} — collection training</h2>
       <p className="muted" style={{ marginBottom: 16 }}>
-        This short training is required. The acknowledgment below unlocks once the video finishes — we
-        record that you watched it for your chain of custody.
+        Please watch this short training before you collect, then complete the acknowledgment below —
+        we record it for your chain of custody.
       </p>
 
       {vid.type === "file" && (
@@ -66,8 +67,8 @@ export default function TrainingGate({ slug, sampleId, videoUrl, kitTitle }) {
         <div className="alert">A training video for this kit is coming soon — continue below.</div>
       )}
 
-      <div className={`locktag ${watched ? "ok" : ""}`}>
-        {watched ? "✓ Training complete" : "🔒 Finish the video to unlock the acknowledgment"}
+      <div className="locktag ok">
+        ✓ Watch the training above, then acknowledge below
       </div>
 
       <form action={saveAcknowledgment} style={{ marginTop: 18, opacity: watched ? 1 : 0.55 }}>
@@ -77,7 +78,7 @@ export default function TrainingGate({ slug, sampleId, videoUrl, kitTitle }) {
 
         <label className="ck">
           <input type="checkbox" name="ack_watched_box" disabled={!watched} checked={a} onChange={(e) => setA(e.target.checked)} />
-          <span>I watched the full training video and understand the collection protocol for this kit.</span>
+          <span>I have reviewed the training video and understand the collection protocol for this kit.</span>
         </label>
         <label className="ck">
           <input type="checkbox" name="ack_deviations" disabled={!watched} checked={b} onChange={(e) => setB(e.target.checked)} />
