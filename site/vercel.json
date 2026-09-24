@@ -4,6 +4,11 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/order",
+      "destination": "/orders",
+      "statusCode": 301
+    },
+    {
       "source": "/privacy.html",
       "destination": "/privacy",
       "statusCode": 301

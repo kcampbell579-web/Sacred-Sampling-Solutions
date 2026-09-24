@@ -111,6 +111,27 @@
   document.getElementById('coSub').textContent = money(sub);
   document.getElementById('coTotal').textContent = money(sub);
 
+  // Alert the owner that a shopper reached the checkout page (high intent).
+  // Once per browser session so a refresh doesn't re-send. Fire-and-forget.
+  (function () {
+    try { if (sessionStorage.getItem('sss_co_alert')) return; sessionStorage.setItem('sss_co_alert', '1'); } catch (e) {}
+    var lead = ''; try { lead = localStorage.getItem(LEAD) || ''; } catch (e) {}
+    var lines = items.map(function (i) { return (i.qty > 1 ? i.qty + '× ' : '') + i.name; }).join(', ');
+    try {
+      fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Reached checkout — ' + money(sub) + (lead ? ' — ' + lead : ''),
+          event: 'Shopper reached the checkout page',
+          items: lines,
+          subtotal: money(sub),
+          email: lead || '(not captured yet)',
+          page: location.href
+        })
+      }).catch(function () {});
+    } catch (e) {}
+  })();
+
   function showErr(msg) {
     mount.innerHTML = '<div class="co-err"><b>We couldn’t start checkout.</b>' +
       '<p>' + (msg || 'Please try again in a moment.') + '</p>' +

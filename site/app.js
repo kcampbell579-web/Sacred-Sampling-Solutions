@@ -530,6 +530,13 @@
             body: JSON.stringify({ Email: email, Fields: [] })
           }).catch(function () {});
         } catch (x) {}
+        // Also alert the owner (info@) of the new guide signup.
+        try {
+          fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ _subject: 'New guide signup — ' + email, event: 'Water Safety Guide popup signup', email: email, page: location.href })
+          }).catch(function () {});
+        } catch (x) {}
         if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 25 });
         if (window.fbq) window.fbq('track', 'Lead');
         ov.querySelector('.promo-body').innerHTML =
