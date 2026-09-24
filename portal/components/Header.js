@@ -10,6 +10,7 @@ export default function Header({ user }) {
           <img src={LOGO} alt="Sacred Sampling Solutions" />
         </a>
         <div className="spacer" />
+        <a className="linkbtn" href="/instructions">Collection instructions</a>
         {user ? (
           <form action={logout} style={{ display: "flex", alignItems: "center" }}>
             <span className="who">{user.email}</span>
