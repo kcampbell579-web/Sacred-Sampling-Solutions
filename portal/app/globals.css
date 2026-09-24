@@ -312,3 +312,22 @@ p{margin:0}
 /* Training video embed (YouTube / Vimeo) — responsive 16:9 */
 .trainvid-embed{position:relative;width:100%;max-width:680px;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0b0e14}
 .trainvid-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* Sample-label walkthrough (collection instructions page) */
+.lbl{max-width:520px;border-radius:12px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:#000}
+.lbl-head{background:#000;display:flex;align-items:center;gap:12px;padding:14px 18px}
+.lbl-logo{height:40px;width:auto}
+.lbl-title{color:#fff;font-weight:800;font-size:1.35rem;letter-spacing:.02em;line-height:1}
+.lbl-sub{color:#5aabff;font-weight:700;font-size:.7rem;letter-spacing:.15em;margin-top:3px}
+.lbl-body{background:#fff;padding:16px 18px;display:flex;flex-direction:column;gap:13px}
+.lbl-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;border-bottom:2px solid #111;padding-bottom:6px}
+.lbl-k{font-weight:700;color:#111;font-size:1rem}
+.lbl-v{font-family:var(--mono);color:var(--brand-ink);font-weight:700}
+.lbl-sign{font-style:italic;font-family:Georgia,"Times New Roman",serif;font-size:1.05rem}
+.lbl-guide{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.lbl-g{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.lbl-g-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.lbl-g-top b{font-size:.95rem}
+.lbl-g-ex{font-family:var(--mono);font-size:.82rem;color:var(--brand-ink);font-weight:700}
+.lbl-g-d{color:var(--ink-2);font-size:.86rem;margin-top:4px;line-height:1.5}
+@media(max-width:620px){.lbl-guide{grid-template-columns:1fr}}
