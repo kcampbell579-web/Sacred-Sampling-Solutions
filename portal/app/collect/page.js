@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import Header from "@/components/Header";
 import CollectForm from "./CollectForm";
+import SampleSteps from "@/components/SampleSteps";
 import { cocPublicUrl } from "@/lib/coc";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +15,7 @@ export default async function CollectPage({ searchParams }) {
   if (!id) redirect("/dashboard");
 
   const regRows = await sql`
-    select sample_id, kit_code, kit_panel, kit_slug, customer_name, sample_source, city, state
+    select sample_id, kit_code, kit_panel, kit_slug, customer_name, sample_source, city, state, status, coc_url
     from sample_registrations where sample_id=${id} and user_id=${user.id}`;
   if (!regRows.length) redirect("/dashboard");
   const reg = regRows[0];
@@ -33,16 +34,24 @@ export default async function CollectPage({ searchParams }) {
         <div className="wrap">
           <a className="backlink" href="/dashboard">← Back to dashboard</a>
 
-          {coc ? (
-            <CocDone reg={reg} />
-          ) : (
-            <CollectForm
-              sampleId={reg.sample_id}
-              defaultLocation={reg.sample_source}
-              defaultMatrix={kit.matrix === "air" ? "A" : "DW"}
-              error={error}
-            />
-          )}
+          <SampleSteps
+            sampleId={reg.sample_id}
+            kitSlug={reg.kit_slug}
+            status={reg.status}
+            cocUrl={reg.coc_url || (coc ? "1" : "")}
+            current="collect"
+          >
+            {coc ? (
+              <CocDone reg={reg} />
+            ) : (
+              <CollectForm
+                sampleId={reg.sample_id}
+                defaultLocation={reg.sample_source}
+                defaultMatrix={kit.matrix === "air" ? "A" : "DW"}
+                error={error}
+              />
+            )}
+          </SampleSteps>
         </div>
       </main>
     </>

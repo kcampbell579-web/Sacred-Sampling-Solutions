@@ -3,6 +3,7 @@ import { sql } from "@/lib/db";
 import { redirect } from "next/navigation";
 import Header from "@/components/Header";
 import TrainingGate from "./TrainingGate";
+import SampleSteps from "@/components/SampleSteps";
 
 export const dynamic = "force-dynamic";
 
@@ -30,11 +31,13 @@ export default async function TrainingPage({ params, searchParams }) {
   const kit = kitRows[0];
 
   // If a sample ID is supplied, it must belong to this member.
-  let sampleId = "";
+  let sampleId = "", sampleStatus = "", sampleCoc = "";
   if (id) {
-    const s = await sql`select sample_id from sample_registrations where sample_id=${id} and user_id=${user.id}`;
+    const s = await sql`select sample_id, status, coc_url from sample_registrations where sample_id=${id} and user_id=${user.id}`;
     if (!s.length) redirect("/dashboard");
     sampleId = s[0].sample_id;
+    sampleStatus = s[0].status;
+    sampleCoc = s[0].coc_url;
   }
 
   const inside = parseLines(kit.whats_inside);
@@ -46,14 +49,9 @@ export default async function TrainingPage({ params, searchParams }) {
     ["Containers", kit.containers],
   ].filter(([, v]) => v);
 
-  return (
+  const body = (
     <>
-      <Header user={user} />
-      <main className="page">
-        <div className="wrap">
-          <a className="backlink" href="/dashboard">← Back to dashboard</a>
-
-          <div className="freeze-note">
+      <div className="freeze-note">
             <span className="freeze-ic">❄️</span>
             <div>
               <b>Freeze your ice pack first.</b> Put it in the freezer until solid — <b>at least 6 hours ahead</b> (overnight is best).
@@ -108,7 +106,29 @@ export default async function TrainingPage({ params, searchParams }) {
             </div>
           )}
 
-          <TrainingGate slug={kit.slug} sampleId={sampleId} videoUrl={kit.video_url || ""} kitTitle={kit.title} />
+      <TrainingGate slug={kit.slug} sampleId={sampleId} videoUrl={kit.video_url || ""} kitTitle={kit.title} />
+    </>
+  );
+
+  return (
+    <>
+      <Header user={user} />
+      <main className="page">
+        <div className="wrap">
+          <a className="backlink" href="/dashboard">← Back to dashboard</a>
+          {sampleId ? (
+            <SampleSteps
+              sampleId={sampleId}
+              kitSlug={kit.slug}
+              status={sampleStatus}
+              cocUrl={sampleCoc}
+              current="training"
+            >
+              {body}
+            </SampleSteps>
+          ) : (
+            body
+          )}
         </div>
       </main>
     </>

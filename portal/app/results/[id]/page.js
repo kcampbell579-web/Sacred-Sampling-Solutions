@@ -3,6 +3,7 @@ import { sql } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { statusIndex } from "@/lib/status";
 import Header from "@/components/Header";
+import SampleSteps from "@/components/SampleSteps";
 import PrintButton from "./PrintButton";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export default async function ResultsPage({ params }) {
   const user = await requireUser();
   const id = decodeURIComponent(params.id).toUpperCase();
 
-  const regRows = await sql`select sample_id, kit_panel, sample_source, status from sample_registrations where sample_id=${id} and user_id=${user.id}`;
+  const regRows = await sql`select sample_id, kit_panel, kit_slug, sample_source, status, coc_url from sample_registrations where sample_id=${id} and user_id=${user.id}`;
   if (!regRows.length) redirect("/dashboard");
   const reg = regRows[0];
   const ready = statusIndex(reg.status) >= 6;
@@ -38,8 +39,16 @@ export default async function ResultsPage({ params }) {
     <>
       <Header user={user} />
       <main className="page">
-        <div className="wrap" style={{ maxWidth: 820 }}>
+        <div className="wrap">
           <a className="backlink" href="/dashboard">← Back to dashboard</a>
+
+          <SampleSteps
+            sampleId={reg.sample_id}
+            kitSlug={reg.kit_slug}
+            status={reg.status}
+            cocUrl={reg.coc_url}
+            current="results"
+          >
 
           {!ready ? (
             <div className="card center">
@@ -102,6 +111,8 @@ export default async function ResultsPage({ params }) {
               </div>
             </>
           )}
+
+          </SampleSteps>
         </div>
       </main>
     </>

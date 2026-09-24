@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { statusIndex } from "@/lib/status";
 import { generateLabel, markShipped } from "@/app/actions/shipping";
 import Header from "@/components/Header";
+import SampleSteps from "@/components/SampleSteps";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function ShippingPage({ searchParams }) {
   if (!id) redirect("/dashboard");
 
   const regRows = await sql`
-    select sample_id, kit_panel, customer_name, street, city, state, zip, phone, status, coc_url
+    select sample_id, kit_slug, kit_panel, customer_name, street, city, state, zip, phone, status, coc_url
     from sample_registrations where sample_id=${id} and user_id=${user.id}`;
   if (!regRows.length) redirect("/dashboard");
   const reg = regRows[0];
@@ -30,8 +31,16 @@ export default async function ShippingPage({ searchParams }) {
     <>
       <Header user={user} />
       <main className="page">
-        <div className="wrap" style={{ maxWidth: 640 }}>
+        <div className="wrap">
           <a className="backlink" href="/dashboard">← Back to dashboard</a>
+
+          <SampleSteps
+            sampleId={reg.sample_id}
+            kitSlug={reg.kit_slug}
+            status={reg.status}
+            cocUrl={reg.coc_url}
+            current="ship"
+          >
 
           <div className="freeze-note">
             <span className="freeze-ic">📦</span>
@@ -92,6 +101,8 @@ export default async function ShippingPage({ searchParams }) {
               </form>
             </div>
           )}
+
+          </SampleSteps>
         </div>
       </main>
     </>
