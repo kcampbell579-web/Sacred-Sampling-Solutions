@@ -397,3 +397,10 @@ p{margin:0}
   .ocard-grid{grid-template-columns:1fr;gap:10px}
   .ocard-track{grid-template-columns:1fr}
 }
+
+/* ── Registration: contact-Kelly fallback ───────────────────────────── */
+.contact-kelly{margin-top:12px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--bad,#c0392b) 25%,transparent)}
+.ck-lead{display:block;font-weight:700;font-size:.86rem;margin-bottom:8px;color:var(--ink)}
+.ck-row{display:flex;gap:8px;flex-wrap:wrap}
+.ck-help{margin-top:14px;font-size:.85rem;color:var(--ink-3);text-align:center}
+.ck-help a{font-weight:700;color:var(--brand-ink)}
