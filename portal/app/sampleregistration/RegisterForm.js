@@ -47,8 +47,16 @@ export default function RegisterForm({ initialId, user, error }) {
                 </div>
               </div>
             ) : (
-              <span className="hint">{sid ? "Keep typing — the format is SSS-COM-00001." : "Printed on your kit label."}</span>
+              <span className="hint">{sid ? "Keep typing — the format is SS-BAS-00001." : "Printed on your kit label — see the example below."}</span>
             )}
+            <figure className="idexample">
+              <img
+                src="https://www.sacredsamplingsolutions.com/SAMPLE_ID_EXAMPLE.jpg"
+                alt="Example kit label with the Sample ID circled"
+                loading="lazy"
+              />
+              <figcaption>Your <b>Sample ID</b> is printed on your kit label, circled here. Enter it exactly as shown (e.g. <span className="mono">SS-BAS-00001</span>).</figcaption>
+            </figure>
           </div>
 
           <div className="row2">
