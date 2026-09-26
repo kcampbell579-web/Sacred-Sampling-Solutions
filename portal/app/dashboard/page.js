@@ -136,7 +136,7 @@ export default async function Dashboard({ searchParams }) {
                 <div className="two-col">
                   <div className="card">
                     <span className="eyebrow">Results</span>
-                    <h2 className="mt" style={{ marginBottom: 4 }}>Your reports</h2>
+                    <h2 className="mt" style={{ marginBottom: 4 }}>Your Results</h2>
                     <p className="muted" style={{ marginBottom: 12 }}>When a kit&rsquo;s analysis is done, its report appears here — clear numbers compared against EPA limits. You&rsquo;ll get an email the moment it&rsquo;s ready.</p>
                     <a className="btn btn-ghost btn-sm" href="https://www.sacredsamplingsolutions.com/understanding-results.html">How to read your report →</a>
                   </div>
