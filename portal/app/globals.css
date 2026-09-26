@@ -280,8 +280,8 @@ p{margin:0}
 .chip{background:var(--brand-wash);color:var(--brand-ink);font-size:.78rem;font-weight:700;padding:6px 11px;border-radius:100px}
 
 /* results + support */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.two-col .card{display:flex;flex-direction:column}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.two-col .card{display:flex;flex-direction:column;height:100%}
 .two-col .card .btn{margin-top:auto;align-self:flex-start}
 @media(max-width:640px){.two-col{grid-template-columns:1fr}}
 
