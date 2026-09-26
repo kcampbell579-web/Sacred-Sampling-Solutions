@@ -24,7 +24,28 @@ export default function RegisterForm({ initialId, user, error }) {
           </p>
         </div>
 
-        {error && <div className="alert alert-error">{error}</div>}
+        {error && (
+          <div className="alert alert-error">
+            <div>{error}</div>
+            <div className="contact-kelly">
+              <span className="ck-lead">Need a hand? Contact Kelly now:</span>
+              <div className="ck-row">
+                <a
+                  className="btn btn-primary btn-sm"
+                  href={`mailto:info@sacredsamplingsolutions.com?subject=${encodeURIComponent(
+                    "Kit registration help" + (sid ? ` — ${sid}` : "")
+                  )}&body=${encodeURIComponent(
+                    `Hi Kelly, I'm having trouble registering my kit${sid ? ` (Sample ID: ${sid})` : ""}. Can you help?`
+                  )}`}
+                >
+                  ✉️ Email Kelly
+                </a>
+                <a className="btn btn-ghost btn-sm" href="tel:+16318752958">📞 Call / text</a>
+                <a className="btn btn-ghost btn-sm" href="https://www.sacredsamplingsolutions.com/contact" target="_blank" rel="noopener">Contact form →</a>
+              </div>
+            </div>
+          </div>
+        )}
 
         <form action={registerSample} className="card">
           <div className="field">
@@ -135,6 +156,11 @@ export default function RegisterForm({ initialId, user, error }) {
           <button className="btn btn-primary btn-block" type="submit" style={{ marginTop: 6 }}>
             Register &amp; start training →
           </button>
+
+          <p className="ck-help">
+            Sample ID not working or not sure what to enter?{" "}
+            <a href="mailto:info@sacredsamplingsolutions.com?subject=Kit%20registration%20help">Contact Kelly</a> and we&rsquo;ll register it for you.
+          </p>
         </form>
       </div>
     </main>
