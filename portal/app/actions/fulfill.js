@@ -2,6 +2,7 @@
 
 import { sql } from "@/lib/db";
 import { verifyPin, setFulfillCookie, clearFulfillCookie, fulfillAuthed } from "@/lib/fulfillauth";
+import { sendOrderShippedEmail } from "@/lib/email/orderShipped";
 import { redirect } from "next/navigation";
 
 const STATUSES = ["new", "shipped", "fulfilled"];
@@ -28,6 +29,13 @@ export async function setOrderStatus(formData) {
   const tracking = (formData.get("tracking") || "").toString().trim();
 
   if (status === "shipped") {
+    // Only email the customer on the FIRST transition into "shipped".
+    let wasShipped = false;
+    try {
+      const before = await sql`select status from orders where id=${id}`;
+      wasShipped = before.length > 0 && before[0].status === "shipped";
+    } catch {}
+
     await sql`update orders set status='shipped', shipped_at=coalesce(shipped_at, now()) where id=${id}`;
     if (tracking) {
       try {
@@ -35,6 +43,17 @@ export async function setOrderStatus(formData) {
       } catch {
         redirect(`/fulfillment?error=${encodeURIComponent("Order marked shipped, but tracking could not be saved — run migrate-orders-tracking.sql in Neon first.")}`);
       }
+    }
+
+    if (!wasShipped) {
+      // Best-effort: send the "Order Shipped" email (never blocks fulfillment).
+      try {
+        const rows = await sql`
+          select id, stripe_session_id, email, customer_name, amount_total, currency,
+                 kit_name, quantity, ship_address, created_at, shipped_at, tracking_number
+          from orders where id=${id}`;
+        if (rows.length) await sendOrderShippedEmail(rows[0]);
+      } catch {}
     }
   } else if (status === "new") {
     await sql`update orders set status='new', shipped_at=null where id=${id}`;
