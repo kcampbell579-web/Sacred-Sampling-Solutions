@@ -76,3 +76,19 @@ export async function saveOutboundTracking(formData) {
   }
   redirect(`/fulfillment?ok=${encodeURIComponent(tracking ? "Tracking saved" : "Tracking cleared")}`);
 }
+
+// Add or update the return (customer -> lab) UPS tracking on the sample
+// registration — for when you send the return label yourself instead of the
+// customer buying it.
+export async function saveReturnTracking(formData) {
+  if (!fulfillAuthed()) redirect("/fulfillment");
+  const sampleId = (formData.get("sample_id") || "").toString().trim().toUpperCase();
+  const tracking = (formData.get("tracking") || "").toString().trim();
+  if (!sampleId) redirect("/fulfillment");
+  try {
+    await sql`update sample_registrations set tracking_number=${tracking || null} where sample_id=${sampleId}`;
+  } catch {
+    redirect(`/fulfillment?error=${encodeURIComponent("Could not save return tracking.")}`);
+  }
+  redirect(`/fulfillment?ok=${encodeURIComponent(tracking ? "Return tracking saved" : "Return tracking cleared")}`);
+}

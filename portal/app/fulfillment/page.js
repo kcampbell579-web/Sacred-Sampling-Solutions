@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { fulfillConfigured, fulfillAuthed } from "@/lib/fulfillauth";
-import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking } from "@/app/actions/fulfill";
+import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking } from "@/app/actions/fulfill";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
 
@@ -155,7 +155,8 @@ async function OrdersView({ ok, error }) {
           {orders.map((o, i) => {
             const stage = STAGES.indexOf(o.status);
             const regs = regsByEmail.get(normEmail(o.email)) || [];
-            const returnTracking = regs.map((r) => r.tracking_number).find(Boolean) || "";
+            const returnReg = regs.find((r) => r.tracking_number) || regs[0] || null;
+            const returnTracking = returnReg?.tracking_number || "";
             return (
               <div className="ocard" key={o.id}>
                 {/* Header */}
@@ -212,8 +213,22 @@ async function OrdersView({ ok, error }) {
                   </div>
                   <div className="ot ot-lab">
                     <div className="ot-k">🧪 To lab <span className="ot-dir">(return)</span></div>
-                    <TrackLink number={returnTracking} />
-                    {!returnTracking && <div className="sub">Appears once the customer buys their return label.</div>}
+                    {returnTracking && <TrackLink number={returnTracking} />}
+                    {returnReg ? (
+                      <>
+                        <form action={saveReturnTracking} className="ot-form">
+                          <input type="hidden" name="sample_id" value={returnReg.sample_id} />
+                          <input className="ot-input mono" name="tracking" defaultValue={returnTracking} placeholder="Paste UPS tracking #" />
+                          <button className={`btn btn-sm ${returnTracking ? "btn-ghost" : "btn-primary"}`} type="submit">{returnTracking ? "Update" : "Save"}</button>
+                        </form>
+                        <div className="sub">Enter it here if you send the return label — or it auto-fills when the customer buys theirs.</div>
+                      </>
+                    ) : (
+                      <>
+                        <TrackLink number={returnTracking} />
+                        <div className="sub">No registered kit for this customer yet, so there&rsquo;s no sample to attach return tracking to.</div>
+                      </>
+                    )}
                   </div>
                 </div>
 
