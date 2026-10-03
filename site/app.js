@@ -125,9 +125,17 @@
       });
     });
 
-    // Turn the header's primary CTA into "Find my test".
-    var primaryCta = document.querySelector('header .nav-cta a.btn-primary');
-    if (primaryCta) { primaryCta.setAttribute('href', '/quiz'); primaryCta.textContent = 'Find my test'; }
+    // Header CTA: a single "Activate kit" button. (Finding the right test lives
+    // in the "What Should I Test?" menu, so no separate quiz button here.)
+    var headerCta = document.querySelector('header .nav-cta');
+    if (headerCta) {
+      [].forEach.call(headerCta.querySelectorAll('a.btn'), function (a) { a.remove(); });
+      var activate = document.createElement('a');
+      activate.className = 'btn btn-primary btn-sm hide-sm';
+      activate.href = 'https://app.sacredsamplingsolutions.com/sampleregistration';
+      activate.textContent = 'Activate kit';
+      headerCta.insertBefore(activate, headerCta.firstChild);
+    }
   }
 
   // Help widget — a floating "Questions?" button that opens a panel of common
