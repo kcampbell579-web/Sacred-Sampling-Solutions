@@ -919,3 +919,8 @@ footer .brand img{height:48px}
 .fs-creds{font-family:var(--mono);font-size:.76rem;letter-spacing:.03em;color:var(--brand);font-weight:700;margin:12px 0 10px}
 .fs-note{font-size:.9rem;color:#5a6b82;margin:0 0 14px;max-width:64ch}
 @media(max-width:720px){.fs-grid{grid-template-columns:1fr;gap:18px}.fs-photo{width:120px;height:120px}}
+
+/* SDS / document download link on product buy cards */
+.sds-link{display:inline-flex;align-items:center;gap:7px;margin:4px 0 2px;font-size:.84rem;font-weight:700;color:var(--brand);text-decoration:none}
+.sds-link:hover{text-decoration:underline}
+.sds-link svg{flex:none;color:var(--brand)}
