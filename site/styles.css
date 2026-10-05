@@ -924,3 +924,6 @@ footer .brand img{height:48px}
 .sds-link{display:inline-flex;align-items:center;gap:7px;margin:4px 0 2px;font-size:.84rem;font-weight:700;color:var(--brand);text-decoration:none}
 .sds-link:hover{text-decoration:underline}
 .sds-link svg{flex:none;color:var(--brand)}
+
+/* Partner-lab attribution under the homepage stats (audit #07) */
+.labs-note{text-align:center;max-width:72ch;margin:16px auto 0;font-size:.82rem;color:#64758b;line-height:1.5}
