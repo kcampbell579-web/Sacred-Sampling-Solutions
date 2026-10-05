@@ -125,16 +125,22 @@
       });
     });
 
-    // Header CTA: a single "Activate kit" button. (Finding the right test lives
-    // in the "What Should I Test?" menu, so no separate quiz button here.)
+    // Header CTA: "Shop tests" is the dominant acquisition action; "Activate kit"
+    // stays as a secondary customer-service action, and "My Results" lives in the
+    // nav. (Finding the right test is under the "What Should I Test?" menu.)
     var headerCta = document.querySelector('header .nav-cta');
     if (headerCta) {
       [].forEach.call(headerCta.querySelectorAll('a.btn'), function (a) { a.remove(); });
       var activate = document.createElement('a');
-      activate.className = 'btn btn-primary btn-sm hide-sm';
+      activate.className = 'btn btn-ghost btn-sm hide-sm';
       activate.href = 'https://app.sacredsamplingsolutions.com/sampleregistration';
       activate.textContent = 'Activate kit';
+      var shop = document.createElement('a');
+      shop.className = 'btn btn-primary btn-sm';
+      shop.href = '/kits';
+      shop.textContent = 'Shop tests';
       headerCta.insertBefore(activate, headerCta.firstChild);
+      headerCta.insertBefore(shop, headerCta.firstChild);
     }
   }
 
