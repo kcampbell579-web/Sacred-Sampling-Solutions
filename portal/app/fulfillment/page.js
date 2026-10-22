@@ -1,8 +1,9 @@
 import { sql } from "@/lib/db";
 import { fulfillConfigured, fulfillAuthed } from "@/lib/fulfillauth";
-import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking } from "@/app/actions/fulfill";
+import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab } from "@/app/actions/fulfill";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
+import { statusIndex } from "@/lib/status";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Fulfillment — Sacred Sampling Solutions", robots: { index: false } };
@@ -221,7 +222,16 @@ async function OrdersView({ ok, error }) {
                           <input className="ot-input mono" name="tracking" defaultValue={returnTracking} placeholder="Paste UPS tracking #" />
                           <button className={`btn btn-sm ${returnTracking ? "btn-ghost" : "btn-primary"}`} type="submit">{returnTracking ? "Update" : "Save"}</button>
                         </form>
-                        <div className="sub">Enter it here if you send the return label — or it auto-fills when the customer buys theirs.</div>
+                        <div className="ot-or">or</div>
+                        {statusIndex(returnReg.status) >= 4 ? (
+                          <div className="ot-received">✓ Received by lab</div>
+                        ) : (
+                          <form action={markReceivedByLab}>
+                            <input type="hidden" name="sample_id" value={returnReg.sample_id} />
+                            <button className="btn btn-ghost btn-sm" type="submit">✓ Mark received by lab</button>
+                          </form>
+                        )}
+                        <div className="sub">Enter tracking if you send the return label — or just mark it received once it arrives at the lab.</div>
                       </>
                     ) : (
                       <>

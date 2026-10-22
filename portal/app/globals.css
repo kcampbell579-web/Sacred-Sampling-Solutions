@@ -404,3 +404,7 @@ p{margin:0}
 .ck-row{display:flex;gap:8px;flex-wrap:wrap}
 .ck-help{margin-top:14px;font-size:.85rem;color:var(--ink-3);text-align:center}
 .ck-help a{font-weight:700;color:var(--brand-ink)}
+
+/* Return block: "or mark received by lab" affordance */
+.ot-or{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-3);margin:8px 0 6px}
+.ot-received{display:inline-block;font-size:.85rem;font-weight:800;color:var(--good);padding:6px 10px;border:1px solid color-mix(in srgb,var(--good) 35%,transparent);border-radius:999px;background:color-mix(in srgb,var(--good) 14%,transparent)}
