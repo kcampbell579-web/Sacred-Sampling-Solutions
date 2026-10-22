@@ -92,3 +92,17 @@ export async function saveReturnTracking(formData) {
   }
   redirect(`/fulfillment?ok=${encodeURIComponent(tracking ? "Return tracking saved" : "Return tracking cleared")}`);
 }
+
+// Advance the sample to "Received by Lab" straight from the fulfillment card —
+// for when you confirm arrival at the lab without entering a return tracking #.
+export async function markReceivedByLab(formData) {
+  if (!fulfillAuthed()) redirect("/fulfillment");
+  const sampleId = (formData.get("sample_id") || "").toString().trim().toUpperCase();
+  if (!sampleId) redirect("/fulfillment");
+  try {
+    await sql`update sample_registrations set status='Received by Lab' where sample_id=${sampleId}`;
+  } catch {
+    redirect(`/fulfillment?error=${encodeURIComponent("Could not update status.")}`);
+  }
+  redirect(`/fulfillment?ok=${encodeURIComponent("Marked received by lab — " + sampleId)}`);
+}
