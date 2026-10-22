@@ -1,6 +1,7 @@
 import { sql } from "@/lib/db";
 import { verifyStripeSignature, stripeGet, orderNumber } from "@/lib/stripe";
 import { notifyOwnerNewOrder } from "@/lib/notify";
+import { ensureAccountForEmail, sendWelcomeSetPassword } from "@/lib/accounts";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -67,6 +68,17 @@ export async function POST(request) {
         ship_address: shipAddress,
         amount_total: s.amount_total,
       });
+
+      // Auto-create a portal account for the buyer and email a set-password link,
+      // so every customer can register their kit and view results. Best-effort.
+      try {
+        const acct = await ensureAccountForEmail({ email: cd.email, name: cd.name, phone: cd.phone });
+        if (acct && acct.isNew && acct.token) {
+          await sendWelcomeSetPassword({ email: cd.email, name: cd.name, token: acct.token });
+        }
+      } catch {
+        // never fail the webhook over account provisioning
+      }
     }
   }
 
