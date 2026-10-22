@@ -5,6 +5,8 @@ import { ORDER_SHIPPED_HTML } from "./orderShippedTemplate";
 import { kvGet } from "@/lib/kv";
 import { orderNumber } from "@/lib/stripe";
 
+const PORTAL_BASE = process.env.PORTAL_BASE_URL || "https://app.sacredsamplingsolutions.com";
+
 function money(cents, cur) {
   if (cents == null) return "";
   try {
@@ -35,12 +37,44 @@ function esc(s) {
   return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+// Wrap a date string in an authored <a> so iOS Mail's data detectors don't
+// turn it into a blue, underlined calendar link. Text inside an existing
+// anchor is left alone; color:inherit keeps whatever the surrounding cell set.
+function dateSafe(text) {
+  const s = esc(text);
+  return s ? `<a style="color:inherit;text-decoration:none;" href="#">${s}</a>` : "";
+}
+
+// Turn the raw Stripe line-item description into a clean product name:
+// drop a leading "1× ", the "by Sacred Sampling Solutions" vendor phrase, and a
+// trailing SKU number — e.g.
+//   "Asbestos Core Laboratory Analysis Collection Kit by Sacred Sampling Solutions 48010"
+//   -> "Asbestos Core Laboratory Analysis Collection Kit"
+function cleanProductName(raw) {
+  let s = String(raw || "")
+    .replace(/^\s*\d+\s*[×x]\s*/i, "")
+    .replace(/\s*by sacred sampling solutions\b/gi, " ")
+    .replace(/\s+\b\d{4,}\b\s*$/, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+  return s || "Your Sacred Sampling kit";
+}
+
 async function resolveOrderNumber(o) {
+  // The customer-facing number (SS-<ABBR>-#####) is assigned at checkout and
+  // stored in KV; that's what the buyer saw on the order page, so prefer it.
   try {
     const kv = await kvGet(`order:sid:${o.stripe_session_id}`);
     if (kv) return kv;
   } catch {}
-  return orderNumber(o.id);
+  // KV miss: use a stable, brand-consistent reference from the session id
+  // rather than the orphan SSO-#### scheme.
+  const tail = String(o.stripe_session_id || "")
+    .replace(/^cs_(live|test)_/, "")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .toUpperCase()
+    .slice(-6);
+  return tail ? `SS-ORD-${tail}` : orderNumber(o.id);
 }
 
 // o: an orders row (id, stripe_session_id, email, customer_name, amount_total,
@@ -54,21 +88,37 @@ export async function sendOrderShippedEmail(o) {
     const number = await resolveOrderNumber(o);
     const tracking = String(o.tracking_number || "").trim();
     const est = o.shipped_at ? new Date(new Date(o.shipped_at).getTime() + 5 * 86400000) : null;
-    const productName = String(o.kit_name || "Your Sacred Sampling kit").replace(/^\s*\d+\s*[×x]\s*/, "");
+    const deliveryDate = est ? fmtLong(est) : "";
+
+    // Tracking is optional at ship time. When we have it, show the real UPS
+    // button + number. When we don't, don't ship a dead "track" link or a
+    // confusing placeholder — point to the portal and promise the number.
+    let TRACK_CTA, TRACKING_LINE, TRACKING_ROW;
+    if (tracking) {
+      TRACK_CTA = `<a href="${upsUrl(tracking)}" class="btn" style="display:inline-block;background:#1071ef;color:#ffffff;text-decoration:none;font-weight:800;font-size:16px;line-height:1;padding:16px 26px;border-radius:9px;">Track Your Package &rarr;</a>`;
+      TRACKING_LINE = `<div style="margin-top:14px;font-size:14px;color:#586a82;">Tracking Number: <strong style="color:#10264a;">${esc(tracking)}</strong></div>`;
+      TRACKING_ROW = `<tr><td style="color:#687b94;">Tracking</td><td align="right" style="color:#10264a;font-weight:700;">${esc(tracking)}</td></tr>`;
+    } else {
+      TRACK_CTA = `<a href="${PORTAL_BASE}/dashboard" class="btn" style="display:inline-block;background:#1071ef;color:#ffffff;text-decoration:none;font-weight:800;font-size:16px;line-height:1;padding:16px 26px;border-radius:9px;">View Order Status &rarr;</a>`;
+      TRACKING_LINE = `<div style="margin-top:14px;font-size:14px;color:#586a82;">Your UPS tracking number will be emailed as soon as it&rsquo;s available.</div>`;
+      TRACKING_ROW = "";
+    }
 
     const data = {
       FIRST_NAME: esc(firstName(o.customer_name)),
       ORDER_NUMBER: esc(number),
-      TRACKING_NUMBER: esc(tracking || "Provided with your tracking link"),
-      TRACKING_URL: tracking ? upsUrl(tracking) : "https://www.ups.com/track",
-      PRODUCT_NAME: esc(productName),
+      TRACK_CTA,
+      TRACKING_LINE,
+      TRACKING_ROW,
+      PRODUCT_NAME: esc(cleanProductName(o.kit_name)),
       PRODUCT_SUBTITLE: "",
       PRODUCT_PRICE: esc(money(o.amount_total, o.currency)),
       QUANTITY: esc(String(o.quantity || 1)),
-      ORDER_DATE: esc(fmtShort(o.created_at)),
-      SHIPPED_DATE: esc(fmtShort(o.shipped_at) || fmtShort(new Date())),
+      ORDER_DATE: dateSafe(fmtShort(o.created_at)),
+      SHIPPED_DATE: dateSafe(fmtShort(o.shipped_at) || fmtShort(new Date())),
       CARRIER: "UPS",
-      DELIVERY_DATE: esc(est ? fmtLong(est) : "See tracking"),
+      DELIVERY_LINE: deliveryDate ? `Est. ${dateSafe(deliveryDate)}` : "",
+      DELIVERY_DATE: dateSafe(deliveryDate || "See tracking"),
       SHIPPING_ADDRESS: esc(o.ship_address || "").replace(/,\s*/g, "<br>"),
       YEAR: String(new Date().getFullYear()),
     };
