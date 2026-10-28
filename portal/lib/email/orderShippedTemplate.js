@@ -50,8 +50,8 @@ export const ORDER_SHIPPED_HTML = `
           <div style="font-size:13px;line-height:1.4;font-weight:800;letter-spacing:2.5px;color:#1071ef;text-transform:uppercase;margin-bottom:12px;">Your order has shipped</div>
           <h1 style="margin:0 0 16px;font-size:44px;line-height:1.03;letter-spacing:-1.4px;color:#10264a;font-weight:800;">Your test kit is <span style="color:#1071ef;">on the way.</span></h1>
           <p style="margin:0 0 24px;font-size:16px;line-height:1.58;color:#304663;">Good news, {{FIRST_NAME}}! Your Sacred Sampling Solutions test kit has shipped and is on its way to you. You&rsquo;ll receive everything you need to collect your sample and return it to our accredited laboratory.</p>
-          <a href="{{TRACKING_URL}}" class="btn" style="display:inline-block;background:#1071ef;color:#ffffff;text-decoration:none;font-weight:800;font-size:16px;line-height:1;padding:16px 26px;border-radius:9px;">Track Your Package &rarr;</a>
-          <div style="margin-top:14px;font-size:14px;color:#586a82;">Tracking Number: <strong style="color:#10264a;">{{TRACKING_NUMBER}}</strong></div>
+          {{TRACK_CTA}}
+          {{TRACKING_LINE}}
         </td></tr>
 
         <!-- Order summary -->
@@ -71,7 +71,7 @@ export const ORDER_SHIPPED_HTML = `
                   <tr><td style="color:#687b94;">Order Date</td><td align="right" style="color:#10264a;font-weight:700;">{{ORDER_DATE}}</td></tr>
                   <tr><td style="color:#687b94;">Shipped Date</td><td align="right" style="color:#10264a;font-weight:700;">{{SHIPPED_DATE}}</td></tr>
                   <tr><td style="color:#687b94;">Carrier</td><td align="right" style="color:#10264a;font-weight:700;">{{CARRIER}}</td></tr>
-                  <tr><td style="color:#687b94;">Tracking</td><td align="right" style="color:#10264a;font-weight:700;">{{TRACKING_NUMBER}}</td></tr>
+                  {{TRACKING_ROW}}
                 </table>
               </td>
             </tr>
@@ -95,12 +95,11 @@ export const ORDER_SHIPPED_HTML = `
             <td class="step" width="25%" align="center" valign="top" style="padding:0 8px;">
               <div style="width:46px;height:46px;border-radius:50%;background:#f2f6fb;color:#5d6d81;line-height:46px;font-weight:800;font-size:20px;margin:0 auto 10px;">3</div>
               <div style="font-weight:800;font-size:14px;color:#10264a;">Out for Delivery</div>
-              <div style="font-size:12px;color:#7a8ca4;margin-top:4px;">Est. {{DELIVERY_DATE}}</div>
             </td>
             <td class="step" width="25%" align="center" valign="top" style="padding:0 8px;">
               <div style="width:46px;height:46px;border-radius:50%;background:#f2f6fb;color:#5d6d81;line-height:46px;font-weight:800;font-size:20px;margin:0 auto 10px;">4</div>
               <div style="font-weight:800;font-size:14px;color:#10264a;">Delivered</div>
-              <div style="font-size:12px;color:#7a8ca4;margin-top:4px;">Est. {{DELIVERY_DATE}}</div>
+              <div style="font-size:12px;color:#7a8ca4;margin-top:4px;">{{DELIVERY_LINE}}</div>
             </td>
           </tr></table>
         </td></tr>

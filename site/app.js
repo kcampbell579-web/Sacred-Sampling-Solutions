@@ -2,6 +2,18 @@
 (function () {
   var root = document.documentElement;
 
+  // Affiliate referral capture. A ?ref=CODE link from a Sacred Partner is
+  // remembered for 60 days and sent with any order the visitor places, so the
+  // commission can be reconciled against that partner's code (last-touch wins).
+  (function () {
+    try {
+      var rc = new URLSearchParams(location.search).get('ref');
+      if (!rc) return;
+      rc = rc.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 32);
+      if (rc) localStorage.setItem('sss_ref', JSON.stringify({ code: rc, t: Date.now() }));
+    } catch (e) {}
+  })();
+
   // Single source of truth for the stated lab turnaround time.
   // Change it here once and every [data-turnaround] element updates.
   var TURNAROUND = '7–10 business days';

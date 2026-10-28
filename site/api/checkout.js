@@ -22,6 +22,9 @@ var CATALOG = {
   'kit-cosmetic-screening':     { name: 'Cosmetic Screening Panel',           amount: 24900 },
   'kit-essentials':             { name: 'Essentials Kit',                     amount: 19900 },
   'kit-fentanyl-surface':       { name: 'Fentanyl Surface Residue Kit',       amount: 29900 },
+  'kit-household-dust':         { name: 'Household Dust Composition Kit',      amount: 14900 },
+  'kit-lead-dust-wipe':         { name: 'Lead Dust Wipe Kit',                 amount: 24900 },
+  'kit-lead-metals-dust':       { name: 'Lead & Metals Dust Wipe Kit',        amount: 24900 },
   'kit-formaldehyde':           { name: 'Aldehyde & Formaldehyde Monitor',    amount: 14900 },
   'kit-heavy-metals':           { name: 'Heavy Metals Kit',                   amount: 17400 },
   'kit-iaq-comprehensive':      { name: 'Complete Air Quality Kit',           amount: 52500 },
@@ -82,6 +85,10 @@ module.exports = async function handler(req, res) {
 
   var items = (body && Array.isArray(body.items)) ? body.items : [];
   var email = body && typeof body.email === 'string' ? body.email.trim() : '';
+  // Affiliate referral code — tagged onto the order so commissions can be
+  // reconciled against the Sacred Partner's code. Sanitized; purely a label.
+  var ref = body && typeof body.ref === 'string'
+    ? body.ref.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 32) : '';
 
   // Validate + normalize the cart against the server-side catalog.
   var valid = [];
@@ -132,6 +139,11 @@ module.exports = async function handler(req, res) {
     };
     if (withTax) p.automatic_tax = { enabled: true };
     if (email) p.customer_email = email;
+    if (ref) {
+      // Visible on both the Checkout Session and the resulting payment/charge.
+      p.metadata = { ref: ref };
+      p.payment_intent_data = { metadata: { ref: ref } };
+    }
     return p;
   }
 
