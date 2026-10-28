@@ -85,6 +85,10 @@ module.exports = async function handler(req, res) {
 
   var items = (body && Array.isArray(body.items)) ? body.items : [];
   var email = body && typeof body.email === 'string' ? body.email.trim() : '';
+  // Affiliate referral code — tagged onto the order so commissions can be
+  // reconciled against the Sacred Partner's code. Sanitized; purely a label.
+  var ref = body && typeof body.ref === 'string'
+    ? body.ref.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 32) : '';
 
   // Validate + normalize the cart against the server-side catalog.
   var valid = [];
@@ -135,6 +139,11 @@ module.exports = async function handler(req, res) {
     };
     if (withTax) p.automatic_tax = { enabled: true };
     if (email) p.customer_email = email;
+    if (ref) {
+      // Visible on both the Checkout Session and the resulting payment/charge.
+      p.metadata = { ref: ref };
+      p.payment_intent_data = { metadata: { ref: ref } };
+    }
     return p;
   }
 
