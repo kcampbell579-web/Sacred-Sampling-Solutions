@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hilltop Fuel — Dispatch & Driver Portal (Prototype)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .fade { animation: fade .22s ease-out; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .truck-path { fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 7 5; }
+  .spin { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
+  .toast { animation: toast 2.6s ease-out forwards; }
+  @keyframes toast { 0% { opacity: 0; transform: translateY(12px); } 10% { opacity: 1; transform: none; } 85% { opacity: 1; } 100% { opacity: 0; } }
+</style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+<div id="app"></div>
+<div id="toasts" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 space-y-2 pointer-events-none"></div>
+
+<script>
+/* =====================================================================
+   DATA MODEL (what a real backend would store)
+   ---------------------------------------------------------------------
+   trucks   : static fleet config (driver, home zone, capacity, fuels)
+   orders   : today's orders. Dispatcher assigns truckId + seq; driver
+              updates status + delivery log.
+   routes   : { published, publishedAt } — the "lock" that releases
+              manifests to the field.
+   sync     : offline-first queue. Driver changes apply locally first,
+              then replay to the "server" when online.
+   ===================================================================== */
+const STORAGE_KEY = 'hilltop-fuel-dispatch-proto-v1';
+const DEPOT = { x: 320, y: 232, name: 'Hilltop Fuel Co. — Depot' };
+
+const TRUCKS = [
+  { id: 'T1', name: 'Truck #1', driver: 'Dana K.',  homeZone: 'North', capacity: 2800, fuels: ['Heating Oil'],             color: '#2563eb', home: { x: 250, y: 95 } },
+  { id: 'T2', name: 'Truck #2', driver: 'Luis M.',  homeZone: 'South', capacity: 2800, fuels: ['Heating Oil'],             color: '#059669', home: { x: 230, y: 360 } },
+  { id: 'T3', name: 'Truck #3', driver: 'Mike R.',  homeZone: 'East',  capacity: 2000, fuels: ['Heating Oil', 'Kerosene'], color: '#d97706', home: { x: 525, y: 225 } },
+];
+
+const ZONES = [
+  { name: 'North Zone', x: 40,  y: 20,  w: 400, h: 150, color: '#2563eb' },
+  { name: 'South Zone', x: 40,  y: 290, w: 400, h: 140, color: '#059669' },
+  { name: 'East Zone',  x: 450, y: 20,  w: 180, h: 410, color: '#d97706' },
+];
+
+// Mock geocoded coordinates on a 640x440 "map" canvas.
+const SEED_ORDERS = [
+  { id: 'O-1001', customer: 'Harold Jenkins',        address: '14 Birch Ln, Northfield',      x: 120, y: 60,  fuel: 'Heating Oil', gallons: 150, notes: 'Fill pipe in rear, watch for dog.', cod: 487.50 },
+  { id: 'O-1002', customer: 'Marlene Otis',          address: '88 Ridge Rd, Northfield',      x: 205, y: 45,  fuel: 'Heating Oil', gallons: 200, notes: '' },
+  { id: 'O-1003', customer: 'Northfield Elementary', address: '300 School St, Northfield',    x: 300, y: 70,  fuel: 'Heating Oil', gallons: 400, notes: 'Deliver before 2 PM. Use side gate; check in at office.' },
+  { id: 'O-1004', customer: 'Pat & Sue Delaney',     address: '5 Quarry Hill Rd, Northfield', x: 380, y: 120, fuel: 'Kerosene',    gallons: 100, notes: 'Outdoor tank on left side of house.' },
+  { id: 'O-1005', customer: 'Greg Hollis',           address: '221 Mill St, Northfield',      x: 150, y: 130, fuel: 'Heating Oil', gallons: 175, notes: '', cod: 568.75 },
+  { id: 'O-1006', customer: 'Vera Lindqvist',        address: '9 Orchard Way, Northfield',    x: 250, y: 150, fuel: 'Heating Oil', gallons: 125, notes: 'Call on arrival. Tank is in basement; fill pipe front-left.' },
+  { id: 'O-1007', customer: 'Tom Abreu',             address: '41 Lakeshore Dr, Southport',   x: 100, y: 330, fuel: 'Heating Oil', gallons: 250, notes: '' },
+  { id: 'O-1008', customer: 'Riverside Diner',       address: '12 River Rd, Southport',       x: 180, y: 400, fuel: 'Heating Oil', gallons: 300, notes: 'Fill pipe behind dumpsters. Lot is tight at lunch rush.' },
+  { id: 'O-1009', customer: 'Agnes Whitcomb',        address: '7 Elm Ct, Southport',          x: 260, y: 345, fuel: 'Heating Oil', gallons: 100, notes: 'Elderly customer — knock on door before pumping.', cod: 325.00 },
+  { id: 'O-1010', customer: 'Bellamy Farm',          address: '900 County Rd 6, Southport',   x: 345, y: 410, fuel: 'Kerosene',    gallons: 200, notes: 'Long gravel driveway. Use hose reel; tank by barn.' },
+  { id: 'O-1011', customer: 'Darnell Price',         address: '310 Cove Rd, Southport',       x: 330, y: 320, fuel: 'Heating Oil', gallons: 180, notes: '' },
+  { id: 'O-1012', customer: 'Sandy Point Marina',    address: '1 Marina Way, Southport',      x: 410, y: 370, fuel: 'Heating Oil', gallons: 350, notes: 'Gate code 4471. Tank at fuel dock.' },
+  { id: 'O-1013', customer: 'Kim Nakamura',          address: '62 Hemlock Rd, Easton',        x: 500, y: 90,  fuel: 'Kerosene',    gallons: 150, notes: 'Fill pipe behind garage.' },
+  { id: 'O-1014', customer: 'First Baptist Church',  address: '400 Main St, Easton',          x: 560, y: 170, fuel: 'Heating Oil', gallons: 275, notes: 'Tank on north side of building.' },
+  { id: 'O-1015', customer: 'Rosa Villanueva',       address: '18 Ash St, Easton',            x: 590, y: 290, fuel: 'Heating Oil', gallons: 150, notes: '', cod: 487.50 },
+  { id: 'O-1016', customer: 'Ed Barstow',            address: '1 Summit Rd, Easton',          x: 520, y: 380, fuel: 'Heating Oil', gallons: 200, notes: 'Steep driveway — chain up if icy.' },
+];
+
+const STATUS = {
+  unassigned: { label: 'Unassigned', cls: 'bg-slate-200 text-slate-700' },
+  pending:    { label: 'Pending',    cls: 'bg-slate-200 text-slate-700' },
+  enroute:    { label: 'En Route',   cls: 'bg-blue-100 text-blue-800' },
+  arrived:    { label: 'Arrived',    cls: 'bg-indigo-100 text-indigo-800' },
+  completed:  { label: 'Completed',  cls: 'bg-emerald-100 text-emerald-800' },
+  issue:      { label: 'Issue',      cls: 'bg-rose-100 text-rose-800' },
+};
+
+/* ===================== STATE / PERSISTENCE ===================== */
+function freshState() {
+  return {
+    view: 'dispatch',          // dispatch | login | manifest | stop
+    driverTruckId: null,
+    selectedOrderId: null,
+    routes: { published: false, publishedAt: null },
+    orders: SEED_ORDERS.map(o => ({ ...o, truckId: null, seq: null, status: 'unassigned', syncedStatus: 'unassigned', delivery: null })),
+    sync: { online: true, deadZone: false, queue: [], lastSynced: null, syncing: false },
+  };
+}
+let state = load();
+function load() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+  return freshState();
+}
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {} }
+function resetDemo() { state = freshState(); save(); render(); toast('Demo reset to this morning.'); }
+// Cross-tab sync: open the dispatcher in one tab and a driver in another.
+window.addEventListener('storage', e => { if (e.key === STORAGE_KEY) { state = load(); render(); } });
+
+/* ===================== HELPERS ===================== */
+const byId = id => state.orders.find(o => o.id === id);
+const truckById = id => TRUCKS.find(t => t.id === id);
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const fmtTime = ts => ts ? new Date(ts).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '—';
+const money = n => '$' + Number(n).toFixed(2);
+const todayLabel = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function stopsFor(truckId) { return state.orders.filter(o => o.truckId === truckId).sort((a, b) => a.seq - b.seq); }
+function gallons(list) { return list.reduce((s, o) => s + o.gallons, 0); }
+function toast(msg, kind = 'ok') {
+  const el = document.createElement('div');
+  el.className = 'toast px-4 py-2 rounded-lg shadow-lg text-sm text-white ' + (kind === 'ok' ? 'bg-slate-800' : 'bg-rose-600');
+  el.textContent = msg; document.getElementById('toasts').appendChild(el); setTimeout(() => el.remove(), 2700);
+}
+
+/* ===================== ROUTING ENGINE (dispatcher) =====================
+   1. Hard constraints: an order can only go on a truck that carries its
+      fuel type (kerosene → Truck #3 only).
+   2. K-means clustering over mock coordinates, seeded at each truck's
+      home-zone point, so clusters line up with North/South/East.
+   3. Capacity balancing: if a truck is over its tank capacity, bump the
+      stops farthest from its centroid to the next-nearest eligible truck.
+   4. Sequencing: nearest-neighbor from the depot through each cluster,
+      which avoids the back-and-forth of an unordered list.
+   ===================================================================== */
+function autoRoute() {
+  const orders = state.orders.filter(o => o.status !== 'completed');
+  const centroids = TRUCKS.map(t => ({ ...t.home }));
+  const assign = {};
+  for (let iter = 0; iter < 12; iter++) {
+    orders.forEach(o => {
+      let best = null, bd = Infinity;
+      TRUCKS.forEach((t, i) => {
+        if (!t.fuels.includes(o.fuel)) return;
+        const d = dist(o, centroids[i]);
+        if (d < bd) { bd = d; best = i; }
+      });
+      assign[o.id] = best;
+    });
+    TRUCKS.forEach((t, i) => {
+      const pts = orders.filter(o => assign[o.id] === i);
+      if (pts.length) centroids[i] = { x: pts.reduce((s, p) => s + p.x, 0) / pts.length, y: pts.reduce((s, p) => s + p.y, 0) / pts.length };
+    });
+  }
+  // Capacity balancing
+  let guard = 0;
+  while (guard++ < 50) {
+    const over = TRUCKS.findIndex((t, i) => gallons(orders.filter(o => assign[o.id] === i)) > t.capacity);
+    if (over < 0) break;
+    const mine = orders.filter(o => assign[o.id] === over).sort((a, b) => dist(b, centroids[over]) - dist(a, centroids[over]));
+    const victim = mine.find(o => TRUCKS.some((t, i) => i !== over && t.fuels.includes(o.fuel) && gallons(orders.filter(p => assign[p.id] === i)) + o.gallons <= t.capacity));
+    if (!victim) break;
+    let best = null, bd = Infinity;
+    TRUCKS.forEach((t, i) => {
+      if (i === over || !t.fuels.includes(victim.fuel)) return;
+      if (gallons(orders.filter(p => assign[p.id] === i)) + victim.gallons > t.capacity) return;
+      const d = dist(victim, centroids[i]); if (d < bd) { bd = d; best = i; }
+    });
+    assign[victim.id] = best;
+  }
+  // Sequence each truck's stops nearest-neighbor from depot
+  TRUCKS.forEach((t, i) => {
+    let remaining = orders.filter(o => assign[o.id] === i);
+    let cur = DEPOT, seq = 1;
+    while (remaining.length) {
+      remaining.sort((a, b) => dist(a, cur) - dist(b, cur));
+      const next = remaining.shift();
+      next.truckId = t.id; next.seq = seq++; next.status = 'pending'; next.syncedStatus = 'pending'; cur = next;
+    }
+  });
+  save(); render();
+  toast(`Clustered ${orders.length} orders across ${TRUCKS.length} trucks.`);
+}
+function moveStop(orderId, truckId) {
+  const o = byId(orderId);
+  const t = truckById(truckId);
+  if (!t) { o.truckId = null; o.seq = null; o.status = 'unassigned'; o.syncedStatus = 'unassigned'; }
+  else {
+    if (!t.fuels.includes(o.fuel)) { toast(`${t.name} does not carry ${o.fuel}.`, 'err'); render(); return; }
+    o.truckId = truckId; o.seq = stopsFor(truckId).length + 1; o.status = 'pending'; o.syncedStatus = 'pending';
+  }
+  // Re-number the truck it left
+  TRUCKS.forEach(tr => stopsFor(tr.id).forEach((s, i) => s.seq = i + 1));
+  save(); render();
+}
+function publishRoutes() {
+  if (state.orders.some(o => o.status === 'unassigned')) { toast('Assign every order before publishing.', 'err'); return; }
+  state.routes = { published: true, publishedAt: Date.now() };
+  save(); render(); toast('Routes locked and pushed to drivers.');
+}
+function unlockRoutes() { state.routes.published = false; save(); render(); }
+
+/* ===================== OFFLINE-FIRST SYNC (driver) =====================
+   Driver actions always apply locally (and persist) first. Each change
+   is queued; when the device is online the queue is replayed to the
+   server with a little latency. The dispatcher only sees `syncedStatus`,
+   so a driver in a dead zone keeps working while dispatch sees the last
+   state that actually made it back.
+   ===================================================================== */
+function isOnline() { return navigator.onLine && !state.sync.deadZone; }
+function commit(orderId, label) {
+  state.sync.queue.push({ orderId, label, at: Date.now() });
+  save(); render(); flushQueue();
+}
+function flushQueue() {
+  if (!isOnline() || state.sync.syncing || !state.sync.queue.length) return;
+  state.sync.syncing = true; render();
+  setTimeout(() => {
+    state.sync.queue.forEach(q => { const o = byId(q.orderId); if (o) o.syncedStatus = o.status; });
+    state.sync.queue = []; state.sync.syncing = false; state.sync.lastSynced = Date.now();
+    save(); render();
+  }, 900);
+}
+function toggleDeadZone() {
+  state.sync.deadZone = !state.sync.deadZone; save(); render();
+  toast(state.sync.deadZone ? 'Simulating dead zone — changes will queue.' : 'Signal restored — syncing queued changes.');
+  flushQueue();
+}
+window.addEventListener('online', () => { render(); flushQueue(); });
+window.addEventListener('offline', () => render());
+
+/* ===================== DRIVER ACTIONS ===================== */
+function setStatus(orderId, status) {
+  const o = byId(orderId); o.status = status;
+  commit(orderId, `${o.customer}: ${STATUS[status].label}`);
+}
+function completeDelivery(orderId, form) {
+  const o = byId(orderId);
+  const gal = parseFloat(form.gallons);
+  if (!(gal > 0)) { toast('Enter the gallons pumped from the meter.', 'err'); return; }
+  if (!form.ticket.trim()) { toast('Ticket / meter number is required.', 'err'); return; }
+  if (o.cod && !form.paid) { toast('This is a COD stop — collect payment before completing.', 'err'); return; }
+  o.delivery = { gallons: gal, ticket: form.ticket.trim(), paid: !!form.paid, method: form.paid ? form.method : null, paymentRef: form.paymentRef || null, notes: form.notes.trim(), completedAt: Date.now() };
+  o.status = 'completed';
+  commit(orderId, `${o.customer}: Completed ${gal} gal`);
+  // Auto-advance to the next stop
+  const next = stopsFor(o.truckId).find(s => ['pending', 'enroute', 'arrived'].includes(s.status));
+  state.selectedOrderId = next ? next.id : null; state.view = 'manifest'; save(); render();
+  toast(`Delivery logged — ${gal} gal to ${o.customer}.`);
+}
+function flagIssue(orderId, notes) {
+  const o = byId(orderId);
+  if (!notes.trim()) { toast('Describe the issue so dispatch can follow up.', 'err'); return; }
+  o.delivery = { gallons: 0, ticket: null, paid: false, notes: notes.trim(), completedAt: Date.now(), issue: true };
+  o.status = 'issue'; commit(orderId, `${o.customer}: Issue flagged`);
+  state.view = 'manifest'; save(); render(); toast('Issue flagged for dispatch.', 'err');
+}
+
+/* ===================== UI: SHARED ===================== */
+function go(view, extra = {}) { Object.assign(state, { view }, extra); save(); render(); }
+
+function syncBanner() {
+  const s = state.sync, online = isOnline();
+  let cls, dot, text;
+  if (!online) { cls = 'bg-amber-50 text-amber-900 border-amber-200'; dot = 'bg-amber-500'; text = `Offline — ${s.queue.length} change${s.queue.length === 1 ? '' : 's'} saved on device, will sync when signal returns`; }
+  else if (s.syncing) { cls = 'bg-blue-50 text-blue-900 border-blue-200'; dot = 'bg-blue-500 spin'; text = `Syncing ${s.queue.length} change${s.queue.length === 1 ? '' : 's'}…`; }
+  else { cls = 'bg-emerald-50 text-emerald-900 border-emerald-200'; dot = 'bg-emerald-500'; text = `Online — all changes synced${s.lastSynced ? ' at ' + fmtTime(s.lastSynced) : ''}`; }
+  return `<div class="border-b ${cls} text-xs px-4 py-1.5 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2"><span class="inline-block w-2 h-2 rounded-full ${dot}"></span>${text}</div>
+    <button onclick="toggleDeadZone()" class="underline underline-offset-2 opacity-80 hover:opacity-100">${s.deadZone ? 'Restore signal' : 'Simulate dead zone'}</button>
+  </div>`;
+}
+function header() {
+  const tab = (v, label, active) => `<button onclick="go('${v}')" class="px-3 py-1.5 rounded-md text-sm font-medium ${active ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-300 hover:text-white'}">${label}</button>`;
+  const isDispatch = state.view === 'dispatch';
+  return `<header class="bg-slate-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-amber-500 grid place-items-center text-slate-900 font-black">H</div>
+        <div><div class="font-semibold leading-tight">Hilltop Fuel Co.</div><div class="text-xs text-slate-400">${todayLabel}</div></div>
+      </div>
+      <nav class="flex items-center gap-1 bg-slate-800 rounded-lg p-1">
+        ${tab('dispatch', 'Dispatcher', isDispatch)}
+        ${tab(state.driverTruckId ? 'manifest' : 'login', 'Driver Portal', !isDispatch)}
+      </nav>
+      <button onclick="resetDemo()" class="text-xs text-slate-400 hover:text-white">Reset demo</button>
+    </div>
+  </header>${syncBanner()}`;
+}
+function chip(status) { const s = STATUS[status]; return `<span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-semibold ${s.cls}">${s.label}</span>`; }
+function fuelBadge(f) { return f === 'Kerosene' ? `<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold whitespace-nowrap bg-purple-100 text-purple-800">Kerosene</span>` : `<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold whitespace-nowrap bg-orange-100 text-orange-800">Heating Oil</span>`; }
+
+/* ===================== UI: DISPATCHER ===================== */
+function mapSvg() {
+  const zones = ZONES.map(z => `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="18" fill="${z.color}" fill-opacity=".06" stroke="${z.color}" stroke-opacity=".25" stroke-dasharray="4 4"/>
+    <text x="${z.x + 12}" y="${z.y + 20}" font-size="12" font-weight="600" fill="${z.color}" fill-opacity=".8">${z.name}</text>`).join('');
+  const roads = `<g stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M60 232 H 600"/><path d="M320 20 V 420"/><path d="M80 80 Q 320 120 580 90"/><path d="M80 380 Q 300 330 600 390"/><path d="M470 40 V 420"/></g>`;
+  const paths = TRUCKS.map(t => {
+    const pts = [DEPOT, ...stopsFor(t.id)];
+    if (pts.length < 2) return '';
+    return `<path class="truck-path" stroke="${t.color}" d="${pts.map((p, i) => (i ? 'L' : 'M') + p.x + ' ' + p.y).join(' ')}"/>`;
+  }).join('');
+  const dots = state.orders.map(o => {
+    const t = truckById(o.truckId);
+    const st = state.routes.published ? o.syncedStatus : o.status;
+    const fill = t ? t.color : '#94a3b8';
+    const ring = st === 'completed' ? '#10b981' : st === 'issue' ? '#e11d48' : st === 'enroute' || st === 'arrived' ? '#1d4ed8' : 'white';
+    const title = `${o.customer} — ${o.gallons} gal ${o.fuel}${t ? ` (${t.name} stop ${o.seq})` : ' (unassigned)'}`;
+    return `<g class="cursor-pointer" onclick="selectDispatchOrder('${o.id}')"><title>${esc(title)}</title>
+      <circle cx="${o.x}" cy="${o.y}" r="${o.fuel === 'Kerosene' ? 9 : 8}" fill="${fill}" stroke="${ring}" stroke-width="3"/>
+      ${o.seq ? `<text x="${o.x}" y="${o.y + 3.5}" font-size="9" font-weight="700" fill="white" text-anchor="middle">${o.seq}</text>` : ''}
+      ${o.fuel === 'Kerosene' ? `<text x="${o.x + 11}" y="${o.y - 8}" font-size="9" fill="#6b21a8" font-weight="700">K</text>` : ''}
+    </g>`;
+  }).join('');
+  const depot = `<g><rect x="${DEPOT.x - 10}" y="${DEPOT.y - 10}" width="20" height="20" rx="4" fill="#0f172a"/><text x="${DEPOT.x}" y="${DEPOT.y + 4}" font-size="10" fill="white" text-anchor="middle" font-weight="700">D</text><text x="${DEPOT.x + 15}" y="${DEPOT.y + 4}" font-size="11" fill="#0f172a" font-weight="600">Depot</text></g>`;
+  return `<svg viewBox="0 0 640 440" class="w-full h-auto bg-slate-50 rounded-lg border border-slate-200">${zones}${roads}${paths}${dots}${depot}</svg>`;
+}
+function selectDispatchOrder(id) { state.selectedOrderId = id; save(); render(); }
+
+function dispatchView() {
+  const unassigned = state.orders.filter(o => o.status === 'unassigned');
+  const pub = state.routes.published;
+  const totalGal = gallons(state.orders);
+  const done = state.orders.filter(o => o.syncedStatus === 'completed').length;
+  const kpi = (label, val, sub = '') => `<div class="bg-white rounded-xl border border-slate-200 p-4"><div class="text-xs text-slate-500">${label}</div><div class="text-2xl font-bold">${val}</div>${sub ? `<div class="text-xs text-slate-500 mt-0.5">${sub}</div>` : ''}</div>`;
+
+  const truckCols = TRUCKS.map(t => {
+    const stops = stopsFor(t.id);
+    const g = gallons(stops), over = g > t.capacity;
+    const rows = stops.map(o => {
+      const st = pub ? o.syncedStatus : o.status;
+      const mover = pub ? '' : `<select onchange="moveStop('${o.id}', this.value)" class="text-[11px] border border-slate-200 rounded px-1 py-0.5 bg-white">
+          ${TRUCKS.map(x => `<option value="${x.id}" ${x.id === t.id ? 'selected' : ''} ${x.fuels.includes(o.fuel) ? '' : 'disabled'}>${x.name}</option>`).join('')}<option value="">Unassign</option></select>`;
+      return `<li class="flex items-start gap-2 py-2 border-b border-slate-100 last:border-0 ${state.selectedOrderId === o.id ? 'bg-amber-50 -mx-2 px-2 rounded' : ''}" onclick="selectDispatchOrder('${o.id}')">
+        <span class="w-6 h-6 rounded-full text-white text-xs font-bold grid place-items-center shrink-0" style="background:${t.color}">${o.seq}</span>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2"><span class="font-medium text-sm truncate">${esc(o.customer)}</span>${chip(st)}</div>
+          <div class="text-xs text-slate-500 truncate">${esc(o.address)}</div>
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">${fuelBadge(o.fuel)}<span class="text-xs font-semibold">${o.gallons} gal</span>${o.cod ? `<span class="text-[11px] font-semibold text-rose-700">COD ${money(o.cod)}</span>` : ''}<span class="ml-auto">${mover}</span></div>
+        </div></li>`;
+    }).join('');
+    return `<div class="bg-white rounded-xl border border-slate-200 flex flex-col">
+      <div class="p-3 border-b border-slate-100 flex items-center gap-3" style="border-top:4px solid ${t.color};border-top-left-radius:12px;border-top-right-radius:12px">
+        <div class="flex-1"><div class="font-semibold">${t.name} <span class="text-slate-400 font-normal">· ${t.driver}</span></div>
+          <div class="text-xs text-slate-500">${t.homeZone} zone · carries ${t.fuels.join(' + ')}</div></div>
+        <div class="text-right"><div class="text-sm font-bold ${over ? 'text-rose-600' : ''}">${g.toLocaleString()} / ${t.capacity.toLocaleString()} gal</div><div class="text-xs text-slate-500">${stops.length} stop${stops.length === 1 ? '' : 's'}</div></div>
+      </div>
+      <div class="px-3 pt-1"><div class="h-1.5 rounded bg-slate-100 overflow-hidden"><div class="h-full ${over ? 'bg-rose-500' : ''}" style="width:${Math.min(100, g / t.capacity * 100)}%;${over ? '' : 'background:' + t.color}"></div></div></div>
+      <ul class="p-3 flex-1">${rows || '<li class="text-sm text-slate-400 py-6 text-center">No stops assigned</li>'}</ul>
+    </div>`;
+  }).join('');
+
+  const unassignedRows = unassigned.map(o => `<tr class="border-t border-slate-100 hover:bg-slate-50">
+      <td class="py-2 pr-3 font-medium">${esc(o.customer)}</td><td class="py-2 pr-3 text-slate-500">${esc(o.address)}</td>
+      <td class="py-2 pr-3">${fuelBadge(o.fuel)}</td><td class="py-2 pr-3 font-semibold">${o.gallons}</td>
+      <td class="py-2 pr-3 text-slate-500">${esc(o.notes) || '—'}</td>
+      <td class="py-2"><select onchange="moveStop('${o.id}', this.value)" class="text-xs border border-slate-200 rounded px-1.5 py-1 bg-white"><option value="">Assign to…</option>${TRUCKS.map(t => `<option value="${t.id}" ${t.fuels.includes(o.fuel) ? '' : 'disabled'}>${t.name} (${t.homeZone})</option>`).join('')}</select></td>
+    </tr>`).join('');
+
+  const sel = state.selectedOrderId ? byId(state.selectedOrderId) : null;
+  const selPanel = sel ? `<div class="mt-3 bg-white rounded-xl border border-slate-200 p-4 text-sm fade">
+      <div class="flex items-center justify-between"><div class="font-semibold">${esc(sel.customer)} <span class="text-slate-400 font-normal">${sel.id}</span></div>${chip(pub ? sel.syncedStatus : sel.status)}</div>
+      <div class="text-slate-500">${esc(sel.address)}</div>
+      <div class="mt-2 flex flex-wrap gap-2 items-center">${fuelBadge(sel.fuel)}<span class="font-semibold">${sel.gallons} gal target</span>${sel.cod ? `<span class="text-rose-700 font-semibold">COD ${money(sel.cod)}</span>` : ''}${sel.truckId ? `<span class="text-slate-500">${truckById(sel.truckId).name} · stop ${sel.seq}</span>` : ''}</div>
+      ${sel.notes ? `<div class="mt-2 text-amber-900 bg-amber-50 border border-amber-200 rounded px-2 py-1">${esc(sel.notes)}</div>` : ''}
+      ${sel.delivery ? `<div class="mt-2 text-xs text-slate-600 border-t border-slate-100 pt-2">Driver log: ${sel.delivery.issue ? 'Issue — ' : `${sel.delivery.gallons} gal pumped · ticket ${esc(sel.delivery.ticket)} · ${sel.delivery.paid ? `paid (${esc(sel.delivery.method)})` : 'no payment'} · `}${esc(sel.delivery.notes) || 'no notes'} · ${fmtTime(sel.delivery.completedAt)}${sel.syncedStatus !== sel.status ? ' <span class="text-amber-700">(not yet synced from truck)</span>' : ''}</div>` : ''}
+    </div>` : '';
+
+  return `<main class="max-w-7xl mx-auto px-4 py-5 fade">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+      <div><h1 class="text-xl font-bold">Morning Routing — ${todayLabel}</h1><p class="text-sm text-slate-500">Cluster today's orders by zone, balance across trucks, then publish to the field.</p></div>
+      <div class="flex items-center gap-2">
+        ${pub
+          ? `<span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg">🔒 Routes published ${fmtTime(state.routes.publishedAt)} · synced to ${TRUCKS.length} drivers</span><button onclick="unlockRoutes()" class="text-sm px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50">Unlock</button>`
+          : `<button onclick="autoRoute()" class="text-sm px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 font-medium">⚡ Auto-cluster &amp; assign</button>
+             <button onclick="publishRoutes()" ${unassigned.length ? 'disabled' : ''} class="text-sm px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">Publish / Lock routes →</button>`}
+      </div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      ${kpi('Orders today', state.orders.length, `${totalGal.toLocaleString()} gal scheduled`)}
+      ${kpi('Unassigned', unassigned.length, unassigned.length ? 'needs a truck' : 'all routed')}
+      ${kpi('Trucks out', TRUCKS.length, TRUCKS.map(t => t.homeZone).join(' / '))}
+      ${kpi('Completed (synced)', `${done} / ${state.orders.length}`, pub ? 'live from the field' : 'routes not published')}
+    </div>
+    <div class="grid lg:grid-cols-5 gap-4">
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-xl border border-slate-200 p-3">
+          <div class="flex items-center justify-between mb-2"><div class="font-semibold text-sm">Service area</div>
+            <div class="flex gap-3 text-[11px] text-slate-500">${TRUCKS.map(t => `<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full" style="background:${t.color}"></span>${t.name}</span>`).join('')}<span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>Unassigned</span></div></div>
+          ${mapSvg()}
+          <div class="text-[11px] text-slate-500 mt-2">Dots are numbered by stop sequence; dashed lines trace each truck's route from the depot. "K" marks kerosene, which only Truck #3 carries. Ring color shows live status once published.</div>
+        </div>
+        ${selPanel}
+      </div>
+      <div class="lg:col-span-3 grid md:grid-cols-3 gap-3">${truckCols}</div>
+    </div>
+    ${unassigned.length ? `<div class="mt-4 bg-white rounded-xl border border-slate-200 p-4">
+      <div class="font-semibold text-sm mb-2">Unassigned orders (${unassigned.length})</div>
+      <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="text-left text-xs text-slate-500"><th class="pb-1 pr-3">Customer</th><th class="pb-1 pr-3">Address</th><th class="pb-1 pr-3">Fuel</th><th class="pb-1 pr-3">Gal</th><th class="pb-1 pr-3">Notes</th><th class="pb-1">Truck</th></tr></thead><tbody>${unassignedRows}</tbody></table></div>
+    </div>` : ''}
+  </main>`;
+}
+
+/* ===================== UI: DRIVER LOGIN ===================== */
+function loginView() {
+  const cards = TRUCKS.map(t => {
+    const stops = stopsFor(t.id);
+    return `<button onclick="driverLogin('${t.id}')" class="text-left bg-white rounded-xl border border-slate-200 p-5 hover:shadow-md hover:border-slate-300 transition">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-full grid place-items-center text-white text-lg font-bold" style="background:${t.color}">${t.driver.split(' ').map(w => w[0]).join('')}</div>
+        <div><div class="font-semibold">${t.driver}</div><div class="text-sm text-slate-500">${t.name} · ${t.homeZone} zone</div></div>
+      </div>
+      <div class="mt-4 text-sm text-slate-600">${state.routes.published ? `${stops.length} stops · ${gallons(stops).toLocaleString()} gal` : '<span class="text-amber-700">Route not published yet</span>'}</div>
+      <div class="mt-3 text-sm font-semibold text-slate-900">Login as ${t.driver} →</div>
+    </button>`;
+  }).join('');
+  return `<main class="max-w-3xl mx-auto px-4 py-8 fade">
+    <h1 class="text-xl font-bold">Driver Portal</h1><p class="text-sm text-slate-500 mb-5">Select your truck to load today's manifest. (Production: PIN or SSO login.)</p>
+    <div class="grid sm:grid-cols-3 gap-3">${cards}</div>
+  </main>`;
+}
+function driverLogin(truckId) {
+  const first = stopsFor(truckId).find(s => s.status !== 'completed' && s.status !== 'issue');
+  go('manifest', { driverTruckId: truckId, selectedOrderId: first ? first.id : null });
+}
+function driverLogout() { go('login', { driverTruckId: null, selectedOrderId: null }); }
+
+/* ===================== UI: DRIVER MANIFEST ===================== */
+function manifestView() {
+  const t = truckById(state.driverTruckId);
+  const stops = stopsFor(t.id);
+  const done = stops.filter(s => s.status === 'completed').length;
+  const pumped = stops.reduce((s, o) => s + (o.delivery?.gallons || 0), 0);
+  const current = stops.find(s => ['enroute', 'arrived'].includes(s.status)) || stops.find(s => s.status === 'pending');
+  const rows = stops.map(o => {
+    const isCur = current && current.id === o.id;
+    return `<button onclick="openStop('${o.id}')" class="w-full text-left bg-white rounded-xl border p-3 flex items-start gap-3 hover:border-slate-400 transition ${isCur ? 'border-slate-900 ring-2 ring-slate-900/10' : 'border-slate-200'} ${o.status === 'completed' ? 'opacity-70' : ''}">
+      <span class="w-8 h-8 rounded-full text-white text-sm font-bold grid place-items-center shrink-0" style="background:${o.status === 'completed' ? '#10b981' : o.status === 'issue' ? '#e11d48' : t.color}">${o.status === 'completed' ? '✓' : o.status === 'issue' ? '!' : o.seq}</span>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center justify-between gap-2"><span class="font-semibold truncate">${esc(o.customer)}</span>${chip(o.status)}</div>
+        <div class="text-sm text-slate-500 truncate">${esc(o.address)}</div>
+        <div class="flex items-center gap-2 mt-1.5 text-sm">${fuelBadge(o.fuel)}<span class="font-semibold">${o.gallons} gal</span>${o.cod ? `<span class="text-xs font-semibold text-rose-700 bg-rose-50 px-1.5 rounded">COD ${money(o.cod)}</span>` : ''}</div>
+        ${o.notes ? `<div class="mt-1.5 text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded px-2 py-1">⚠ ${esc(o.notes)}</div>` : ''}
+        ${isCur ? `<div class="mt-1.5 text-xs font-semibold text-slate-900">▶ Current stop</div>` : ''}
+      </div></button>`;
+  }).join('');
+  const empty = `<div class="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+      <div class="text-3xl mb-2">🕗</div>Dispatch hasn't published today's routes yet.<br><span class="text-xs">This screen refreshes automatically when they do.</span></div>`;
+  return `<main class="max-w-xl mx-auto px-4 py-5 fade">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full grid place-items-center text-white font-bold" style="background:${t.color}">${t.driver.split(' ').map(w => w[0]).join('')}</div>
+        <div><div class="font-semibold leading-tight">${t.driver} · ${t.name}</div><div class="text-xs text-slate-500">${t.homeZone} zone manifest · ${todayLabel}</div></div></div>
+      <button onclick="driverLogout()" class="text-xs text-slate-500 underline">Switch driver</button>
+    </div>
+    ${state.routes.published && stops.length ? `
+    <div class="bg-slate-900 text-white rounded-xl p-4 mb-4">
+      <div class="flex justify-between text-sm"><span>${done} of ${stops.length} stops complete</span><span>${pumped.toLocaleString()} / ${gallons(stops).toLocaleString()} gal</span></div>
+      <div class="h-2 bg-slate-700 rounded mt-2 overflow-hidden"><div class="h-full bg-emerald-400" style="width:${stops.length ? done / stops.length * 100 : 0}%"></div></div>
+      <div class="text-xs text-slate-400 mt-2">Route locked by dispatch at ${fmtTime(state.routes.publishedAt)} · sequenced by cluster from the depot</div>
+    </div>
+    <div class="space-y-2">${rows}</div>` : empty}
+  </main>`;
+}
+function openStop(id) { go('stop', { selectedOrderId: id }); }
+
+/* ===================== UI: ACTIVE STOP ===================== */
+function stopView() {
+  const o = byId(state.selectedOrderId); const t = truckById(o.truckId);
+  const stops = stopsFor(t.id); const idx = stops.findIndex(s => s.id === o.id);
+  const prev = stops[idx - 1], next = stops[idx + 1];
+  const step = (n, label, active, done) => `<div class="flex-1 text-center"><div class="mx-auto w-7 h-7 rounded-full grid place-items-center text-xs font-bold ${done ? 'bg-emerald-500 text-white' : active ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500'}">${done ? '✓' : n}</div><div class="text-[11px] mt-1 ${active ? 'font-semibold' : 'text-slate-500'}">${label}</div></div>`;
+  const st = o.status;
+  const timeline = `<div class="flex items-center gap-1 my-4">
+    ${step(1, 'Pending', st === 'pending', ['enroute', 'arrived', 'completed'].includes(st))}<div class="h-px flex-1 bg-slate-200"></div>
+    ${step(2, 'En Route', st === 'enroute', ['arrived', 'completed'].includes(st))}<div class="h-px flex-1 bg-slate-200"></div>
+    ${step(3, 'Arrived', st === 'arrived', st === 'completed')}<div class="h-px flex-1 bg-slate-200"></div>
+    ${step(4, 'Delivered', st === 'completed', st === 'completed')}</div>`;
+
+  let actions = '';
+  if (st === 'pending') actions = `<button onclick="setStatus('${o.id}','enroute')" class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700">🚚 En Route to ${esc(o.customer.split(' ')[0])}</button>`;
+  else if (st === 'enroute') actions = `<button onclick="setStatus('${o.id}','arrived')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-lg hover:bg-indigo-700">📍 Arrived on site</button>`;
+  else if (st === 'arrived') actions = deliveryForm(o);
+  else if (st === 'completed' || st === 'issue') {
+    const d = o.delivery;
+    actions = `<div class="rounded-xl border ${st === 'issue' ? 'border-rose-200 bg-rose-50' : 'border-emerald-200 bg-emerald-50'} p-4 text-sm">
+      <div class="font-semibold mb-1">${st === 'issue' ? 'Issue flagged' : 'Delivery complete'} · ${fmtTime(d.completedAt)}</div>
+      ${st === 'issue' ? '' : `<div>Pumped <b>${d.gallons} gal</b> (target ${o.gallons}) · Ticket <b>${esc(d.ticket)}</b></div>
+      <div>${d.paid ? `Payment collected via ${esc(d.method)}${d.paymentRef ? ` · ref ${esc(d.paymentRef)}` : ''}` : (o.cod ? 'Payment NOT collected' : 'Account billed — no payment due on site')}</div>`}
+      ${d.notes ? `<div class="mt-1 text-slate-600">Notes: ${esc(d.notes)}</div>` : ''}
+      ${o.syncedStatus !== o.status ? `<div class="mt-2 text-xs text-amber-800">⏳ Saved on device, waiting to sync to dispatch.</div>` : `<div class="mt-2 text-xs text-emerald-800">✓ Synced to dispatch.</div>`}
+    </div>`;
+  }
+
+  return `<main class="max-w-xl mx-auto px-4 py-5 fade">
+    <div class="flex items-center justify-between mb-3 text-sm">
+      <button onclick="go('manifest')" class="text-slate-600 hover:text-slate-900">← Manifest</button>
+      <div class="text-slate-500">Stop ${o.seq} of ${stops.length} · ${t.name}</div>
+      <div class="flex gap-2">${prev ? `<button onclick="openStop('${prev.id}')" class="px-2 py-1 border rounded bg-white">‹</button>` : ''}${next ? `<button onclick="openStop('${next.id}')" class="px-2 py-1 border rounded bg-white">›</button>` : ''}</div>
+    </div>
+    <div class="bg-white rounded-xl border border-slate-200 p-4">
+      <div class="flex items-start justify-between gap-3">
+        <div><div class="text-lg font-bold leading-tight">${esc(o.customer)}</div>
+          <a class="text-sm text-blue-700 underline underline-offset-2" href="#" onclick="event.preventDefault();toast('Would open turn-by-turn navigation.')">${esc(o.address)}</a></div>
+        ${chip(st)}
+      </div>
+      <div class="grid grid-cols-3 gap-2 mt-4 text-center">
+        <div class="bg-slate-50 rounded-lg p-2"><div class="text-[11px] text-slate-500">Fuel</div><div class="mt-0.5">${fuelBadge(o.fuel)}</div></div>
+        <div class="bg-slate-50 rounded-lg p-2"><div class="text-[11px] text-slate-500">Target</div><div class="font-bold">${o.gallons} gal</div></div>
+        <div class="bg-slate-50 rounded-lg p-2"><div class="text-[11px] text-slate-500">Payment</div><div class="font-bold ${o.cod ? 'text-rose-700' : ''}">${o.cod ? 'COD ' + money(o.cod) : 'On account'}</div></div>
+      </div>
+      ${o.notes ? `<div class="mt-3 text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2"><span class="font-semibold">Delivery notes:</span> ${esc(o.notes)}</div>` : ''}
+      ${timeline}
+      ${actions}
+    </div>
+  </main>`;
+}
+function deliveryForm(o) {
+  return `<form id="dform" onsubmit="event.preventDefault();submitDelivery('${o.id}')" class="space-y-4 fade">
+    <div class="font-semibold text-sm text-slate-700">Delivery log</div>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="block"><span class="text-xs text-slate-500">Gallons pumped (meter)</span>
+        <input name="gallons" type="number" step="0.1" min="0" inputmode="decimal" value="${o.gallons}" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-lg font-semibold" required></label>
+      <label class="block"><span class="text-xs text-slate-500">Ticket / meter #</span>
+        <input name="ticket" type="text" placeholder="e.g. 48213" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-lg font-mono" required></label>
+    </div>
+    ${o.cod ? `<div id="codbox" class="rounded-lg border border-rose-200 bg-rose-50 p-3">
+      <div class="flex items-center justify-between"><div class="font-semibold text-rose-900 text-sm">COD — collect ${money(o.cod)}</div><span class="text-[10px] text-slate-500">Stripe Terminal concept</span></div>
+      <div class="mt-2 grid grid-cols-3 gap-2 text-sm">
+        <button type="button" onclick="mockStripe('${o.id}')" class="col-span-3 py-2 rounded-lg bg-[#635bff] text-white font-semibold hover:opacity-90">💳 Tap to pay · ${money(o.cod)}</button>
+        <label class="col-span-3 flex items-center gap-2"><input type="checkbox" name="paid" class="w-4 h-4"> <span>Payment collected</span>
+          <select name="method" class="ml-auto border border-slate-300 rounded px-2 py-1 bg-white text-xs"><option>Card (Stripe)</option><option>Check</option><option>Cash</option></select></label>
+        <input type="hidden" name="paymentRef" value="">
+        <div id="payref" class="col-span-3 text-xs text-slate-600 hidden"></div>
+      </div></div>` : ''}
+    <label class="block"><span class="text-xs text-slate-500">Anomalies / notes for dispatch</span>
+      <textarea name="notes" rows="2" placeholder="Short delivery, tank gauge broken, couldn't access fill pipe…" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"></textarea></label>
+    <button type="submit" class="w-full py-3 rounded-xl bg-emerald-600 text-white font-semibold text-lg hover:bg-emerald-700">✓ Complete delivery</button>
+    <button type="button" onclick="submitIssue('${o.id}')" class="w-full py-2.5 rounded-xl border border-rose-300 text-rose-700 font-semibold hover:bg-rose-50">⚠ Flag issue — no delivery</button>
+  </form>`;
+}
+function readForm() {
+  const f = document.getElementById('dform');
+  return { gallons: f.gallons.value, ticket: f.ticket.value, paid: f.paid ? f.paid.checked : false, method: f.method ? f.method.value : null, paymentRef: f.paymentRef ? f.paymentRef.value : null, notes: f.notes.value };
+}
+function submitDelivery(id) { completeDelivery(id, readForm()); }
+function submitIssue(id) { flagIssue(id, readForm().notes); }
+function mockStripe(id) {
+  // Concept only: a real build would create a PaymentIntent server-side and
+  // collect it with Stripe Terminal (tap-to-pay on the driver's phone).
+  const f = document.getElementById('dform');
+  const ref = 'pi_' + Math.random().toString(36).slice(2, 12);
+  f.paid.checked = true; f.method.value = 'Card (Stripe)'; f.paymentRef.value = ref;
+  const el = document.getElementById('payref'); el.textContent = `Approved · ${ref} · receipt emailed to customer`; el.classList.remove('hidden');
+  toast(`Card approved — ${money(byId(id).cod)} collected.`);
+}
+
+/* ===================== RENDER ===================== */
+function render() {
+  // Drivers can only land on manifest/stop screens if they are logged in and the stop exists.
+  if (['manifest', 'stop'].includes(state.view) && !state.driverTruckId) state.view = 'login';
+  if (state.view === 'stop' && !(state.selectedOrderId && byId(state.selectedOrderId)?.truckId === state.driverTruckId)) state.view = 'manifest';
+  const body = { dispatch: dispatchView, login: loginView, manifest: manifestView, stop: stopView }[state.view]();
+  document.getElementById('app').innerHTML = header() + body;
+}
+render();
+flushQueue();
+</script>
+</body>
+</html>
