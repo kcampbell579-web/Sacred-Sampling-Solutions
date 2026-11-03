@@ -52,7 +52,10 @@ export default async function Fulfillment({ searchParams }) {
             <h1>Orders</h1>
           </div>
           {fulfillAuthed() && (
-            <form action={fulfillLogout}><button className="linkbtn" type="submit">Lock</button></form>
+            <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+              <a className="linkbtn" href="/fulfillment/labels">🏷️ Print QR labels</a>
+              <form action={fulfillLogout}><button className="linkbtn" type="submit">Lock</button></form>
+            </div>
           )}
         </div>
 
