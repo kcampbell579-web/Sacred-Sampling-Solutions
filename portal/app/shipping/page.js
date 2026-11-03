@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 import { redirect } from "next/navigation";
 import { statusIndex } from "@/lib/status";
+import { kitBySlug } from "@/lib/catalog";
 import { generateLabel, markShipped } from "@/app/actions/shipping";
 import Header from "@/components/Header";
 import SampleSteps from "@/components/SampleSteps";
@@ -18,6 +19,7 @@ export default async function ShippingPage({ searchParams }) {
     from sample_registrations where sample_id=${id} and user_id=${user.id}`;
   if (!regRows.length) redirect("/dashboard");
   const reg = regRows[0];
+  const isAir = (kitBySlug(reg.kit_slug)?.matrix || null) === "air";
 
   const shipRows = await sql`select carrier, service, tracking, label_url from shipments where sample_id=${id} order by created_at desc limit 1`;
   const ship = shipRows[0] || null;
@@ -42,13 +44,23 @@ export default async function ShippingPage({ searchParams }) {
             current="ship"
           >
 
-          <div className="freeze-note">
-            <span className="freeze-ic">📦</span>
-            <div>
-              <b>Ship the same day you collect.</b> Put your sealed bottles and the frozen ice pack in the pouch,
-              include your chain of custody, and drop it at a staffed UPS location. Don&rsquo;t leave it in an outdoor box.
+          {isAir ? (
+            <div className="freeze-note">
+              <span className="freeze-ic">📦</span>
+              <div>
+                <b>Everything goes in the box.</b> Reseal the badge — with its clip attached — in the foil pouch with the desiccant,
+                include your printed Lab Request Form, and drop it at a staffed UPS location. Don&rsquo;t leave it in an outdoor box.
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="freeze-note">
+              <span className="freeze-ic">📦</span>
+              <div>
+                <b>Ship the same day you collect.</b> Put your sealed bottles and the frozen ice pack in the pouch,
+                include your chain of custody, and drop it at a staffed UPS location. Don&rsquo;t leave it in an outdoor box.
+              </div>
+            </div>
+          )}
 
           {!reg.coc_url && (
             <div className="alert alert-error">
@@ -78,6 +90,21 @@ export default async function ShippingPage({ searchParams }) {
               <a className="btn btn-primary btn-block mt" href={ship.label_url} target="_blank" rel="noopener">Print my UPS label (PDF)</a>
               <form action={markShipped} style={{ marginTop: 12 }}>
                 <input type="hidden" name="sample_id" value={id} />
+                {isAir && (
+                  <div style={{ marginBottom: 12 }}>
+                    <div className="alert alert-error" style={{ marginBottom: 10 }}>
+                      <b>Before you ship:</b> the badge <b>and</b> its Lab Request Form must be inside the box. If the form isn&rsquo;t enclosed, the laboratory cannot match your sample — it can be lost, and there is no guarantee it will be found.
+                    </div>
+                    <label style={{ display: "flex", gap: 8, alignItems: "flex-start", margin: "8px 0", fontSize: ".95rem" }}>
+                      <input type="checkbox" name="ack_lrf" required style={{ marginTop: 3 }} />
+                      <span>My completed <b>Lab Request Form</b> is in the box (or will be placed in the box before I ship).</span>
+                    </label>
+                    <label style={{ display: "flex", gap: 8, alignItems: "flex-start", margin: "8px 0", fontSize: ".95rem" }}>
+                      <input type="checkbox" name="ack_clip" required style={{ marginTop: 3 }} />
+                      <span>The <b>badge, with its clip attached</b>, is sealed in its pouch and in the box.</span>
+                    </label>
+                  </div>
+                )}
                 <button className="btn btn-ghost btn-block" type="submit">I&rsquo;ve shipped it →</button>
               </form>
             </div>
