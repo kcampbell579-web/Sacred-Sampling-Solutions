@@ -10,6 +10,9 @@ export const KIT_TYPES = {
   COM: { code: "COM", title: "Comprehensive Water Kit", slug: "comprehensive-water", matrix: "water", panels: ["metals", "vocs", "chloride", "fluoride"] },
   PFA: { code: "PFA", title: "PFAS Water Kit",          slug: "pfas-water",          matrix: "water", panels: ["pfas"] },
   PRO: { code: "PRO", title: "Complete Home Inspection Water Kit", slug: "professional", matrix: "water", panels: ["metals", "vocs", "pfas", "nitrate", "bacteria"] },
+  // Air badges (passive diffusive monitors). NDX = nitrogen dioxide — a
+  // letters-only code so it fits the Sample-ID parser (SS-NDX-00001).
+  NDX: { code: "NDX", title: "NO₂ Monitor", slug: "no2-air", matrix: "air", panels: ["no2"] },
 };
 
 // SS-BAS-00001 / SSS-COM-00001 — 2–3 S's, a 3–4 letter kit code, up to 7 digits.

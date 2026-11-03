@@ -25,7 +25,7 @@ export default async function TrainingPage({ params, searchParams }) {
   const id = (searchParams?.id || "").toString().trim().toUpperCase();
 
   const kitRows = await sql`
-    select code, title, slug, intro, tests, methods, sensitivity, containers, whats_inside, steps, video_url
+    select code, title, slug, matrix, intro, tests, methods, sensitivity, containers, whats_inside, steps, video_url
     from kit_types where slug=${slug}`;
   if (!kitRows.length) redirect("/dashboard");
   const kit = kitRows[0];
@@ -51,13 +51,22 @@ export default async function TrainingPage({ params, searchParams }) {
 
   const body = (
     <>
-      <div className="freeze-note">
+      {kit.matrix === "air" ? (
+          <div className="freeze-note">
+            <span className="freeze-ic">⏱️</span>
+            <div>
+              <b>Write down your start and stop times.</b> This badge measures a time-weighted average, so the lab needs the exact clock time you open it and the time you seal it back up — record both on your card and your Lab Request Form.
+            </div>
+          </div>
+        ) : (
+          <div className="freeze-note">
             <span className="freeze-ic">❄️</span>
             <div>
               <b>Freeze your ice pack first.</b> Put it in the freezer until solid — <b>at least 6 hours ahead</b> (overnight is best).
               Your sample has to stay cold all the way to the lab.
             </div>
           </div>
+        )}
 
           <div className="hero-note">
             <span className="eyebrow" style={{ color: "#9fd0ff" }}>Step 2 · Collection training</span>
