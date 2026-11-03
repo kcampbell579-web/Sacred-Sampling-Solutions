@@ -128,6 +128,7 @@ module.exports = async function handler(req, res) {
       line_items: lineItems,
       allow_promotion_codes: true,                       // WELCOME25 etc.
       shipping_address_collection: { allowed_countries: ['US'] },
+      phone_number_collection: { enabled: true },        // capture customer phone at checkout
       shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
