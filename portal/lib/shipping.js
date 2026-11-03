@@ -37,11 +37,13 @@ async function shippo(path, body) {
 
 // customer: { name, street1, street2, city, state, zip, phone, email }
 // Returns { carrier, service, rate, tracking, labelUrl }.
-export async function createReturnLabel(customer) {
+export async function createReturnLabel(customer, opts = {}) {
+  const addressTo = opts.address || LAB_ADDRESS;
+  const parcel = opts.parcel || PARCEL;
   const shipment = await shippo("/shipments/", {
     address_from: { country: "US", ...customer },
-    address_to: LAB_ADDRESS,
-    parcels: [PARCEL],
+    address_to: addressTo,
+    parcels: [parcel],
     extra: { is_return: true },
     async: false,
   });
