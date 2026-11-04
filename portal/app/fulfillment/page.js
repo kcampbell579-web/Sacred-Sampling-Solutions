@@ -5,6 +5,7 @@ import { parseShipAddress } from "@/lib/address";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
 import { statusIndex } from "@/lib/status";
+import { listLeads, leadCountsByType, LEAD_TYPES, leadTypeLabel } from "@/lib/leads";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Fulfillment — Sacred Sampling Solutions", robots: { index: false } };
@@ -40,9 +41,15 @@ function TrackLink({ number }) {
   );
 }
 
+const TABS = [["dashboard", "Dashboard"], ["orders", "Orders"], ["leads", "Leads"]];
+
 export default async function Fulfillment({ searchParams }) {
   const ok = (searchParams?.ok || "").toString();
   const error = (searchParams?.error || "").toString();
+  const tab = (searchParams?.tab || "dashboard").toString();
+  const type = (searchParams?.type || "").toString();
+  const authed = fulfillAuthed();
+  const title = tab === "orders" ? "Orders" : tab === "leads" ? "Leads" : "Dashboard";
 
   return (
     <main className="page">
@@ -50,9 +57,9 @@ export default async function Fulfillment({ searchParams }) {
         <div className="page-head" style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
           <div>
             <span className="eyebrow">Sacred Sampling · Fulfillment</span>
-            <h1>Orders</h1>
+            <h1>{title}</h1>
           </div>
-          {fulfillAuthed() && (
+          {authed && (
             <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
               <a className="linkbtn" href="/fulfillment/labels">🏷️ Print QR labels</a>
               <form action={fulfillLogout}><button className="linkbtn" type="submit">Lock</button></form>
@@ -60,12 +67,20 @@ export default async function Fulfillment({ searchParams }) {
           )}
         </div>
 
+        {authed && (
+          <nav className="ftabs">
+            {TABS.map(([k, label]) => (
+              <a key={k} className={`ftab${tab === k ? " on" : ""}`} href={`/fulfillment?tab=${k}`}>{label}</a>
+            ))}
+          </nav>
+        )}
+
         {!fulfillConfigured() ? (
           <div className="card">
             <h2>Fulfillment portal not configured</h2>
             <p className="muted mt">Set the <span className="mono">FULFILLMENT_PIN</span> environment variable in Vercel (portal project), then redeploy. You&rsquo;ll also need <span className="mono">STRIPE_SECRET_KEY</span> and <span className="mono">STRIPE_WEBHOOK_SECRET</span> for orders to arrive, and the <span className="mono">orders</span> table created in Neon.</p>
           </div>
-        ) : !fulfillAuthed() ? (
+        ) : !authed ? (
           <div className="card" style={{ maxWidth: 420 }}>
             <h2 style={{ marginBottom: 6 }}>Enter fulfillment PIN</h2>
             <p className="muted" style={{ marginBottom: 16 }}>Access is restricted to staff.</p>
@@ -78,8 +93,12 @@ export default async function Fulfillment({ searchParams }) {
               <button className="btn btn-primary btn-block" type="submit">Unlock</button>
             </form>
           </div>
-        ) : (
+        ) : tab === "orders" ? (
           <OrdersView ok={ok} error={error} />
+        ) : tab === "leads" ? (
+          <LeadsView type={type} ok={ok} error={error} />
+        ) : (
+          <DashboardView ok={ok} error={error} />
         )}
       </div>
     </main>
@@ -338,5 +357,167 @@ async function OrdersView({ ok, error }) {
         </div>
       )}
     </>
+  );
+}
+
+// ── Dashboard tab ───────────────────────────────────────────────────────────
+async function DashboardView({ ok, error }) {
+  const ordersByStatus = {};
+  let totalOrders = 0, revenueCents = 0, customers = 0, samples = 0, resultsReady = 0;
+  try {
+    const rows = await sql`select status, count(*)::int n, coalesce(sum(amount_total),0)::bigint rev from orders group by status`;
+    for (const r of rows) { ordersByStatus[r.status] = r.n; totalOrders += r.n; revenueCents += Number(r.rev || 0); }
+  } catch {}
+  try { const r = await sql`select count(distinct lower(email))::int n from orders where email is not null`; customers = r[0]?.n || 0; } catch {}
+  try { const r = await sql`select count(*)::int n from sample_registrations`; samples = r[0]?.n || 0; } catch {}
+  try { const r = await sql`select count(*)::int n from sample_registrations where status='Results Ready'`; resultsReady = r[0]?.n || 0; } catch {}
+  const leadCounts = await leadCountsByType();
+  const totalLeads = Object.values(leadCounts).reduce((a, b) => a + b, 0);
+
+  let recentOrders = [];
+  try { recentOrders = await sql`select id, customer_name, email, kit_name, amount_total, currency, status, created_at from orders order by created_at desc limit 6`; } catch {}
+  const recentLeads = (await listLeads()).slice(0, 6);
+
+  const card = (n, label, href) => (
+    <a className="os-card" href={href} style={{ textDecoration: "none" }}>
+      <div className="os-n">{n}</div><div className="os-l">{label}</div>
+    </a>
+  );
+
+  return (
+    <>
+      {ok && <div className="alert alert-ok">{ok}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+
+      <div className="ord-summary">
+        {card(ordersByStatus.new || 0, "New — to ship", "/fulfillment?tab=orders")}
+        {card(totalOrders, "Total orders", "/fulfillment?tab=orders")}
+        {card(customers, "Customers", "/fulfillment?tab=leads&type=customer")}
+        {card(totalLeads, "Leads captured", "/fulfillment?tab=leads")}
+      </div>
+      <div className="ord-summary">
+        {card(money(revenueCents, "usd"), "Revenue (all orders)", "/fulfillment?tab=orders")}
+        {card(samples, "Registered kits", "/fulfillment?tab=orders")}
+        {card(resultsReady, "Results ready", "/fulfillment?tab=orders")}
+        {card(ordersByStatus.shipped || 0, "Shipped", "/fulfillment?tab=orders")}
+      </div>
+
+      <div className="two-col">
+        <div className="card">
+          <div className="section-row"><div className="sh">Recent orders</div><a className="btn btn-ghost btn-sm" href="/fulfillment?tab=orders">All orders →</a></div>
+          {recentOrders.length === 0 ? <p className="muted">No orders yet.</p> : (
+            <div className="dash-list">
+              {recentOrders.map((o) => (
+                <div className="dash-row" key={o.id}>
+                  <div><div className="dr-main">{o.customer_name || o.email || "—"}</div><div className="dr-sub">{o.kit_name || "—"}</div></div>
+                  <div className="dr-right"><span className={`pill ${PILL[o.status] || "p-blue"}`}>{o.status}</span><span className="dr-amt">{money(o.amount_total, o.currency)}</span></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="card">
+          <div className="section-row"><div className="sh">Recent leads</div><a className="btn btn-ghost btn-sm" href="/fulfillment?tab=leads">All leads →</a></div>
+          {recentLeads.length === 0 ? <p className="muted">No leads captured yet. New newsletter, affiliate &amp; contact submissions land here.</p> : (
+            <div className="dash-list">
+              {recentLeads.map((l) => (
+                <div className="dash-row" key={l.id}>
+                  <div><div className="dr-main">{l.name || l.email || l.phone || "—"}</div><div className="dr-sub">{leadTypeLabel(l.type)}{l.email ? ` · ${l.email}` : ""}</div></div>
+                  <div className="dr-right"><span className="dr-sub">{fmtDate(l.created_at)}</span></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Leads tab ───────────────────────────────────────────────────────────────
+async function LeadsView({ type, ok, error }) {
+  const counts = await leadCountsByType();
+  const totalLeads = Object.values(counts).reduce((a, b) => a + b, 0);
+  let customerCount = 0;
+  try { const r = await sql`select count(distinct lower(email))::int n from orders where email is not null`; customerCount = r[0]?.n || 0; } catch {}
+
+  const filters = [
+    ["", `All (${totalLeads})`],
+    ["customer", `Customers (${customerCount})`],
+    ...LEAD_TYPES.map(([k, label]) => [k, `${label} (${counts[k] || 0})`]),
+  ];
+
+  return (
+    <>
+      {ok && <div className="alert alert-ok">{ok}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      <nav className="ltabs">
+        {filters.map(([k, label]) => (
+          <a key={k || "all"} className={`ltab${(type || "") === k ? " on" : ""}`} href={`/fulfillment?tab=leads${k ? `&type=${k}` : ""}`}>{label}</a>
+        ))}
+      </nav>
+      {type === "customer" ? <CustomersTable /> : <LeadsTable type={type} />}
+    </>
+  );
+}
+
+async function CustomersTable() {
+  let rows = [];
+  try {
+    rows = await sql`
+      select max(customer_name) as name, max(email) as email, max(phone) as phone,
+             count(*)::int as orders, coalesce(sum(amount_total),0)::bigint as total, max(created_at) as last
+      from orders where email is not null
+      group by lower(email) order by last desc limit 500`;
+  } catch {}
+  if (!rows.length) return <div className="card"><p className="muted">No customers yet.</p></div>;
+  return (
+    <div className="card lead-card">
+      <table className="leadtable">
+        <thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Orders</th><th>Spent</th><th>Last</th></tr></thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={i}>
+              <td>{r.name || "—"}</td>
+              <td className="mono">{r.email || "—"}</td>
+              <td>{r.phone || "—"}</td>
+              <td>{r.orders}</td>
+              <td>{money(Number(r.total || 0), "usd")}</td>
+              <td>{fmtDate(r.last)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+async function LeadsTable({ type }) {
+  const rows = await listLeads(type || undefined);
+  if (!rows.length) {
+    return (
+      <div className="card">
+        <p className="muted">No {type ? leadTypeLabel(type).toLowerCase() : "leads"} captured yet. New submissions from the site forms appear here automatically.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="card lead-card">
+      <table className="leadtable">
+        <thead><tr><th>Date</th>{!type && <th>Type</th>}<th>Name</th><th>Email</th><th>Phone</th><th>Details</th></tr></thead>
+        <tbody>
+          {rows.map((l) => (
+            <tr key={l.id}>
+              <td>{fmtDate(l.created_at)}</td>
+              {!type && <td>{leadTypeLabel(l.type)}</td>}
+              <td>{l.name || "—"}</td>
+              <td className="mono">{l.email || "—"}</td>
+              <td>{l.phone || "—"}</td>
+              <td>{[l.message, l.ref ? `ref: ${l.ref}` : "", l.source ? `(${l.source})` : ""].filter(Boolean).join(" · ") || "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

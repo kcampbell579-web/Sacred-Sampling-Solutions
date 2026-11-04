@@ -10,7 +10,7 @@ const STATUSES = ["new", "shipped", "fulfilled"];
 
 export async function fulfillLogin(formData) {
   const pin = (formData.get("pin") || "").toString();
-  if (!verifyPin(pin)) redirect(`/fulfillment?error=${encodeURIComponent("Incorrect PIN.")}`);
+  if (!verifyPin(pin)) redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Incorrect PIN.")}`);
   setFulfillCookie();
   redirect("/fulfillment");
 }
@@ -42,7 +42,7 @@ export async function setOrderStatus(formData) {
       try {
         await sql`update orders set tracking_number=${tracking} where id=${id}`;
       } catch {
-        redirect(`/fulfillment?error=${encodeURIComponent("Order marked shipped, but tracking could not be saved — run migrate-orders-tracking.sql in Neon first.")}`);
+        redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Order marked shipped, but tracking could not be saved — run migrate-orders-tracking.sql in Neon first.")}`);
       }
     }
 
@@ -61,7 +61,7 @@ export async function setOrderStatus(formData) {
   } else {
     await sql`update orders set status=${status} where id=${id}`;
   }
-  redirect(`/fulfillment?ok=${encodeURIComponent("Order updated")}`);
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent("Order updated")}`);
 }
 
 // Add or update the outbound (warehouse -> customer) UPS tracking number.
@@ -73,9 +73,9 @@ export async function saveOutboundTracking(formData) {
   try {
     await sql`update orders set tracking_number=${tracking || null} where id=${id}`;
   } catch {
-    redirect(`/fulfillment?error=${encodeURIComponent("Could not save tracking — run migrate-orders-tracking.sql in Neon first.")}`);
+    redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Could not save tracking — run migrate-orders-tracking.sql in Neon first.")}`);
   }
-  redirect(`/fulfillment?ok=${encodeURIComponent(tracking ? "Tracking saved" : "Tracking cleared")}`);
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent(tracking ? "Tracking saved" : "Tracking cleared")}`);
 }
 
 // Buy a prepaid outbound (warehouse -> customer) UPS label via Shippo, straight
@@ -96,14 +96,14 @@ export async function buyOutboundLabel(formData) {
     phone: (formData.get("phone") || "").toString().trim(),
   };
   if (!to.name || !to.street1 || !to.city || !to.state || !to.zip) {
-    redirect(`/fulfillment?error=${encodeURIComponent("Fill in the full ship-to address (name, street, city, state, ZIP) before buying a label.")}`);
+    redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Fill in the full ship-to address (name, street, city, state, ZIP) before buying a label.")}`);
   }
 
   let label;
   try {
     label = await createOutboundLabel(to);
   } catch (e) {
-    redirect(`/fulfillment?error=${encodeURIComponent(e?.message || "Could not buy the UPS label. Please try again.")}`);
+    redirect(`/fulfillment?tab=orders&error=${encodeURIComponent(e?.message || "Could not buy the UPS label. Please try again.")}`);
   }
 
   try {
@@ -112,7 +112,7 @@ export async function buyOutboundLabel(formData) {
   } catch {}
   await sql`update orders set tracking_number=${label.tracking || null}, outbound_label_url=${label.labelUrl || null} where id=${id}`;
 
-  redirect(`/fulfillment?ok=${encodeURIComponent("UPS label purchased" + (label.tracking ? " — " + label.tracking : ""))}`);
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent("UPS label purchased" + (label.tracking ? " — " + label.tracking : ""))}`);
 }
 
 // Add or update the return (customer -> lab) UPS tracking on the sample
@@ -126,9 +126,9 @@ export async function saveReturnTracking(formData) {
   try {
     await sql`update sample_registrations set tracking_number=${tracking || null} where sample_id=${sampleId}`;
   } catch {
-    redirect(`/fulfillment?error=${encodeURIComponent("Could not save return tracking.")}`);
+    redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Could not save return tracking.")}`);
   }
-  redirect(`/fulfillment?ok=${encodeURIComponent(tracking ? "Return tracking saved" : "Return tracking cleared")}`);
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent(tracking ? "Return tracking saved" : "Return tracking cleared")}`);
 }
 
 // Advance the sample to "Received by Lab" straight from the fulfillment card —
@@ -140,9 +140,9 @@ export async function markReceivedByLab(formData) {
   try {
     await sql`update sample_registrations set status='Received by Lab' where sample_id=${sampleId}`;
   } catch {
-    redirect(`/fulfillment?error=${encodeURIComponent("Could not update status.")}`);
+    redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Could not update status.")}`);
   }
-  redirect(`/fulfillment?ok=${encodeURIComponent("Marked received by lab — " + sampleId)}`);
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent("Marked received by lab — " + sampleId)}`);
 }
 
 // Upload a lab-result PDF (or paste a hosted URL) and release results to the
@@ -158,7 +158,7 @@ export async function fulfillAttachResult(formData) {
   if (!sampleId) redirect("/fulfillment");
 
   const exists = await sql`select 1 from sample_registrations where sample_id=${sampleId} limit 1`;
-  if (!exists.length) redirect(`/fulfillment?error=${encodeURIComponent("No registered sample " + sampleId)}`);
+  if (!exists.length) redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("No registered sample " + sampleId)}`);
 
   let reportLink = url || null;
 
@@ -167,10 +167,10 @@ export async function fulfillAttachResult(formData) {
     const type = file.type || "application/pdf";
     const name = file.name || "report.pdf";
     if (!/pdf/i.test(type) && !/\.pdf$/i.test(name)) {
-      redirect(`/fulfillment?error=${encodeURIComponent("Please upload a PDF file (or paste a hosted URL).")}`);
+      redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Please upload a PDF file (or paste a hosted URL).")}`);
     }
     if (file.size > 4.5 * 1024 * 1024) {
-      redirect(`/fulfillment?error=${encodeURIComponent("That PDF is larger than 4.5 MB. Compress it, or paste a hosted report URL instead.")}`);
+      redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("That PDF is larger than 4.5 MB. Compress it, or paste a hosted report URL instead.")}`);
     }
     const b64 = Buffer.from(await file.arrayBuffer()).toString("base64");
     await sql`create table if not exists result_files (
@@ -188,12 +188,12 @@ export async function fulfillAttachResult(formData) {
   }
 
   if (!reportLink && !summary) {
-    redirect(`/fulfillment?error=${encodeURIComponent("Attach a PDF, paste a report URL, or add a summary before releasing.")}`);
+    redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Attach a PDF, paste a report URL, or add a summary before releasing.")}`);
   }
 
   await sql`update sample_registrations set lab_report_pdf=${reportLink}, status='Results Ready' where sample_id=${sampleId}`;
   await sql`delete from results where sample_id=${sampleId}`;
   await sql`insert into results (sample_id, report_pdf, summary) values (${sampleId}, ${reportLink}, ${summary || null})`;
 
-  redirect(`/fulfillment?ok=${encodeURIComponent("Results released to the customer — " + sampleId)}`);
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent("Results released to the customer — " + sampleId)}`);
 }

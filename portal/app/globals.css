@@ -146,6 +146,28 @@ p{margin:0}
 .lblform{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .lblform .ot-input{width:100%}
 .lblrow{display:flex;gap:6px}
+/* Fulfillment: tabs, dashboard lists, lead tables */
+.ftabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:4px 0 18px;flex-wrap:wrap}
+.ftab{padding:9px 16px;font-weight:600;font-size:.95rem;color:var(--ink-3);text-decoration:none;border-bottom:2px solid transparent;margin-bottom:-1px}
+.ftab:hover{color:var(--ink)}
+.ftab.on{color:var(--brand-ink);border-bottom-color:var(--brand-ink)}
+.ltabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.ltab{padding:5px 12px;font-size:.84rem;font-weight:600;color:var(--ink-3);text-decoration:none;border:1px solid var(--line);border-radius:999px}
+.ltab:hover{color:var(--ink);border-color:var(--line-strong)}
+.ltab.on{color:#fff;background:var(--brand-ink);border-color:var(--brand-ink)}
+.dash-list{display:flex;flex-direction:column}
+.dash-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.dash-row:first-child{border-top:0}
+.dash-row .dr-main{font-weight:600;font-size:.92rem;color:var(--ink)}
+.dash-row .dr-sub{font-size:.78rem;color:var(--ink-3)}
+.dash-row .dr-right{display:flex;align-items:center;gap:10px;text-align:right}
+.dash-row .dr-amt{font-weight:700;font-size:.9rem}
+.lead-card{overflow-x:auto;padding:0}
+.leadtable{border-collapse:collapse;width:100%;font-size:.86rem}
+.leadtable th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.leadtable td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.leadtable tr:last-child td{border-bottom:0}
+.leadtable td.mono{font-family:var(--mono);font-size:.8rem}
 
 /* detected-kit banner on register */
 .kitbanner{display:flex;align-items:center;gap:11px;background:var(--brand-wash);border:1px solid #bfe0ff;border-radius:10px;padding:11px 13px;margin-top:10px}
