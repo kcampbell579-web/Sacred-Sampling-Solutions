@@ -1,6 +1,7 @@
 import { sql } from "@/lib/db";
 import { fulfillConfigured, fulfillAuthed } from "@/lib/fulfillauth";
-import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab, fulfillAttachResult } from "@/app/actions/fulfill";
+import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab, fulfillAttachResult, buyOutboundLabel } from "@/app/actions/fulfill";
+import { parseShipAddress } from "@/lib/address";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
 import { statusIndex } from "@/lib/status";
@@ -86,26 +87,28 @@ export default async function Fulfillment({ searchParams }) {
 }
 
 async function OrdersView({ ok, error }) {
-  // The outbound tracking column is optional until the migration is run.
-  let hasTracking = true;
+  // Self-heal the optional tracking + label columns (idempotent).
   try {
-    const col = await sql`select 1 from information_schema.columns where table_name='orders' and column_name='tracking_number' limit 1`;
-    hasTracking = col.length > 0;
-  } catch {
-    hasTracking = false;
-  }
+    await sql`alter table orders add column if not exists tracking_number text`;
+    await sql`alter table orders add column if not exists outbound_label_url text`;
+  } catch {}
 
-  const orders = hasTracking
-    ? await sql`
+  let orders;
+  try {
+    orders = await sql`
         select id, stripe_session_id, email, customer_name, amount_total, currency,
-               kit_name, quantity, ship_name, ship_address, phone, status, created_at, shipped_at, tracking_number
-        from orders
-        order by case status when 'new' then 0 when 'shipped' then 1 else 2 end, created_at desc`
-    : await sql`
-        select id, stripe_session_id, email, customer_name, amount_total, currency,
-               kit_name, quantity, ship_name, ship_address, phone, status, created_at, shipped_at, null as tracking_number
+               kit_name, quantity, ship_name, ship_address, phone, status, created_at, shipped_at,
+               tracking_number, outbound_label_url
         from orders
         order by case status when 'new' then 0 when 'shipped' then 1 else 2 end, created_at desc`;
+  } catch {
+    orders = await sql`
+        select id, stripe_session_id, email, customer_name, amount_total, currency,
+               kit_name, quantity, ship_name, ship_address, phone, status, created_at, shipped_at,
+               null as tracking_number, null as outbound_label_url
+        from orders
+        order by case status when 'new' then 0 when 'shipped' then 1 else 2 end, created_at desc`;
+  }
 
   // Customer-side progress: registrations (return tracking, training) keyed by email.
   let regsByEmail = new Map();
@@ -139,12 +142,6 @@ async function OrdersView({ ok, error }) {
     <>
       {ok && <div className="alert alert-ok">{ok}</div>}
       {error && <div className="alert alert-error">{error}</div>}
-      {!hasTracking && (
-        <div className="alert">
-          Outbound tracking isn&rsquo;t enabled yet. Run <span className="mono">db/migrate-orders-tracking.sql</span> in the Neon SQL editor to turn on the &ldquo;To customer&rdquo; tracking field.
-        </div>
-      )}
-
       <div className="ord-summary">
         <div className="os-card"><div className="os-n">{counts.new}</div><div className="os-l">New — to ship</div></div>
         <div className="os-card"><div className="os-n">{counts.shipped}</div><div className="os-l">Shipped</div></div>
@@ -161,6 +158,7 @@ async function OrdersView({ ok, error }) {
             const regs = regsByEmail.get(normEmail(o.email)) || [];
             const returnReg = regs.find((r) => r.tracking_number) || regs[0] || null;
             const returnTracking = returnReg?.tracking_number || "";
+            const shipTo = parseShipAddress(o.ship_address);
             return (
               <div className="ocard" key={o.id}>
                 {/* Header */}
@@ -198,22 +196,34 @@ async function OrdersView({ ok, error }) {
                 <div className="ocard-track">
                   <div className="ot ot-out">
                     <div className="ot-k">📦 To customer <span className="ot-dir">(outbound)</span></div>
-                    {o.tracking_number ? (
-                      <>
-                        <TrackLink number={o.tracking_number} />
-                        <form action={saveOutboundTracking} className="ot-form">
-                          <input type="hidden" name="id" value={o.id} />
-                          <input className="ot-input mono" name="tracking" defaultValue={o.tracking_number} placeholder="1Z…" />
-                          <button className="btn btn-ghost btn-sm" type="submit">Update</button>
-                        </form>
-                      </>
-                    ) : (
-                      <form action={saveOutboundTracking} className="ot-form">
-                        <input type="hidden" name="id" value={o.id} />
-                        <input className="ot-input mono" name="tracking" placeholder="Paste UPS tracking #" />
-                        <button className="btn btn-primary btn-sm" type="submit">Save</button>
-                      </form>
+                    {o.outbound_label_url && (
+                      <a className="btn btn-primary btn-sm" href={o.outbound_label_url} target="_blank" rel="noopener">🖨️ Print UPS label (PDF)</a>
                     )}
+                    {o.tracking_number ? (
+                      <TrackLink number={o.tracking_number} />
+                    ) : (
+                      <details className="prog-attach">
+                        <summary>🏷️ Buy UPS label</summary>
+                        <form action={buyOutboundLabel} className="lblform">
+                          <input type="hidden" name="id" value={o.id} />
+                          <input className="ot-input" name="name" defaultValue={o.ship_name || ""} placeholder="Full name" />
+                          <input className="ot-input" name="street1" defaultValue={shipTo.street1} placeholder="Street address" />
+                          <input className="ot-input" name="street2" defaultValue={shipTo.street2} placeholder="Apt / unit (optional)" />
+                          <div className="lblrow">
+                            <input className="ot-input" name="city" defaultValue={shipTo.city} placeholder="City" />
+                            <input className="ot-input" name="state" defaultValue={shipTo.state} placeholder="ST" maxLength={2} style={{ maxWidth: 58 }} />
+                            <input className="ot-input" name="zip" defaultValue={shipTo.zip} placeholder="ZIP" style={{ maxWidth: 92 }} />
+                          </div>
+                          <input className="ot-input" name="phone" defaultValue={o.phone || ""} placeholder="Phone (optional)" />
+                          <button className="btn btn-primary btn-sm" type="submit">Buy UPS label →</button>
+                        </form>
+                      </details>
+                    )}
+                    <form action={saveOutboundTracking} className="ot-form">
+                      <input type="hidden" name="id" value={o.id} />
+                      <input className="ot-input mono" name="tracking" defaultValue={o.tracking_number || ""} placeholder={o.tracking_number ? "1Z…" : "…or paste UPS tracking #"} />
+                      <button className="btn btn-ghost btn-sm" type="submit">{o.tracking_number ? "Update" : "Save"}</button>
+                    </form>
                   </div>
                   <div className="ot ot-lab">
                     <div className="ot-k">🧪 To lab <span className="ot-dir">(return)</span></div>

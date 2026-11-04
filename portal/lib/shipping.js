@@ -3,7 +3,7 @@
 // The Shippo token lives ONLY in the SHIPPO_API_TOKEN env var (Vercel → Settings
 // → Environment Variables). Use your LIVE token (shippo_live_…) to buy real
 // labels; a TEST token (shippo_test_…) returns a sample label without charging.
-import { LAB_ADDRESS, PARCEL, CARRIERS } from "./shipconfig";
+import { LAB_ADDRESS, PARCEL, CARRIERS, SHIP_FROM, OUTBOUND_PARCEL } from "./shipconfig";
 
 const BASE = "https://api.goshippo.com";
 
@@ -52,6 +52,52 @@ export async function createReturnLabel(customer, opts = {}) {
   if (!rates.length) {
     throw new Error(
       "No shipping rates came back. Check the return address, and confirm a UPS carrier is connected in your Shippo account."
+    );
+  }
+
+  const pool = rates.filter((r) => CARRIERS.includes((r.provider || "").toUpperCase()));
+  const choose = (pool.length ? pool : rates).sort(
+    (a, b) => parseFloat(a.amount) - parseFloat(b.amount)
+  )[0];
+
+  const tx = await shippo("/transactions/", {
+    rate: choose.object_id,
+    label_file_type: "PDF",
+    async: false,
+  });
+
+  if (tx.status !== "SUCCESS" || !tx.label_url) {
+    const msgs = Array.isArray(tx.messages)
+      ? tx.messages.map((m) => m.text || m).filter(Boolean).join("; ")
+      : "";
+    throw new Error(msgs || "Shippo could not create the label. Please try again.");
+  }
+
+  return {
+    carrier: choose.provider || "UPS",
+    service: choose.servicelevel?.name || "",
+    rate: choose.amount || "",
+    tracking: tx.tracking_number || "",
+    labelUrl: tx.label_url || "",
+  };
+}
+
+// Outbound label: Sacred (SHIP_FROM) -> customer. Bought from the fulfillment
+// dashboard. `to` = { name, street1, street2, city, state, zip, phone, email }.
+// Returns { carrier, service, rate, tracking, labelUrl }.
+export async function createOutboundLabel(to, opts = {}) {
+  const parcel = opts.parcel || OUTBOUND_PARCEL;
+  const shipment = await shippo("/shipments/", {
+    address_from: { country: "US", ...SHIP_FROM },
+    address_to: { country: "US", ...to },
+    parcels: [parcel],
+    async: false,
+  });
+
+  const rates = Array.isArray(shipment.rates) ? shipment.rates : [];
+  if (!rates.length) {
+    throw new Error(
+      "No shipping rates came back. Check the ship-to address, and confirm a UPS carrier is connected in your Shippo account."
     );
   }
 

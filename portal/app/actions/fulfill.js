@@ -3,6 +3,7 @@
 import { sql } from "@/lib/db";
 import { verifyPin, setFulfillCookie, clearFulfillCookie, fulfillAuthed } from "@/lib/fulfillauth";
 import { sendOrderShippedEmail } from "@/lib/email/orderShipped";
+import { createOutboundLabel } from "@/lib/shipping";
 import { redirect } from "next/navigation";
 
 const STATUSES = ["new", "shipped", "fulfilled"];
@@ -75,6 +76,43 @@ export async function saveOutboundTracking(formData) {
     redirect(`/fulfillment?error=${encodeURIComponent("Could not save tracking — run migrate-orders-tracking.sql in Neon first.")}`);
   }
   redirect(`/fulfillment?ok=${encodeURIComponent(tracking ? "Tracking saved" : "Tracking cleared")}`);
+}
+
+// Buy a prepaid outbound (warehouse -> customer) UPS label via Shippo, straight
+// from the fulfillment card. Ship-to fields come from the form (pre-filled from
+// the order, operator-confirmed). Saves the tracking # + label PDF URL.
+export async function buyOutboundLabel(formData) {
+  if (!fulfillAuthed()) redirect("/fulfillment");
+  const id = Number(formData.get("id"));
+  if (!id) redirect("/fulfillment");
+
+  const to = {
+    name: (formData.get("name") || "").toString().trim(),
+    street1: (formData.get("street1") || "").toString().trim(),
+    street2: (formData.get("street2") || "").toString().trim(),
+    city: (formData.get("city") || "").toString().trim(),
+    state: (formData.get("state") || "").toString().trim().toUpperCase(),
+    zip: (formData.get("zip") || "").toString().trim(),
+    phone: (formData.get("phone") || "").toString().trim(),
+  };
+  if (!to.name || !to.street1 || !to.city || !to.state || !to.zip) {
+    redirect(`/fulfillment?error=${encodeURIComponent("Fill in the full ship-to address (name, street, city, state, ZIP) before buying a label.")}`);
+  }
+
+  let label;
+  try {
+    label = await createOutboundLabel(to);
+  } catch (e) {
+    redirect(`/fulfillment?error=${encodeURIComponent(e?.message || "Could not buy the UPS label. Please try again.")}`);
+  }
+
+  try {
+    await sql`alter table orders add column if not exists tracking_number text`;
+    await sql`alter table orders add column if not exists outbound_label_url text`;
+  } catch {}
+  await sql`update orders set tracking_number=${label.tracking || null}, outbound_label_url=${label.labelUrl || null} where id=${id}`;
+
+  redirect(`/fulfillment?ok=${encodeURIComponent("UPS label purchased" + (label.tracking ? " — " + label.tracking : ""))}`);
 }
 
 // Add or update the return (customer -> lab) UPS tracking on the sample

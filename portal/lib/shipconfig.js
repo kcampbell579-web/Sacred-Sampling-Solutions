@@ -32,6 +32,31 @@ export const PARCEL = {
 // carrier account to be connected in your Shippo dashboard.
 export const CARRIERS = ["UPS"];
 
+// Ship-FROM for OUTBOUND labels (warehouse -> customer), bought from the
+// fulfillment dashboard. Defaults to the Sacred Sampling address; override any
+// field with an env var in Vercel and redeploy.
+export const SHIP_FROM = {
+  name:    process.env.SHIP_FROM_NAME    || "Sacred Sampling Solutions",
+  street1: process.env.SHIP_FROM_STREET1 || "44 Drake Ave",
+  street2: process.env.SHIP_FROM_STREET2 || "",
+  city:    process.env.SHIP_FROM_CITY    || "Bellport",
+  state:   process.env.SHIP_FROM_STATE   || "NY",
+  zip:     process.env.SHIP_FROM_ZIP     || "11713",
+  country: "US",
+  phone:   process.env.SHIP_FROM_PHONE   || "631-875-2958",
+  email:   process.env.SHIP_FROM_EMAIL   || "info@sacredsamplingsolutions.com",
+};
+
+// Default outbound kit box. Override with env vars to match your real mailer.
+export const OUTBOUND_PARCEL = {
+  length: process.env.SHIP_BOX_L || "10",
+  width:  process.env.SHIP_BOX_W || "8",
+  height: process.env.SHIP_BOX_H || "4",
+  distance_unit: "in",
+  weight: process.env.SHIP_BOX_OZ || "32", // ~2 lb kit + packaging
+  mass_unit: "oz",
+};
+
 // Air badges (passive monitors) are analyzed by AT Labs / Assay Technology,
 // not LIAL — a different destination. The lab moved from Boardman to this
 // Youngstown address in 2026. Override any field with an env var in Vercel.
