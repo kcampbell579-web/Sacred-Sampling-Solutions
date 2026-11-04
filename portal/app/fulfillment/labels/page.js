@@ -133,6 +133,7 @@ export default async function LabelsPage({ searchParams }) {
               <p className="muted mt" style={{ fontSize: ".9rem" }}>
                 Only kit types with a portal registration flow are listed — scanning one of these codes auto-detects the kit.
               </p>
+              <RecentBatches />
             </>
           )}
 
@@ -190,5 +191,37 @@ export default async function LabelsPage({ searchParams }) {
         )}
       </div>
     </main>
+  );
+}
+
+// Past label batches, so an operator can re-open / re-print any set generated
+// earlier (each batch is otherwise only reachable by its one-time URL).
+async function RecentBatches() {
+  let rows = [];
+  try {
+    rows = await sql`
+      select batch, max(kit_code) as kit_code, count(*)::int as n,
+             min(sample_id) as first_id, max(sample_id) as last_id, max(created_at) as created
+      from issued_sample_ids where batch is not null
+      group by batch order by created desc limit 30`;
+  } catch {}
+  if (!rows.length) return null;
+  const d = (v) => { try { return new Date(v).toISOString().slice(0, 16).replace("T", " "); } catch { return ""; } };
+  return (
+    <div className="card" style={{ maxWidth: 560, marginTop: 18 }}>
+      <div className="section-row"><div className="sh">Recent batches</div></div>
+      <p className="muted" style={{ fontSize: ".85rem", marginBottom: 10 }}>Re-open any batch to view or re-print its labels.</p>
+      <div className="dash-list">
+        {rows.map((b) => (
+          <a className="dash-row" key={b.batch} href={`/fulfillment/labels?batch=${encodeURIComponent(b.batch)}`} style={{ textDecoration: "none" }}>
+            <div>
+              <div className="dr-main">{(KIT_TYPES[b.kit_code]?.title || b.kit_code)} · {b.n} label{b.n === 1 ? "" : "s"}</div>
+              <div className="dr-sub mono">{b.first_id}{b.last_id !== b.first_id ? ` – ${b.last_id}` : ""}</div>
+            </div>
+            <div className="dr-right"><span className="dr-sub">{d(b.created)}</span><span className="dr-sub">Open →</span></div>
+          </a>
+        ))}
+      </div>
+    </div>
   );
 }
