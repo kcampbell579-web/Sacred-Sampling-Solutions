@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { fulfillConfigured, fulfillAuthed } from "@/lib/fulfillauth";
-import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab } from "@/app/actions/fulfill";
+import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab, fulfillAttachResult } from "@/app/actions/fulfill";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
 import { statusIndex } from "@/lib/status";
@@ -252,17 +252,33 @@ async function OrdersView({ ok, error }) {
                     <div className="sub">No kit registered yet for this email.</div>
                   ) : (
                     <div className="prog-rows">
-                      {regs.map((r) => (
-                        <div className="prog-row" key={r.sample_id}>
-                          <span className="mono prog-sid">{r.sample_id}</span>
-                          <span className="prog-badges">
-                            <span className="badge on">Registered</span>
-                            <span className={`badge ${r.coc_url ? "on" : "off"}`}>{r.coc_url ? "COC ✓" : "COC —"}</span>
-                            <span className={`badge ${r.trained ? "on" : "off"}`}>{r.trained ? "Trained ✓" : "Training —"}</span>
-                          </span>
-                          <span className="prog-status">{r.status}</span>
-                        </div>
-                      ))}
+                      {regs.map((r) => {
+                        const released = statusIndex(r.status) >= 6;
+                        return (
+                          <div className="prog-item" key={r.sample_id}>
+                            <div className="prog-row">
+                              <span className="mono prog-sid">{r.sample_id}</span>
+                              <span className="prog-badges">
+                                <span className="badge on">Registered</span>
+                                <span className={`badge ${r.coc_url ? "on" : "off"}`}>{r.coc_url ? "COC ✓" : "COC —"}</span>
+                                <span className={`badge ${r.trained ? "on" : "off"}`}>{r.trained ? "Trained ✓" : "Training —"}</span>
+                                <span className={`badge ${released ? "on" : "off"}`}>{released ? "Results ✓" : "Results —"}</span>
+                              </span>
+                              <span className="prog-status">{r.status}</span>
+                            </div>
+                            <details className="prog-attach">
+                              <summary>📄 {released ? "Replace results" : "Attach results & release"}</summary>
+                              <form action={fulfillAttachResult} className="attach-form">
+                                <input type="hidden" name="sample_id" value={r.sample_id} />
+                                <input type="file" name="file" accept="application/pdf,.pdf" />
+                                <input className="ot-input" name="summary" placeholder="Plain-English summary (optional)" />
+                                <button className="btn btn-primary btn-sm" type="submit">Attach &amp; release →</button>
+                              </form>
+                              <div className="sub">Uploads the PDF and marks this sample <b>Results Ready</b> — the customer sees it on their results page. PDFs up to 4.5 MB; for bigger files paste a hosted URL in the Lab Portal.</div>
+                            </details>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
