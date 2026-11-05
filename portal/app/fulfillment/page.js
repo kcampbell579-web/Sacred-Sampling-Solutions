@@ -41,7 +41,7 @@ function TrackLink({ number }) {
   );
 }
 
-const TABS = [["dashboard", "Dashboard"], ["orders", "Orders"], ["leads", "Leads"]];
+const TABS = [["dashboard", "Dashboard"], ["orders", "Orders"], ["leads", "Leads"], ["campaigns", "Campaigns"]];
 
 export default async function Fulfillment({ searchParams }) {
   const ok = (searchParams?.ok || "").toString();
@@ -49,7 +49,7 @@ export default async function Fulfillment({ searchParams }) {
   const tab = (searchParams?.tab || "dashboard").toString();
   const type = (searchParams?.type || "").toString();
   const authed = fulfillAuthed();
-  const title = tab === "orders" ? "Orders" : tab === "leads" ? "Leads" : "Dashboard";
+  const title = tab === "orders" ? "Orders" : tab === "leads" ? "Leads" : tab === "campaigns" ? "Campaigns" : "Dashboard";
 
   return (
     <main className="page">
@@ -97,6 +97,8 @@ export default async function Fulfillment({ searchParams }) {
           <OrdersView ok={ok} error={error} />
         ) : tab === "leads" ? (
           <LeadsView type={type} ok={ok} error={error} />
+        ) : tab === "campaigns" ? (
+          <CampaignsView ok={ok} error={error} />
         ) : (
           <DashboardView ok={ok} error={error} />
         )}
@@ -519,5 +521,56 @@ async function LeadsTable({ type }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+// ── Campaigns tab: coupon/promotion-code performance ────────────────────────
+async function CampaignsView({ ok, error }) {
+  let rows = [];
+  try {
+    rows = await sql`
+      select upper(promo_code) as code, count(*)::int as orders,
+             coalesce(sum(amount_total),0)::bigint as revenue,
+             coalesce(sum(discount_total),0)::bigint as discount,
+             max(created_at) as last
+      from orders where promo_code is not null and promo_code <> ''
+      group by upper(promo_code)
+      order by orders desc, revenue desc`;
+  } catch {}
+  const totalOrders = rows.reduce((a, r) => a + r.orders, 0);
+  const totalRev = rows.reduce((a, r) => a + Number(r.revenue || 0), 0);
+
+  return (
+    <>
+      {ok && <div className="alert alert-ok">{ok}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      <div className="ord-summary">
+        <div className="os-card"><div className="os-n">{rows.length}</div><div className="os-l">Codes used</div></div>
+        <div className="os-card"><div className="os-n">{totalOrders}</div><div className="os-l">Orders with a code</div></div>
+        <div className="os-card"><div className="os-n">{money(totalRev, "usd")}</div><div className="os-l">Revenue from codes</div></div>
+      </div>
+      {rows.length === 0 ? (
+        <div className="card">
+          <p className="muted">No coupon redemptions captured yet. When a customer checks out with a promotion code, it shows up here &mdash; code, orders, revenue, and discounts given. (Captured from new orders going forward; match these against the codes in your social-post plan.)</p>
+        </div>
+      ) : (
+        <div className="card lead-card">
+          <table className="leadtable">
+            <thead><tr><th>Coupon code</th><th>Orders</th><th>Revenue</th><th>Discounts given</th><th>Last used</th></tr></thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={i}>
+                  <td className="mono"><b>{r.code}</b></td>
+                  <td>{r.orders}</td>
+                  <td>{money(Number(r.revenue || 0), "usd")}</td>
+                  <td>{money(Number(r.discount || 0), "usd")}</td>
+                  <td>{fmtDate(r.last)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
   );
 }

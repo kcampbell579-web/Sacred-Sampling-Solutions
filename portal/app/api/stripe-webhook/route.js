@@ -49,14 +49,50 @@ export async function POST(request) {
       addr.country,
     ].filter(Boolean).join(", ");
 
-    const rows = await sql`
-      insert into orders
-        (stripe_session_id, email, customer_name, amount_total, currency, kit_name, quantity, ship_name, ship_address, phone, status)
-      values
-        (${s.id}, ${cd.email || null}, ${cd.name || null}, ${s.amount_total ?? null}, ${s.currency || "usd"},
-         ${kit || null}, ${qty}, ${ship.name || cd.name || null}, ${shipAddress || null}, ${cd.phone || null}, 'new')
-      on conflict (stripe_session_id) do nothing
-      returning id`;
+    // Promotion code + discount for campaign tracking. Retrieve the session with
+    // the promotion code expanded so we store the human code (e.g. WELCOME25).
+    let promoCode = null;
+    let discountTotal = null;
+    try {
+      const full = await stripeGet(`checkout/sessions/${s.id}?expand[]=discounts.promotion_code`);
+      discountTotal = full.total_details && full.total_details.amount_discount != null ? full.total_details.amount_discount : null;
+      const d = (full.discounts || [])[0];
+      if (d && d.promotion_code && typeof d.promotion_code === "object") promoCode = d.promotion_code.code || null;
+      else if (d && d.promotion_code) {
+        try { const pc = await stripeGet(`promotion_codes/${d.promotion_code}`); promoCode = pc.code || null; } catch {}
+      }
+      if (promoCode) promoCode = String(promoCode).toUpperCase();
+    } catch {
+      // discount capture is best-effort; order still records
+    }
+
+    // Self-heal the campaign columns (idempotent).
+    try {
+      await sql`alter table orders add column if not exists promo_code text`;
+      await sql`alter table orders add column if not exists discount_total integer`;
+    } catch {}
+
+    let rows;
+    try {
+      rows = await sql`
+        insert into orders
+          (stripe_session_id, email, customer_name, amount_total, currency, kit_name, quantity, ship_name, ship_address, phone, promo_code, discount_total, status)
+        values
+          (${s.id}, ${cd.email || null}, ${cd.name || null}, ${s.amount_total ?? null}, ${s.currency || "usd"},
+           ${kit || null}, ${qty}, ${ship.name || cd.name || null}, ${shipAddress || null}, ${cd.phone || null},
+           ${promoCode}, ${discountTotal}, 'new')
+        on conflict (stripe_session_id) do nothing
+        returning id`;
+    } catch {
+      rows = await sql`
+        insert into orders
+          (stripe_session_id, email, customer_name, amount_total, currency, kit_name, quantity, ship_name, ship_address, phone, status)
+        values
+          (${s.id}, ${cd.email || null}, ${cd.name || null}, ${s.amount_total ?? null}, ${s.currency || "usd"},
+           ${kit || null}, ${qty}, ${ship.name || cd.name || null}, ${shipAddress || null}, ${cd.phone || null}, 'new')
+        on conflict (stripe_session_id) do nothing
+        returning id`;
+    }
 
     if (rows.length) {
       await notifyOwnerNewOrder({
