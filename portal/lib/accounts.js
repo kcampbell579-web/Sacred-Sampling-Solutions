@@ -65,3 +65,37 @@ export async function sendWelcomeSetPassword({ email, name, token }) {
     // best-effort
   }
 }
+
+// Email a password-reset link via Resend. No-ops without RESEND_API_KEY.
+export async function sendPasswordResetEmail({ email, name, token }) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key || !token || !email) return;
+  const link = `${PORTAL_BASE}/set-password?token=${encodeURIComponent(token)}`;
+  const first = String(name || "there").trim().split(/\s+/)[0] || "there";
+  const from = process.env.RESEND_FROM || "Sacred Sampling Solutions <orders@sacredsamplingsolutions.com>";
+  const html = `<!doctype html><html><body style="margin:0;background:#eef4fb;font-family:Arial,Helvetica,sans-serif;color:#10264a">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:560px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(16,38,74,.08)">
+        <tr><td style="padding:26px 34px;border-bottom:1px solid #e8eef6">
+          <img src="https://www.sacredsamplingsolutions.com/assets/logo-color.png" width="190" alt="Sacred Sampling Solutions" style="display:block;width:190px;height:auto;border:0">
+        </td></tr>
+        <tr><td style="padding:30px 34px">
+          <h1 style="margin:0 0 14px;font-size:24px;line-height:1.2;color:#10264a">Reset your password, ${first}.</h1>
+          <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#304663">We received a request to reset the password for your Sacred Sampling account. Click below to choose a new one:</p>
+          <a href="${link}" style="display:inline-block;background:#1071ef;color:#fff;text-decoration:none;font-weight:800;font-size:16px;padding:15px 26px;border-radius:9px">Set a new password &rarr;</a>
+          <p style="margin:20px 0 0;font-size:13px;line-height:1.5;color:#8897aa">This link is valid for 48 hours. If you didn't request a reset, you can safely ignore this email — your password won't change.</p>
+        </td></tr>
+        <tr><td style="padding:20px 34px;background:#0e2a4d;color:#a9bdd3;font-size:11px">&copy; ${new Date().getFullYear()} Sacred Sampling Solutions</td></tr>
+      </table>
+    </td></tr></table>
+  </body></html>`;
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to: [email], subject: "Reset your Sacred Sampling password", html }),
+    });
+  } catch {
+    // best-effort
+  }
+}
