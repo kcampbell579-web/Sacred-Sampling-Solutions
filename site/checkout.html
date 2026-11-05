@@ -140,11 +140,18 @@
 
   var email = ''; try { email = localStorage.getItem(LEAD) || ''; } catch (e) {}
 
+  // Affiliate referral code (set by ?ref= on any page), valid 60 days.
+  var ref = ''; try {
+    var rc = JSON.parse(localStorage.getItem('sss_ref') || 'null');
+    if (rc && rc.code && (Date.now() - (rc.t || 0) < 60 * 86400000)) ref = rc.code;
+  } catch (e) {}
+
   fetch('/api/checkout', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       items: items.map(function (i) { return { slug: i.slug, qty: i.qty }; }),
-      email: email || undefined
+      email: email || undefined,
+      ref: ref || undefined
     })
   }).then(function (r) {
     return r.json().then(function (d) { return { ok: r.ok, d: d }; }, function () { return { ok: false, d: {} }; });

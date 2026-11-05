@@ -23,6 +23,7 @@ export default function LoginPage({ searchParams }) {
             <div className="field">
               <label>Password</label>
               <input name="password" type="password" required autoComplete="current-password" />
+              <a className="forgot-link" href="/forgot-password">Forgot password?</a>
             </div>
             <button className="btn btn-primary btn-block" type="submit">Log in</button>
           </form>

@@ -1,5 +1,7 @@
 import { sql } from "@/lib/db";
 import { fillLialCoc } from "@/lib/coc-pdf";
+import { buildAssayLrf } from "@/lib/assay-lrf";
+import { kitByCode } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -23,7 +25,11 @@ export async function GET(request) {
     from sample_registrations where sample_id=${id} limit 1`;
   const reg = regRows[0] || { sample_id: id, kit_code: "", customer_name: cocRows[0].sampler_name };
 
-  const pdf = await fillLialCoc({ coc: cocRows[0], reg });
+  // Air badges (NO₂, Assay) use the 594AT Lab Request Form; water uses LIAL.
+  const isAir = (kitByCode(reg.kit_code)?.matrix || "") === "air" || cocRows[0].matrix === "A";
+  const pdf = isAir
+    ? await buildAssayLrf({ reg, coc: cocRows[0] })
+    : await fillLialCoc({ coc: cocRows[0], reg });
   const filename = `COC-${id}.pdf`;
 
   return new Response(Buffer.from(pdf), {

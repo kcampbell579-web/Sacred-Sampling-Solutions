@@ -94,6 +94,7 @@ export default async function Dashboard({ searchParams }) {
                   {kits.map((k) => {
                     const ns = nextStep(k);
                     const i = statusIndex(k.status);
+                    const id = encodeURIComponent(k.sample_id);
                     return (
                       <div className="kitcard" key={k.sample_id}>
                         <div className="kc-top">
@@ -106,6 +107,11 @@ export default async function Dashboard({ searchParams }) {
                         <Stepbar status={k.status} />
                         <div className="kc-step">Step {i + 1} of 7</div>
                         <a className="btn btn-primary btn-sm" href={ns.href}>{ns.label} →</a>
+                        <div className="kc-jump">
+                          <a href={k.kit_slug ? `/training/${k.kit_slug}?id=${id}` : `/instructions`}>↻ Training</a>
+                          <a href={`/shipping?id=${id}`}>🏷️ UPS label</a>
+                          <a href={`/results/${id}`}>📄 Results</a>
+                        </div>
                       </div>
                     );
                   })}

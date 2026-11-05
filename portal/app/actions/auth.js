@@ -2,6 +2,7 @@
 
 import { sql } from "@/lib/db";
 import { hashPassword, verifyPassword, createSession, destroySession } from "@/lib/auth";
+import { createPasswordToken, sendPasswordResetEmail } from "@/lib/accounts";
 import { redirect } from "next/navigation";
 
 function safeNext(v) {
@@ -59,6 +60,24 @@ export async function login(formData) {
   }
   await createSession(rows[0].id);
   redirect(next);
+}
+
+// Send a password-reset link. Always reports success so we never reveal whether
+// an email has an account.
+export async function requestPasswordReset(formData) {
+  const email = (formData.get("email") || "").toString().trim().toLowerCase();
+  if (email) {
+    try {
+      const rows = await sql`select id, name from users where email=${email}`;
+      if (rows.length) {
+        const token = await createPasswordToken(rows[0].id, 2); // 48-hour expiry
+        await sendPasswordResetEmail({ email, name: rows[0].name, token });
+      }
+    } catch {
+      // best-effort; still report success
+    }
+  }
+  redirect("/forgot-password?sent=1");
 }
 
 export async function logout() {

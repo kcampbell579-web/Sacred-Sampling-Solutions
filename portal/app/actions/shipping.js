@@ -3,6 +3,8 @@
 import { sql } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { createReturnLabel } from "@/lib/shipping";
+import { returnConfigFor } from "@/lib/shipconfig";
+import { kitBySlug } from "@/lib/catalog";
 import { redirect } from "next/navigation";
 
 export async function generateLabel(formData) {
@@ -10,7 +12,7 @@ export async function generateLabel(formData) {
   const sampleId = (formData.get("sample_id") || "").toString().trim().toUpperCase();
   const back = (q) => `/shipping?id=${encodeURIComponent(sampleId)}&${q}`;
 
-  const owned = await sql`select sample_id from sample_registrations where sample_id=${sampleId} and user_id=${user.id}`;
+  const owned = await sql`select sample_id, kit_slug from sample_registrations where sample_id=${sampleId} and user_id=${user.id}`;
   if (!owned.length) redirect("/dashboard");
 
   // Never buy a second label if one already exists for this sample.
@@ -32,9 +34,12 @@ export async function generateLabel(formData) {
     redirect(back("error=" + encodeURIComponent("Please fill in your full return address (street, city, state, ZIP).")));
   }
 
+  // Route the badge to the right lab: air badges -> AT Labs, water -> LIAL.
+  const returnTo = returnConfigFor(kitBySlug(owned[0].kit_slug)?.matrix || null);
+
   let label;
   try {
-    label = await createReturnLabel(customer);
+    label = await createReturnLabel(customer, returnTo);
   } catch (e) {
     redirect(back("error=" + encodeURIComponent(e?.message || "Could not create the label. Please try again.")));
   }
@@ -60,8 +65,16 @@ export async function markShipped(formData) {
   const user = await requireUser();
   const sampleId = (formData.get("sample_id") || "").toString().trim().toUpperCase();
 
-  const owned = await sql`select sample_id from sample_registrations where sample_id=${sampleId} and user_id=${user.id}`;
+  const owned = await sql`select sample_id, kit_slug from sample_registrations where sample_id=${sampleId} and user_id=${user.id}`;
   if (!owned.length) redirect("/dashboard");
+
+  // Air badges can't be analyzed without the Lab Request Form in the box, so
+  // require the customer to confirm the form and the clipped badge are enclosed.
+  if ((kitBySlug(owned[0].kit_slug)?.matrix || null) === "air") {
+    if (!formData.get("ack_lrf") || !formData.get("ack_clip")) {
+      redirect(`/shipping?id=${encodeURIComponent(sampleId)}&error=${encodeURIComponent("Please confirm the Lab Request Form and the clipped badge are in the box before shipping.")}`);
+    }
+  }
 
   await sql`update sample_registrations set status='In Route to Lab', ship_date=now() where sample_id=${sampleId}`;
   redirect(`/dashboard?shipped=${encodeURIComponent(sampleId)}`);

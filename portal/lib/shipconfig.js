@@ -31,3 +31,62 @@ export const PARCEL = {
 // Carriers to consider when picking the cheapest rate. Requires the matching
 // carrier account to be connected in your Shippo dashboard.
 export const CARRIERS = ["UPS"];
+
+// Ship-FROM for OUTBOUND labels (warehouse -> customer), bought from the
+// fulfillment dashboard. Defaults to the Sacred Sampling address; override any
+// field with an env var in Vercel and redeploy.
+export const SHIP_FROM = {
+  name:    process.env.SHIP_FROM_NAME    || "Sacred Sampling Solutions",
+  street1: process.env.SHIP_FROM_STREET1 || "44 Drake Ave",
+  street2: process.env.SHIP_FROM_STREET2 || "",
+  city:    process.env.SHIP_FROM_CITY    || "Bellport",
+  state:   process.env.SHIP_FROM_STATE   || "NY",
+  zip:     process.env.SHIP_FROM_ZIP     || "11713",
+  country: "US",
+  phone:   process.env.SHIP_FROM_PHONE   || "631-875-2958",
+  email:   process.env.SHIP_FROM_EMAIL   || "info@sacredsamplingsolutions.com",
+};
+
+// Default outbound kit box. Override with env vars to match your real mailer.
+export const OUTBOUND_PARCEL = {
+  length: process.env.SHIP_BOX_L || "10",
+  width:  process.env.SHIP_BOX_W || "8",
+  height: process.env.SHIP_BOX_H || "4",
+  distance_unit: "in",
+  weight: process.env.SHIP_BOX_OZ || "32", // ~2 lb kit + packaging
+  mass_unit: "oz",
+};
+
+// Air badges (passive monitors) are analyzed by AT Labs / Assay Technology,
+// not LIAL — a different destination. The lab moved from Boardman to this
+// Youngstown address in 2026. Override any field with an env var in Vercel.
+export const AT_LABS_ADDRESS = {
+  name:    process.env.ATLABS_NAME    || "AT Labs — Sample Receiving",
+  company: process.env.ATLABS_COMPANY || "AT Labs (Assay Technology)",
+  street1: process.env.ATLABS_STREET1 || "8540 Crossroads Dr",
+  street2: process.env.ATLABS_STREET2 || "",
+  city:    process.env.ATLABS_CITY    || "Youngstown",
+  state:   process.env.ATLABS_STATE   || "OH",
+  zip:     process.env.ATLABS_ZIP     || "44514",
+  country: "US",
+  phone:   process.env.ATLABS_PHONE   || "800-833-1258",
+  email:   process.env.ATLABS_EMAIL   || "custservice@assaytech.com",
+};
+
+// A passive badge is tiny and light — a padded envelope, not a bottle box.
+// Right-sizing the parcel keeps the UPS rate correct.
+export const AIR_PARCEL = {
+  length: process.env.BADGE_BOX_L || "9",
+  width:  process.env.BADGE_BOX_W || "6",
+  height: process.env.BADGE_BOX_H || "1",
+  distance_unit: "in",
+  weight: process.env.BADGE_BOX_OZ || "4",
+  mass_unit: "oz",
+};
+
+// Pick the return destination + parcel for a sample by its kit matrix.
+// Air badges go to AT Labs; everything else (water) goes to LIAL.
+export function returnConfigFor(matrix) {
+  if (matrix === "air") return { address: AT_LABS_ADDRESS, parcel: AIR_PARCEL };
+  return { address: LAB_ADDRESS, parcel: PARCEL };
+}

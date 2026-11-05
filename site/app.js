@@ -2,6 +2,71 @@
 (function () {
   var root = document.documentElement;
 
+  // Affiliate referral capture. A ?ref=CODE link from a Sacred Partner is
+  // remembered for 60 days and sent with any order the visitor places, so the
+  // commission can be reconciled against that partner's code (last-touch wins).
+  (function () {
+    try {
+      var rc = new URLSearchParams(location.search).get('ref');
+      if (!rc) return;
+      rc = rc.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 32);
+      if (rc) localStorage.setItem('sss_ref', JSON.stringify({ code: rc, t: Date.now() }));
+    } catch (e) {}
+  })();
+
+  // ── Lead capture ──────────────────────────────────────────────────────────
+  // Mirror every site form signup into the portal's Leads dashboard (in addition
+  // to the FormSubmit email). Non-blocking: uses sendBeacon so it survives the
+  // page navigation a native form submit causes.
+  (function () {
+    var API = 'https://app.sacredsamplingsolutions.com/api/lead';
+    function ref() {
+      try {
+        var q = new URLSearchParams(location.search).get('ref');
+        if (q) return q.trim().toUpperCase();
+        var s = JSON.parse(localStorage.getItem('sss_ref') || 'null');
+        return s && s.code ? s.code : '';
+      } catch (e) { return ''; }
+    }
+    function send(p) {
+      try {
+        if (!p || (!p.email && !p.phone && !p.name)) return;
+        if (!p.ref) p.ref = ref();
+        if (!p.source) p.source = location.pathname;
+        var body = JSON.stringify(p);
+        if (navigator.sendBeacon) navigator.sendBeacon(API, new Blob([body], { type: 'text/plain' }));
+        else fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: body, keepalive: true }).catch(function () {});
+      } catch (e) {}
+    }
+    window.ssLead = send;
+
+    function field(f, names) {
+      for (var i = 0; i < names.length; i++) { var el = f.elements[names[i]]; if (el && el.value) return String(el.value).trim(); }
+      return '';
+    }
+    function inferType(f) {
+      var t = f.getAttribute('data-lead-type'); if (t) return t;
+      var cls = f.className || '';
+      if (/promo-form/.test(cls)) return 'welcome';
+      if (/waitlist-form/.test(cls)) return 'notify';
+      if (/affiliate/i.test(location.pathname)) return 'affiliate';
+      return 'inquiry';
+    }
+    // Capture phase so it runs before a form's own handler, and for native forms
+    // before the page unloads.
+    document.addEventListener('submit', function (e) {
+      var f = e.target;
+      if (!f || !f.matches || !f.matches('form[data-lead-type], form[action*="formsubmit.co"]')) return;
+      send({
+        type: inferType(f),
+        name: field(f, ['name', 'Name']) || [field(f, ['first_name']), field(f, ['last_name'])].filter(Boolean).join(' '),
+        email: field(f, ['email', 'Email', '_replyto']),
+        phone: field(f, ['phone', 'Phone', 'tel']),
+        message: field(f, ['message', 'Message', 'comments', 'notes', '_subject'])
+      });
+    }, true);
+  })();
+
   // Single source of truth for the stated lab turnaround time.
   // Change it here once and every [data-turnaround] element updates.
   var TURNAROUND = '7–10 business days';
@@ -258,6 +323,7 @@
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ _subject: 'Call-back request — ' + name, name: name, phone: phone, best_time: form.time.value, email: form.email.value.trim(), page: location.pathname })
       }).then(finish, finish);
+      try { if (window.ssLead) window.ssLead({ type: 'callback', name: name, phone: phone, email: form.email.value.trim(), message: form.time && form.time.value ? ('Best time: ' + form.time.value) : '' }); } catch (e) {}
       if (window.gtag) window.gtag('event', 'generate_lead', { event_label: 'callback' });
       if (window.fbq) window.fbq('track', 'Lead', { content_name: 'callback' });
       function finish() {
@@ -551,6 +617,7 @@
             body: JSON.stringify({ _subject: 'New guide signup — ' + email, event: 'Water Safety Guide popup signup', email: email, page: location.href })
           }).catch(function () {});
         } catch (x) {}
+        try { if (window.ssLead) window.ssLead({ type: 'welcome', email: email, message: 'Water Safety Guide + $25 welcome popup' }); } catch (x) {}
         if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 25 });
         if (window.fbq) window.fbq('track', 'Lead');
         ov.querySelector('.promo-body').innerHTML =
