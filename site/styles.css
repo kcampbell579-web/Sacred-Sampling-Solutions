@@ -520,18 +520,21 @@ footer .brand img{height:48px}
 /* ---- Learn index: article grid ---- */
 .artsec{padding:40px 0}
 .artsec .section-head{margin-bottom:22px}
-.artgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.artcard{display:flex;flex-direction:column;text-decoration:none}
+.artgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:18px}
+.artcard{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px 20px;box-shadow:var(--shadow);transition:transform .15s ease,box-shadow .2s ease,border-color .2s ease}
+.artcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--brand)}
 .artcard h3{font-size:1.12rem;margin:8px 0 6px;line-height:1.25}
 .artcard .muted{flex:1}
 .artcard-more{color:var(--brand);font-weight:700;margin-top:14px}
 .artsec-feat{padding-top:8px}
-.artfeat{display:block;text-decoration:none;background:linear-gradient(120deg,#0d2b52,#0a2038);border-radius:var(--radius);padding:38px 34px;box-shadow:var(--shadow-lg);border:1px solid rgba(143,196,255,.25)}
+.artfeat{display:grid;grid-template-columns:1fr auto;align-items:center;gap:30px;text-decoration:none;background:linear-gradient(120deg,#0d2b52,#0a2038);border-radius:var(--radius);padding:34px 36px;box-shadow:var(--shadow-lg);border:1px solid rgba(143,196,255,.25);transition:transform .15s ease,box-shadow .2s ease}
+.artfeat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.artfeat-viz svg{width:128px;height:128px;opacity:.92;filter:drop-shadow(0 8px 20px rgba(0,0,0,.35))}
 .artfeat .eyebrow{color:#8fc4ff}
 .artfeat h2{color:#fff;font-size:clamp(1.4rem,2.4vw,1.9rem);margin:8px 0 10px;max-width:22ch}
 .artfeat .muted{color:rgba(255,255,255,.82);max-width:60ch}
 .artfeat .artcard-more{color:#8fc4ff;display:inline-block;margin-top:16px}
-@media(max-width:860px){.artgrid{grid-template-columns:1fr}.art-related ul{grid-template-columns:1fr}}
+@media(max-width:860px){.artgrid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.art-related ul{grid-template-columns:1fr}.artfeat{grid-template-columns:1fr}.artfeat-viz{display:none}}
 
 /* ---- Kits filter bar ---- */
 .kitfilter{position:sticky;top:74px;z-index:50;background:var(--ground);border-bottom:1px solid var(--line);box-shadow:0 6px 18px -14px rgba(9,18,40,.4)}
