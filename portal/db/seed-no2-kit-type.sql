@@ -1,10 +1,10 @@
--- Seed the NO2 air-badge kit type (code NDX). Passive Assay Technology 594 badge.
+-- Seed the NO2 air-badge kit type (code NO2). Passive Assay Technology 594 badge.
 -- whats_inside / steps use newline-separated "Title | description" lines.
 -- No semicolons inside string literals (the Neon SQL editor splits on ';').
 -- Run once in the Neon SQL editor (Project -> SQL Editor) against the portal DB.
 
 insert into kit_types (code, title, slug, matrix, intro, tests, methods, sensitivity, containers, whats_inside, steps, panels) values
-('NDX','NO₂ Monitor','no2-air','air',
+('NO2','NO₂ Monitor','no2-air','air',
  'Nitrogen dioxide is the marker of combustion indoors — gas cooktops, unvented heaters and attached garages. This passive Assay Technology badge measures it as a time-weighted average: no pump, no power, no noise.',
  'Nitrogen dioxide (NO₂), time-weighted average','Ion chromatography · Assay validated method','Time-weighted average concentration','Assay Technology 594 passive diffusion badge',
  E'Assay 594 NO₂ badge | Sealed in a foil pouch with desiccant — do not open until you are ready to start.\nAttachment clip | Return it with the badge — it is proof of pre-paid analysis.\nDeployment instructions | With a start/stop time log to fill in.\nLab Request Form | Printed from your portal — fill it in and include it in the return box.\nChain-of-custody card | Records the handoff from your home to the lab.\nPre-printed sample label | Already carries your Sample ID.\nQR sample-registration sticker | Scan to register and track.\nPrepaid return mailer | UPS postage already paid — ships to the analyzing laboratory.',

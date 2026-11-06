@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 // Mint a batch of Sample IDs and log them, then show the printable QR sheet.
 // IDs come from the sample_id_seq sequence, which starts at 13000 so they can't
-// collide with IDs already in use. Each becomes SS-<CODE>-<n> (e.g. SS-NDX-13000)
+// collide with IDs already in use. Each becomes SS-<CODE>-<n> (e.g. SS-NO2-13000)
 // and the printed QR encodes /sampleregistration?id=<SampleID>.
 export async function mintLabels(formData) {
   if (!fulfillAuthed()) redirect("/fulfillment");
