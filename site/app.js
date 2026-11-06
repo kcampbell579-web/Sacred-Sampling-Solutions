@@ -408,7 +408,7 @@
         '<div class="cart-foot">' +
           '<div class="cart-row"><span>Subtotal</span><b class="cart-sub-amt">$0</b></div>' +
           '<div class="cart-ship">✓ Free U.S. shipping &amp; prepaid return label</div>' +
-          '<div class="cart-promo">Have a code? Enter <b>WELCOME25</b> at checkout for $25 off your first order.</div>' +
+          '<div class="cart-promo">Have a code? Enter <b>WELCOME10</b> at checkout for $10 off + free shipping on your first order.</div>' +
           '<input type="email" class="cart-email" inputmode="email" autocomplete="email" placeholder="Email for your receipt &amp; results">' +
           '<button type="button" class="btn btn-gold btn-lg cart-checkout">Checkout <span class="arrow">&rarr;</span></button>' +
           '<div class="cart-err" hidden></div>' +
@@ -537,11 +537,11 @@
     });
   })();
 
-  // Water Safety Guide + $25-off welcome popup — captures the email in the
+  // Water Safety Guide + $10-off welcome popup — captures the email in the
   // background (AJAX, no page reload), then delivers the free guide and the
   // discount code. Shows once per visitor.
   (function () {
-    var SEEN = 'sss_promo_seen', LEAD = 'sss_lead', CODE = 'WELCOME25';
+    var SEEN = 'sss_promo_seen', LEAD = 'sss_lead', CODE = 'WELCOME10';
     var HERO = '/assets/popup-hero.jpg';                  // glass-of-water lifestyle hero
     var GUIDE = '/assets/home-environmental-testing-guide.pdf'; // The Home Environmental Testing Guide (PDF)
     var MJ = 'https://15q4o.mjt.lu/wgt/15q4o/0yyg/subscribe?c=603a85a3'; // Mailjet list subscribe endpoint
@@ -574,16 +574,16 @@
       var ov = document.createElement('div');
       ov.className = 'promo-pop';
       ov.innerHTML =
-        '<div class="promo-card" role="dialog" aria-modal="true" aria-label="Free Water Safety Guide plus $25 off your first order">' +
+        '<div class="promo-card" role="dialog" aria-modal="true" aria-label="Free Water Safety Guide plus $10 off your first order">' +
         '<button type="button" class="promo-x" aria-label="Close">&times;</button>' +
         '<img class="promo-hero" src="' + HERO + '" alt="Sacred Sampling Solutions water test kit">' +
         '<div class="promo-body">' +
         '<h3>Concerned About PFAS, Lead, or Well Water?</h3>' +
-        '<p class="promo-sub">Get our <b>free Home Water Safety Guide</b> plus <b>$25 off</b> your first laboratory water test.</p>' +
+        '<p class="promo-sub">Get our <b>free Home Water Safety Guide</b> plus <b>$10 off + free shipping</b> on your first laboratory water test.</p>' +
         '<p class="promo-mini">Learn what to test for, how often to test, and how to understand your results.</p>' +
         '<form class="promo-form" novalidate>' +
         '<input type="email" name="email" inputmode="email" autocomplete="email" placeholder="Enter your email address" aria-label="Email" required>' +
-        '<button type="submit" class="btn btn-gold">Get My Guide + $25 Off <span class="arrow">&rarr;</span></button>' +
+        '<button type="submit" class="btn btn-gold">Get My Guide + $10 Off <span class="arrow">&rarr;</span></button>' +
         '<div class="promo-err" hidden>Please enter a valid email.</div>' +
         '</form>' +
         badgesHtml() +
@@ -617,14 +617,14 @@
             body: JSON.stringify({ _subject: 'New guide signup — ' + email, event: 'Water Safety Guide popup signup', email: email, page: location.href })
           }).catch(function () {});
         } catch (x) {}
-        try { if (window.ssLead) window.ssLead({ type: 'welcome', email: email, message: 'Water Safety Guide + $25 welcome popup' }); } catch (x) {}
+        try { if (window.ssLead) window.ssLead({ type: 'welcome', email: email, message: 'Water Safety Guide + $10 welcome popup' }); } catch (x) {}
         if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 25 });
         if (window.fbq) window.fbq('track', 'Lead');
         ov.querySelector('.promo-body').innerHTML =
           '<span class="eyebrow">You\'re in</span>' +
-          '<h3>Your guide is ready &mdash; and here\'s your $25 code</h3>' +
+          '<h3>Your guide is ready &mdash; and here\'s your $10 code</h3>' +
           '<div class="promo-code">' + CODE + '</div>' +
-          '<p class="promo-sub">Apply <b>' + CODE + '</b> at checkout for <b>$25 off</b> your first water test.</p>' +
+          '<p class="promo-sub">Apply <b>' + CODE + '</b> at checkout for <b>$10 off + free shipping</b> on your first water test.</p>' +
           '<a class="btn btn-gold" href="' + GUIDE + '" target="_blank" rel="noopener">Download my Water Safety Guide <span class="arrow">&rarr;</span></a>' +
           '<a class="promo-shop" href="/kits#kits">Shop water kits &rarr;</a>';
         ov.querySelector('.promo-x') && ov.querySelector('.promo-x').addEventListener('click', close);
