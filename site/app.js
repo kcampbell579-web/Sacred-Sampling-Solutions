@@ -879,15 +879,27 @@
         var em = (rform.elements['email'].value || '').trim();
         var msg = rform.querySelector('.zip-report-msg');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { msg.hidden = false; msg.textContent = 'Please enter a valid email.'; return; }
-        try {
-          fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
-            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ _subject: 'ZIP profile request — ' + zip, email: em, zip: zip, area: place, primary_concern: rec.pc })
-          }).catch(function () {});
-        } catch (x) {}
-        try { localStorage.setItem('sss_lead', em); } catch (x) {}
-        if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 0 });
-        rform.innerHTML = '<div class="zip-report-done">✓ On its way &mdash; check your inbox. Ready to test? <a href="/kits#kits">Shop kits &rarr;</a></div>';
+        var btn = rform.querySelector('button[type="submit"]');
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+        msg.hidden = true;
+        fetch('/api/zip-report', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: em, zip: zip, area: place, primary_concern: rec.pc })
+        }).then(function (r) { return r.json().catch(function () { return {}; }); })
+          .then(function (j) {
+            if (j && j.ok) {
+              try { localStorage.setItem('sss_lead', em); } catch (x) {}
+              if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 0 });
+              rform.innerHTML = '<div class="zip-report-done">✓ On its way — check your inbox (and spam, just in case). Ready to test? <a href="/kits#kits">Shop kits →</a></div>';
+            } else {
+              if (btn) { btn.disabled = false; btn.textContent = 'Email my profile'; }
+              msg.hidden = false; msg.textContent = 'Sorry — that didn’t go through. Please try again or email info@sacredsamplingsolutions.com.';
+            }
+          })
+          .catch(function () {
+            if (btn) { btn.disabled = false; btn.textContent = 'Email my profile'; }
+            msg.hidden = false; msg.textContent = 'Sorry — network error. Please try again.';
+          });
       });
 
       results.scrollIntoView({ behavior: 'smooth', block: 'start' });
