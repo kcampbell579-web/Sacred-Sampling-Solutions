@@ -112,7 +112,23 @@ module.exports = async function handler(req, res) {
   // Embedded Checkout: the payment form mounts on our own /checkout page and
   // Stripe redirects the top window to return_url once payment completes.
   // (Stripe 2026-03-25 renamed ui_mode 'embedded' -> 'embedded_page'.)
-  function buildPayload(withTax) {
+  // A partner link (?ref=CODE) whose code is a live Stripe promotion code gets
+  // its discount applied automatically (e.g. a Sacred Partner's $20 code), so the
+  // customer doesn't have to type it. Stripe allows one code per checkout, so in
+  // that case the "add promotion code" box is replaced by the applied discount.
+  var refPromo = null;
+  if (ref) {
+    try {
+      var pr = await fetch('https://api.stripe.com/v1/promotion_codes?active=true&limit=1&code=' + encodeURIComponent(ref), {
+        headers: { 'Authorization': 'Bearer ' + key }
+      });
+      var pj = await pr.json();
+      var hit = pr.ok && pj && pj.data && pj.data[0];
+      if (hit && hit.active && String(hit.code || '').toUpperCase() === ref) refPromo = hit.id;
+    } catch (e) { /* no auto-discount; the box still lets them type a code */ }
+  }
+
+  function buildPayload(withTax, applyRef) {
     var lineItems = valid.map(function (v) {
       var product_data = { name: v.name };
       var price_data = { currency: 'usd', unit_amount: v.amount, product_data: product_data };
@@ -138,6 +154,10 @@ module.exports = async function handler(req, res) {
       }],
       return_url: base + '/thank-you?session_id={CHECKOUT_SESSION_ID}'
     };
+    if (applyRef && refPromo) {
+      delete p.allow_promotion_codes;                    // Stripe: discounts XOR allow_promotion_codes
+      p.discounts = [{ promotion_code: refPromo }];
+    }
     if (withTax) p.automatic_tax = { enabled: true };
     if (email) p.customer_email = email;
     if (ref) {
@@ -163,12 +183,20 @@ module.exports = async function handler(req, res) {
     // Tax yet, that specific call fails — so we retry once WITHOUT tax rather
     // than break checkout. Tax then starts applying automatically the moment
     // Stripe Tax is enabled in the dashboard, with no code change.
-    var result = await createSession(buildPayload(true));
+    var applyRef = !!refPromo;
+    var result = await createSession(buildPayload(true, applyRef));
+    var withTax = true;
     if (!result.ok) {
       var m = (result.data && result.data.error && result.data.error.message) || '';
       if (/tax|origin address|registrations?/i.test(m)) {
-        result = await createSession(buildPayload(false));
+        withTax = false;
+        result = await createSession(buildPayload(false, applyRef));
       }
+    }
+    // If the auto-applied partner code was refused (expired, limit reached…),
+    // fall back to a normal checkout where any code can still be typed in.
+    if (!result.ok && applyRef) {
+      result = await createSession(buildPayload(withTax, false));
     }
     if (!result.ok) {
       var msg = (result.data && result.data.error && result.data.error.message) || 'Could not create checkout session.';

@@ -57,6 +57,7 @@
     document.addEventListener('submit', function (e) {
       var f = e.target;
       if (!f || !f.matches || !f.matches('form[data-lead-type], form[action*="formsubmit.co"]')) return;
+      if (f.hasAttribute('data-no-lead')) return;   // form records its own lead (e.g. affiliate apply)
       send({
         type: inferType(f),
         name: field(f, ['name', 'Name']) || [field(f, ['first_name']), field(f, ['last_name'])].filter(Boolean).join(' '),
