@@ -6,6 +6,15 @@ import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
 import { statusIndex } from "@/lib/status";
 import { listLeads, leadCountsByType, LEAD_TYPES, leadTypeLabel } from "@/lib/leads";
+import { stripeKeyKind } from "@/lib/stripe";
+import {
+  ensureAffiliateTables, suggestCode, commissionState,
+  HOLD_DAYS, MIN_PAYOUT_CENTS, PAYOUT_METHODS, COMMISSION_RATE, CUSTOMER_DISCOUNT_CENTS,
+} from "@/lib/affiliates";
+import {
+  affiliateStripeCheck, approveAffiliate, rejectAffiliate, setAffiliatePaused,
+  toggleAffiliateW9, markAffiliatePaid, voidCommission,
+} from "@/app/actions/affiliates";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Fulfillment — Sacred Sampling Solutions", robots: { index: false } };
@@ -41,7 +50,7 @@ function TrackLink({ number }) {
   );
 }
 
-const TABS = [["dashboard", "Dashboard"], ["orders", "Orders"], ["leads", "Leads"], ["campaigns", "Campaigns"]];
+const TABS = [["dashboard", "Dashboard"], ["orders", "Orders"], ["leads", "Leads"], ["campaigns", "Campaigns"], ["affiliates", "Affiliates"]];
 
 export default async function Fulfillment({ searchParams }) {
   const ok = (searchParams?.ok || "").toString();
@@ -49,7 +58,7 @@ export default async function Fulfillment({ searchParams }) {
   const tab = (searchParams?.tab || "dashboard").toString();
   const type = (searchParams?.type || "").toString();
   const authed = fulfillAuthed();
-  const title = tab === "orders" ? "Orders" : tab === "leads" ? "Leads" : tab === "campaigns" ? "Campaigns" : "Dashboard";
+  const title = tab === "orders" ? "Orders" : tab === "leads" ? "Leads" : tab === "campaigns" ? "Campaigns" : tab === "affiliates" ? "Affiliates" : "Dashboard";
 
   return (
     <main className="page">
@@ -99,6 +108,8 @@ export default async function Fulfillment({ searchParams }) {
           <LeadsView type={type} ok={ok} error={error} />
         ) : tab === "campaigns" ? (
           <CampaignsView ok={ok} error={error} />
+        ) : tab === "affiliates" ? (
+          <AffiliatesView ok={ok} error={error} />
         ) : (
           <DashboardView ok={ok} error={error} />
         )}
@@ -571,6 +582,183 @@ async function CampaignsView({ ok, error }) {
           </table>
         </div>
       )}
+    </>
+  );
+}
+
+// ── Affiliates tab: Sacred Partners applications, codes, commissions, payouts ──
+async function AffiliatesView({ ok, error }) {
+  let apps = [], partners = [], recent = [], dbError = "";
+  try {
+    await ensureAffiliateTables();
+    apps = await sql`select * from affiliates where status='pending' order by created_at asc`;
+    partners = await sql`
+      select a.*,
+        count(c.id) filter (where c.status <> 'void')::int as orders,
+        coalesce(sum(c.product_cents) filter (where c.status <> 'void'), 0)::bigint as sales,
+        coalesce(sum(c.commission_cents) filter (where c.status='pending' and c.created_at >  now() - make_interval(days => ${HOLD_DAYS})), 0)::bigint as pending,
+        coalesce(sum(c.commission_cents) filter (where c.status='pending' and c.created_at <= now() - make_interval(days => ${HOLD_DAYS})), 0)::bigint as payable,
+        coalesce(sum(c.commission_cents) filter (where c.status='paid'), 0)::bigint as paid
+      from affiliates a left join affiliate_commissions c on c.affiliate_id = a.id
+      where a.status in ('approved','paused')
+      group by a.id order by payable desc, sales desc, a.approved_at desc`;
+    recent = await sql`
+      select c.*, a.code from affiliate_commissions c join affiliates a on a.id = c.affiliate_id
+      order by c.created_at desc limit 50`;
+    for (const a of apps) a.suggested = await suggestCode(a);
+  } catch (e) {
+    dbError = "Couldn't load affiliate data from the database.";
+  }
+  const owed = partners.reduce((n, p) => n + Number(p.payable || 0), 0);
+  const paidAll = partners.reduce((n, p) => n + Number(p.paid || 0), 0);
+  const payoutLabel = (k) => (PAYOUT_METHODS.find(([m]) => m === k) || [k, k || "—"])[1];
+  const keyKind = stripeKeyKind();
+  const keyOk = keyKind.startsWith("full secret key (live)");
+
+  return (
+    <>
+      {ok && <div className="alert alert-ok">{ok}</div>}
+      {error && <div className="alert alert-error">{error}</div>}
+      {dbError && <div className="alert alert-error">{dbError}</div>}
+
+      <div className="ord-summary">
+        <div className="os-card"><div className="os-n">{partners.filter((p) => p.status === "approved").length}</div><div className="os-l">Active partners</div></div>
+        <div className="os-card"><div className="os-n">{apps.length}</div><div className="os-l">Applications to review</div></div>
+        <div className="os-card"><div className="os-n">{money(owed, "usd")}</div><div className="os-l">Payable now</div></div>
+        <div className="os-card"><div className="os-n">{money(paidAll, "usd")}</div><div className="os-l">Paid to date</div></div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: "1.05rem" }}>Stripe check</h2>
+            <p className="muted" style={{ margin: "4px 0 0" }}>
+              Key in Vercel: <b>{keyKind}</b>{keyOk ? " — can create codes." : keyKind.startsWith("restricted") ? " — needs Write access to Coupons and Promotion codes." : ""}
+              {" "}Program: customer saves {money(CUSTOMER_DISCOUNT_CENTS, "usd")}, partner earns {Math.round(COMMISSION_RATE * 100)}%, payable after {HOLD_DAYS} days, {money(MIN_PAYOUT_CENTS, "usd")} minimum payout.
+            </p>
+          </div>
+          <form action={affiliateStripeCheck}><button className="btn btn-ghost btn-sm" type="submit">Run Stripe check</button></form>
+        </div>
+      </div>
+
+      <h2 style={{ fontSize: "1.1rem", margin: "22px 0 10px" }}>Applications</h2>
+      {apps.length === 0 ? (
+        <div className="card"><p className="muted" style={{ margin: 0 }}>No applications waiting. They arrive from the Become a Partner form on sacredsamplingsolutions.com/affiliate.</p></div>
+      ) : (
+        <div className="card lead-card">
+          <table className="leadtable">
+            <thead><tr><th>Applicant</th><th>Audience</th><th>About</th><th>Approve with code</th><th></th></tr></thead>
+            <tbody>
+              {apps.map((a) => (
+                <tr key={a.id}>
+                  <td><b>{a.name}</b><br /><span className="muted">{a.email}</span><br /><span className="muted">Applied {fmtDate(a.created_at)}</span></td>
+                  <td>{a.channel || "—"}{a.audience ? ` · ${a.audience}` : ""}{a.website ? <><br /><a href={/^https?:/i.test(a.website) ? a.website : `https://${a.website}`} target="_blank" rel="noopener noreferrer">{a.website}</a></> : null}</td>
+                  <td style={{ maxWidth: 260 }}>{a.about || <span className="muted">—</span>}</td>
+                  <td>
+                    <form action={approveAffiliate}>
+                      <input type="hidden" name="id" value={a.id} />
+                      <input name="code" defaultValue={a.suggested} maxLength={20} className="mono" style={{ width: 130, textTransform: "uppercase", padding: "6px 8px" }} aria-label="Partner code" />
+                      <label className="muted" style={{ display: "block", fontSize: ".75rem", margin: "6px 0" }}>
+                        <input type="checkbox" name="manual" /> I already made this code in Stripe
+                      </label>
+                      <button className="btn btn-primary btn-sm" type="submit">Approve</button>
+                    </form>
+                  </td>
+                  <td>
+                    <form action={rejectAffiliate}>
+                      <input type="hidden" name="id" value={a.id} />
+                      <button className="linkbtn" type="submit">Decline</button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <h2 style={{ fontSize: "1.1rem", margin: "22px 0 10px" }}>Partners</h2>
+      {partners.length === 0 ? (
+        <div className="card"><p className="muted" style={{ margin: 0 }}>No partners yet. Approve an application to create their code.</p></div>
+      ) : (
+        <div className="card lead-card">
+          <table className="leadtable">
+            <thead><tr><th>Code</th><th>Partner</th><th>Orders</th><th>Sales</th><th>Pending</th><th>Payable</th><th>Paid</th><th>Payout to</th><th>W-9</th><th></th></tr></thead>
+            <tbody>
+              {partners.map((p) => (
+                <tr key={p.id}>
+                  <td className="mono"><b>{p.code}</b>{p.status === "paused" && <><br /><span className="badge off">paused</span></>}</td>
+                  <td>{p.name}<br /><span className="muted">{p.email}</span></td>
+                  <td>{p.orders}</td>
+                  <td>{money(Number(p.sales), "usd")}</td>
+                  <td>{money(Number(p.pending), "usd")}</td>
+                  <td><b>{money(Number(p.payable), "usd")}</b>{Number(p.payable) > 0 && Number(p.payable) < MIN_PAYOUT_CENTS && <><br /><span className="muted" style={{ fontSize: ".72rem" }}>under minimum</span></>}</td>
+                  <td>{money(Number(p.paid), "usd")}</td>
+                  <td>{p.payout_handle ? <>{payoutLabel(p.payout_method)}<br /><span className="muted">{p.payout_handle}</span></> : <span className="muted">not set</span>}</td>
+                  <td>
+                    <form action={toggleAffiliateW9}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <button className={`badge ${p.w9_received ? "on" : "off"}`} type="submit" title="Click to toggle">{p.w9_received ? "on file" : "needed"}</button>
+                    </form>
+                  </td>
+                  <td style={{ minWidth: 170 }}>
+                    {Number(p.payable) > 0 && (
+                      <form action={markAffiliatePaid} style={{ marginBottom: 8 }}>
+                        <input type="hidden" name="id" value={p.id} />
+                        <input name="ref" placeholder="Payment ref (optional)" style={{ width: 150, padding: "5px 7px", fontSize: ".8rem" }} />
+                        <button className="btn btn-primary btn-sm" type="submit" style={{ marginTop: 6 }}>Mark {money(Number(p.payable), "usd")} paid</button>
+                      </form>
+                    )}
+                    <form action={setAffiliatePaused}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <input type="hidden" name="pause" value={p.status === "paused" ? "0" : "1"} />
+                      <button className="linkbtn" type="submit">{p.status === "paused" ? "Resume code" : "Pause code"}</button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <h2 style={{ fontSize: "1.1rem", margin: "22px 0 10px" }}>Recent commissions</h2>
+      {recent.length === 0 ? (
+        <div className="card"><p className="muted" style={{ margin: 0 }}>Commissions appear here when a customer checks out with a partner&rsquo;s code or link.</p></div>
+      ) : (
+        <div className="card lead-card">
+          <table className="leadtable">
+            <thead><tr><th>Date</th><th>Code</th><th>Order</th><th>Via</th><th>Products</th><th>Commission</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {recent.map((c) => {
+                const state = commissionState(c);
+                return (
+                  <tr key={c.id}>
+                    <td>{fmtDate(c.created_at)}</td>
+                    <td className="mono">{c.code}</td>
+                    <td className="mono">{c.order_id ? orderNumber(c.order_id) : "—"}</td>
+                    <td>{c.source === "code" ? "Code" : "Link"}</td>
+                    <td>{money(c.product_cents, "usd")}</td>
+                    <td><b>{money(c.commission_cents, "usd")}</b></td>
+                    <td>{state}{c.status === "paid" && c.payout_ref ? <><br /><span className="muted">{c.payout_ref}</span></> : null}</td>
+                    <td>
+                      {c.status === "pending" && (
+                        <form action={voidCommission}>
+                          <input type="hidden" name="id" value={c.id} />
+                          <button className="linkbtn" type="submit" title="Use for refunded or cancelled orders">Void</button>
+                        </form>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <p className="muted" style={{ fontSize: ".8rem", marginTop: 12 }}>
+        Void a commission if its order is refunded. Collect a W-9 before a partner&rsquo;s first payout. Partner dashboard: app.sacredsamplingsolutions.com/affiliate
+      </p>
     </>
   );
 }

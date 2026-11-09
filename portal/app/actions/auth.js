@@ -15,7 +15,8 @@ function safeNext(v) {
 export async function setPassword(formData) {
   const token = (formData.get("token") || "").toString();
   const password = (formData.get("password") || "").toString();
-  const back = (msg) => `/set-password?token=${encodeURIComponent(token)}&error=${encodeURIComponent(msg)}`;
+  const nx = (formData.get("next") || "").toString();
+  const back = (msg) => `/set-password?token=${encodeURIComponent(token)}&error=${encodeURIComponent(msg)}${nx.startsWith("/") ? `&next=${encodeURIComponent(nx)}` : ""}`;
   if (password.length < 8) redirect(back("Choose a password of at least 8 characters."));
   const rows = await sql`select user_id, expires_at from password_resets where token=${token}`;
   if (!rows.length || new Date(rows[0].expires_at) < new Date()) {
@@ -25,7 +26,7 @@ export async function setPassword(formData) {
   await sql`update users set password_hash=${hashPassword(password)} where id=${userId}`;
   await sql`delete from password_resets where token=${token}`;
   await createSession(userId);
-  redirect("/dashboard");
+  redirect(safeNext(formData.get("next")));
 }
 
 export async function signup(formData) {

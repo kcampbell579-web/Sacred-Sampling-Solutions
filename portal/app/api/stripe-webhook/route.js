@@ -2,6 +2,7 @@ import { sql } from "@/lib/db";
 import { verifyStripeSignature, stripeGet, orderNumber } from "@/lib/stripe";
 import { notifyOwnerNewOrder } from "@/lib/notify";
 import { ensureAccountForEmail, sendWelcomeSetPassword } from "@/lib/accounts";
+import { recordCommission } from "@/lib/affiliates";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -95,6 +96,17 @@ export async function POST(request) {
     }
 
     if (rows.length) {
+      // Sacred Partners: credit the partner whose code (or ?ref= link) was used.
+      // Commission base = products after the discount, before shipping and tax.
+      await recordCommission({
+        sessionId: s.id,
+        orderId: rows[0].id,
+        promoCode,
+        ref: s.metadata && s.metadata.ref,
+        productCents: Math.max(0, Number(s.amount_subtotal ?? s.amount_total ?? 0) - Number(discountTotal || 0)),
+        buyerEmail: cd.email,
+      });
+
       await notifyOwnerNewOrder({
         orderNumber: orderNumber(rows[0].id),
         kit_name: kit,
