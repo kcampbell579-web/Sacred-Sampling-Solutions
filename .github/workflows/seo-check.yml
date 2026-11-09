@@ -1,0 +1,23 @@
+name: SEO check
+
+# Fails a pull request that reintroduces SEO metadata errors on the static site
+# (long/missing titles, out-of-range descriptions, missing canonicals or OG
+# images, double-encoded entities, invalid JSON-LD, sitemap/noindex mismatches).
+on:
+  pull_request:
+    paths:
+      - "site/**"
+      - "scripts/seo_check.py"
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "scripts/seo_check.py"
+
+jobs:
+  seo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check site metadata
+        run: python3 scripts/seo_check.py
