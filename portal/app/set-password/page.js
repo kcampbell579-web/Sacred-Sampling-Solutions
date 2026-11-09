@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function SetPasswordPage({ searchParams }) {
   const token = (searchParams?.token || "").toString();
+  const next = (searchParams?.next || "").toString();
   const error = (searchParams?.error || "").toString();
 
   let valid = false;
@@ -37,6 +38,7 @@ export default async function SetPasswordPage({ searchParams }) {
               {error && <div className="alert alert-error">{error}</div>}
               <form action={setPassword}>
                 <input type="hidden" name="token" value={token} />
+                {next && <input type="hidden" name="next" value={next} />}
                 <div className="field">
                   <label>New password</label>
                   <input name="password" type="password" minLength={8} required autoComplete="new-password" placeholder="At least 8 characters" />

@@ -35,6 +35,49 @@ export async function stripeGet(path) {
   return res.json();
 }
 
+// Stripe-style form encoding for nested params: {a:{b:1}, c:[x]} -> a[b]=1&c[0]=x
+function encodeForm(obj, prefix, out) {
+  out = out || new URLSearchParams();
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (v === undefined || v === null) continue;
+    const key = prefix ? `${prefix}[${k}]` : k;
+    if (typeof v === "object") encodeForm(v, key, out);
+    else out.append(key, String(v));
+  }
+  return out;
+}
+
+// Authenticated request that changes data. Never throws: returns
+// { ok, status, data } so callers can show Stripe's own error message.
+export async function stripeRequest(method, path, params) {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return { ok: false, status: 0, data: { error: { message: "STRIPE_SECRET_KEY is not set in Vercel." } } };
+  try {
+    const res = await fetch(`https://api.stripe.com/v1/${path}`, {
+      method,
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/x-www-form-urlencoded" },
+      body: method === "GET" ? undefined : encodeForm(params).toString(),
+      cache: "no-store",
+    });
+    let data = {};
+    try { data = await res.json(); } catch {}
+    return { ok: res.ok, status: res.status, data };
+  } catch (e) {
+    return { ok: false, status: 0, data: { error: { message: "Could not reach Stripe." } } };
+  }
+}
+
+// Which kind of key is configured — for the admin Stripe check. Never the key itself.
+export function stripeKeyKind() {
+  const k = process.env.STRIPE_SECRET_KEY || "";
+  if (!k) return "missing";
+  if (k.startsWith("sk_live_")) return "full secret key (live)";
+  if (k.startsWith("sk_test_")) return "full secret key (TEST mode)";
+  if (k.startsWith("rk_live_")) return "restricted key (live)";
+  if (k.startsWith("rk_test_")) return "restricted key (TEST mode)";
+  return "unrecognized key format";
+}
+
 // Human-facing order number from the DB id.
 export function orderNumber(id) {
   return `SSO-${1000 + Number(id)}`;
