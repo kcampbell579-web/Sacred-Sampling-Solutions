@@ -740,41 +740,6 @@
       if (c === 'moderate') return 'mod';
       return 'ok';
     }
-    // all_concerns like "Lead [ZIP]; PFAS [DISTANT (12mi)]" → clean chips.
-    function chips(str) {
-      return String(str || '').split(/[;,]/).map(function (s) { return s.trim(); }).filter(Boolean)
-        .map(function (s) {
-          var name = s.replace(/\s*\[[^\]]*\]\s*/g, '').trim();
-          if (!name) return '';
-          return '<span class="zip-chip">' + esc(name) + '</span>';
-        }).join('');
-    }
-
-    function kitCard(rec) {
-      var kit = (META && META.kits && META.kits[rec.kit]) || {};
-      var name = kit.name || 'Recommended test';
-      var href = '/' + rec.kit;
-      if (kit.buy && kit.price) {
-        return '<div class="zip-kit">' +
-          '<div class="zip-kit-tag">Recommended starting point</div>' +
-          '<div class="zip-kit-row">' +
-            '<div><div class="zip-kit-name">' + esc(name) + '</div>' +
-            '<div class="zip-kit-price">$' + kit.price + '</div></div>' +
-            '<button type="button" class="btn btn-gold" data-zipbuy="' + esc(rec.kit) + '" data-zipname="' + esc(name) + '" data-zipprice="' + kit.price + '">Add to cart <span class="arrow">&rarr;</span></button>' +
-          '</div>' +
-          '<a class="zip-kit-learn" href="' + href + '">See what this kit covers &rarr;</a>' +
-        '</div>';
-      }
-      return '<div class="zip-kit">' +
-        '<div class="zip-kit-tag">Recommended starting point</div>' +
-        '<div class="zip-kit-row">' +
-          '<div><div class="zip-kit-name">' + esc(name) + '</div>' +
-          '<div class="zip-kit-price muted">See kit page</div></div>' +
-          '<a class="btn btn-gold" href="' + href + '">View the ' + esc(name) + ' <span class="arrow">&rarr;</span></a>' +
-        '</div>' +
-      '</div>';
-    }
-
     function statRow(rec) {
       var stats = [];
       if (rec.ex > 0) stats.push([rec.ex, 'within your ZIP']);
@@ -797,9 +762,258 @@
         (nd.ctx ? ' ' + esc(nd.ctx) + '.' : '') + (nd.src ? ' <span class="zip-muted">Source: ' + esc(nd.src) + '</span>' : '') + '</p></div>';
     }
 
+    // --- Contaminant prioritization + education -----------------------------
+    // Display-only grouping and priority (PFAS > VOCs > existing). The source
+    // records in /data/zip are never modified; this reshapes how they're shown.
+    var VOC_SET = { 'Industrial VOCs': 1, 'Chlorinated Solvents': 1, 'TCP': 1 }; // water VOCs covered by EPA 524.2
+    var DIOXANE = '1,4-Dioxane';
+
+    // "PFAS [NEAR (11.2mi)]; Lead [ZIP]" -> [{name,scope,dist}]
+    function parseConcerns(ac) {
+      return String(ac || '').split(';').map(function (s) { return s.trim(); }).filter(Boolean).map(function (p) {
+        var m = p.match(/^(.*?)\s*\[\s*([A-Za-z]+)(?:\s*\(([\d.]+)\s*mi\))?/);
+        if (m) return { name: m[1].trim(), scope: m[2].toUpperCase(), dist: m[3] ? parseFloat(m[3]) : null };
+        return { name: p.replace(/\s*\[[^\]]*\]\s*/g, '').trim(), scope: '', dist: null };
+      }).filter(function (c) { return c.name; });
+    }
+    // Within the lookup's search area (ZIP / NEAR / COUNTY). DISTANT entries are
+    // far-away artifacts and are never treated as nearby.
+    function inArea(c) { return c.scope !== 'DISTANT'; }
+    function nearestOf(list) {
+      var best = null;
+      list.forEach(function (c) {
+        var d = (c.scope === 'ZIP') ? 0 : (c.dist == null ? 999 : c.dist);
+        if (best === null || d < best._d) { best = c; best._d = d; }
+      });
+      return best;
+    }
+    function distPhrase(c) {
+      if (!c) return '';
+      if (c.scope === 'ZIP') return 'within this ZIP code';
+      if (c.dist != null) return 'approximately ' + c.dist + ' miles from this ZIP code';
+      if (c.scope === 'COUNTY') return 'within your county';
+      return 'in the surrounding area';
+    }
+    // Pick the display primary concern by priority, from real records only.
+    function choosePrimary(rec) {
+      var cons = parseConcerns(rec.ac).filter(inArea);
+      var pfas = cons.filter(function (c) { return c.name === 'PFAS'; });
+      if (pfas.length) return { key: 'pfas', label: 'PFAS (Forever Chemicals)', edu: 'pfas', near: nearestOf(pfas), kit: 'kit-pfas' };
+      var vocs = cons.filter(function (c) { return VOC_SET[c.name] || c.name === DIOXANE; });
+      if (vocs.length) {
+        var coverable = vocs.some(function (c) { return VOC_SET[c.name]; });
+        return { key: 'voc', label: 'Volatile Organic Compounds (VOCs)', edu: (coverable ? 'voc' : 'dioxane'),
+          near: nearestOf(vocs), kit: (coverable ? 'kit-comprehensive' : null) };
+      }
+      var ndist = (rec.nd && (rec.nd.d || rec.nd.d === 0)) ? { scope: '', dist: rec.nd.d } : null;
+      return { key: 'other', label: rec.pc, edu: EDU_KEY[rec.pc] || null, near: ndist,
+        kit: (/Nitrate/i.test(rec.pc || '') ? 'kit-essentials' : rec.kit), useAb: true };
+    }
+    function primaryDetail(primary, rec) {
+      if (primary.key === 'pfas') {
+        return 'Public environmental records identify PFAS-related contamination concerns in surrounding communities. ' +
+          (primary.near ? ('The nearest documented record is ' + distPhrase(primary.near) + '. ') : '') +
+          'These records do not establish that PFAS is present in your home&rsquo;s drinking water.';
+      }
+      if (primary.key === 'voc') {
+        return 'Public environmental records identify VOC-related contamination concerns in surrounding communities. ' +
+          (primary.near ? ('The nearest documented record is ' + distPhrase(primary.near) + '. ') : '') +
+          'These records do not establish that VOCs are present in your home&rsquo;s drinking water.';
+      }
+      return rec.ab ? esc(rec.ab) : '';
+    }
+
+    // Concern name -> display category (dedup + sort happen in conceptChips).
+    function catOf(name) {
+      if (name === 'PFAS') return { key: 'pfas', label: 'PFAS', edu: 'pfas' };
+      if (VOC_SET[name] || name === DIOXANE) {
+        return { key: 'voc', label: (name === DIOXANE ? 'VOCs & Related Chemicals (1,4-Dioxane)' : 'VOCs & Related Chemicals'),
+          edu: (name === DIOXANE ? 'dioxane' : 'voc') };
+      }
+      return { key: 'other:' + name, label: name, edu: EDU_KEY[name] || null };
+    }
+    function conceptChips(rec) {
+      var cons = parseConcerns(rec.ac).filter(inArea);
+      if (!cons.length) return '';
+      var seen = {}, cats = [];
+      cons.forEach(function (c) {
+        var cat = catOf(c.name);
+        if (seen[cat.key]) {
+          // A coverable VOC alongside dioxane widens the label back to the group.
+          if (cat.key === 'voc' && c.name !== DIOXANE) { seen[cat.key].label = 'VOCs & Related Chemicals'; seen[cat.key].edu = 'voc'; }
+          return;
+        }
+        seen[cat.key] = cat; cats.push(cat);
+      });
+      cats.sort(function (a, b) {
+        var r = { pfas: 0, voc: 1 };
+        return (r[a.key] == null ? 2 : r[a.key]) - (r[b.key] == null ? 2 : r[b.key]);
+      });
+      return cats.map(function (cat) {
+        if (cat.edu && EDU[cat.edu]) {
+          return '<button type="button" class="zip-chip zip-chip-btn" data-edu="' + esc(cat.edu) + '">' +
+            esc(cat.label) + ' <span class="zip-i" aria-hidden="true">&#9432;</span></button>';
+        }
+        return '<span class="zip-chip">' + esc(cat.label) + '</span>';
+      }).join('');
+    }
+
+    // Recommended-kit card for a specific slug (verified to analyze the concern).
+    function kitCardFor(slug) {
+      var kit = (META && META.kits && META.kits[slug]) || {};
+      var name = kit.name || 'Recommended test';
+      var href = '/' + slug;
+      if (kit.buy && kit.price) {
+        return '<div class="zip-kit">' +
+          '<div class="zip-kit-tag">Recommended starting point</div>' +
+          '<div class="zip-kit-row">' +
+            '<div><div class="zip-kit-name">' + esc(name) + '</div>' +
+            '<div class="zip-kit-price">$' + kit.price + '</div></div>' +
+            '<button type="button" class="btn btn-gold" data-zipbuy="' + esc(slug) + '" data-zipname="' + esc(name) + '" data-zipprice="' + kit.price + '">Add to cart <span class="arrow">&rarr;</span></button>' +
+          '</div>' +
+          '<a class="zip-kit-learn" href="' + href + '">See what this kit covers &rarr;</a>' +
+        '</div>';
+      }
+      return '<div class="zip-kit">' +
+        '<div class="zip-kit-tag">Recommended starting point</div>' +
+        '<div class="zip-kit-row">' +
+          '<div><div class="zip-kit-name">' + esc(name) + '</div>' +
+          '<div class="zip-kit-price muted">See kit page</div></div>' +
+          '<a class="btn btn-gold" href="' + href + '">View the ' + esc(name) + ' <span class="arrow">&rarr;</span></a>' +
+        '</div>' +
+      '</div>';
+    }
+    function kitBlock(primary, rec) {
+      var slug = (primary.key === 'other') ? (/Nitrate/i.test(rec.pc || '') ? 'kit-essentials' : rec.kit) : primary.kit;
+      if (!slug) {
+        return '<div class="zip-kit zip-kit-neutral">' +
+          '<div class="zip-kit-tag">About testing for this</div>' +
+          '<p class="zip-muted">1,4-Dioxane requires a specialized laboratory method (EPA Method 522) and is not covered by a standard VOC drinking-water panel. We don&rsquo;t currently offer a dedicated 1,4-dioxane kit &mdash; tap the concern above to learn more, or email info@sacredsamplingsolutions.com.</p>' +
+        '</div>';
+      }
+      return kitCardFor(slug);
+    }
+
+    // Educational content (customer-facing). Sources: U.S. EPA, CDC/ATSDR and
+    // state environmental agencies. Kept factual and non-alarmist; only kits that
+    // actually analyze the contaminant are linked.
+    var EDU = {
+      pfas: { t: 'PFAS (Forever Chemicals)',
+        what: 'Per- and polyfluoroalkyl substances (PFAS) are a large family of manufactured chemicals used since the 1940s for their water-, grease- and stain-resistant properties. Common examples include PFOA and PFOS.',
+        src: 'Firefighting foam (AFFF) used at airports and military bases, industrial manufacturing and metal plating, and consumer goods such as non-stick cookware, stain-resistant fabrics and some food packaging.',
+        why: 'PFAS break down extremely slowly in the environment and the body, which is why they are called "forever chemicals." In 2024 the U.S. EPA set enforceable national drinking-water limits for several PFAS, including PFOA and PFOS at 4 parts per trillion.',
+        path: 'PFAS dissolve readily in water and move easily through soil into groundwater, where they can reach private wells and public water supplies.',
+        test: { txt: 'Our PFAS Kit measures a 25-compound PFAS panel in drinking water by LC-MS/MS (EPA Methods 533 / 537.1), down to parts per trillion.', kit: 'kit-pfas' },
+        ref: 'U.S. EPA; CDC/ATSDR' },
+      voc: { t: 'Volatile Organic Compounds (VOCs)',
+        what: 'VOCs are carbon-based chemicals that evaporate easily at room temperature. In groundwater the most common are chlorinated solvents such as trichloroethylene (TCE) and tetrachloroethylene (PCE), along with benzene, vinyl chloride and the fuel additive MTBE.',
+        src: 'Dry cleaners, metal degreasing and manufacturing, gas stations and underground fuel tanks, and historic industrial waste disposal.',
+        why: 'Several VOCs — including benzene, vinyl chloride and TCE — are regulated by the EPA in drinking water because of health concerns from elevated, long-term exposure. Because they evaporate, VOCs in water can also enter indoor air during showering.',
+        path: 'VOCs leak from spills, underground tanks and industrial sites into soil and groundwater, where they can migrate toward wells and water-supply sources.',
+        test: { txt: 'Our Comprehensive Kit analyzes drinking water for VOCs by GC-MS (EPA Method 524.2), including benzene, vinyl chloride, TCE, PCE and MTBE — alongside metals, chloride and fluoride.', kit: 'kit-comprehensive' },
+        ref: 'U.S. EPA; CDC/ATSDR' },
+      dioxane: { t: 'VOCs & Related Chemicals (1,4-Dioxane)',
+        what: '1,4-Dioxane is a synthetic industrial chemical. Although technically a volatile organic compound, it behaves very differently from typical VOCs — it dissolves completely in water and does not cling to soil.',
+        src: 'Historically used as a stabilizer for chlorinated solvents and as a trace byproduct in some detergents, cosmetics and manufacturing. It is often found alongside older solvent plumes.',
+        why: '1,4-Dioxane is an emerging drinking-water concern. The U.S. EPA classifies it as a likely human carcinogen at elevated, long-term exposure, several states have set their own guidance levels, and it is difficult to remove with conventional water treatment.',
+        path: 'Because it mixes fully with water and resists breakdown, 1,4-dioxane can travel long distances in groundwater — often farther than the solvent plumes it accompanies.',
+        test: { txt: '1,4-Dioxane requires a specialized laboratory method (EPA Method 522) and is NOT captured by a standard VOC drinking-water panel. Sacred Sampling Solutions does not currently offer a dedicated 1,4-dioxane kit — email info@sacredsamplingsolutions.com if you need this specific analyte.', kit: null },
+        ref: 'U.S. EPA; state environmental agencies' },
+      nitrate: { t: 'Nitrate',
+        what: 'Nitrate is a nitrogen compound present naturally at low levels, but it reaches drinking water mainly through human activity.',
+        src: 'Agricultural fertilizers, animal manure, and septic systems.',
+        why: 'High nitrate is a particular concern for infants under six months, in whom it can interfere with the blood&rsquo;s ability to carry oxygen ("blue baby syndrome"). The EPA drinking-water limit is 10 mg/L (as nitrate-nitrogen). Private wells are not required to be tested, so owners should check periodically.',
+        path: 'Nitrate dissolves easily and leaches through soil into groundwater, especially in agricultural areas and near septic systems.',
+        test: { txt: 'Our Essentials Kit measures nitrate along with total coliform bacteria, E. coli, pH and hardness — a solid baseline for private wells.', kit: 'kit-essentials' },
+        ref: 'U.S. EPA; CDC' },
+      lead: { t: 'Lead',
+        what: 'Lead is a toxic metal. Unlike most contaminants it usually does not come from the water source itself, but from the plumbing between the water main and your tap.',
+        src: 'Lead service lines, older lead solder, and some brass fixtures. Corrosive water can dissolve lead from these materials.',
+        why: 'There is no known safe level of lead exposure for children, and it can affect development. The EPA action level is 15 µg/L and the health goal is zero. Because lead comes from your own plumbing, only a test at your tap can tell you your level.',
+        path: 'Lead enters water as it sits in and passes through lead-containing pipes, solder and fixtures — so levels vary from tap to tap and with how long water has been standing.',
+        test: { txt: 'Our Heavy Metals Kit measures lead and 12 other metals in drinking water by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
+        ref: 'U.S. EPA; CDC' },
+      arsenic: { t: 'Arsenic',
+        what: 'Arsenic is a naturally occurring element found in rocks and soil. In many regions it dissolves into groundwater with no industrial source at all.',
+        src: 'Mostly natural bedrock geology — notably parts of New England, the Upper Midwest and the Southwest. It can also come from legacy pesticides and some industrial activity.',
+        why: 'Long-term exposure to elevated arsenic is associated with health risks, which is why the EPA sets a drinking-water limit of 10 µg/L. Private wells in arsenic-prone geology are a common source of elevated levels.',
+        path: 'Arsenic leaches naturally from bedrock into groundwater, so levels depend heavily on local geology and well depth.',
+        test: { txt: 'Our Heavy Metals Kit measures arsenic and 12 other metals in drinking water by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
+        ref: 'U.S. EPA; CDC/ATSDR' },
+      radon: { t: 'Radon',
+        what: 'Radon is a naturally occurring radioactive gas with no color or odor, produced by the breakdown of uranium in soil and rock.',
+        src: 'Natural bedrock. It enters homes mainly as soil gas through foundations, and can also be dissolved in well water.',
+        why: 'Radon in indoor air is the second-leading cause of lung cancer in the United States (EPA), and the EPA recommends every home be tested. Radon released from water is a smaller, additional pathway.',
+        path: 'Radon gas seeps from soil into basements and lower levels; in groundwater it can be released into indoor air when water is used.',
+        test: { txt: 'Our Radon Kit screens indoor air for radon — the EPA-recommended first step for every home.', kit: 'kit-radon' },
+        ref: 'U.S. EPA' },
+      chromium6: { t: 'Chromium-6',
+        what: 'Hexavalent chromium (chromium-6) is a form of the metal chromium. The other common form, chromium-3, is an essential nutrient, but chromium-6 is more toxic.',
+        src: 'Industrial uses such as metal plating, stainless-steel production and cooling-tower treatment. It can also occur naturally in some geology.',
+        why: 'Chromium-6 in drinking water is an area of active regulation. The EPA currently sets a limit for total chromium (100 µg/L), and some states have additional chromium-6 guidance; elevated long-term exposure raises health concerns.',
+        path: 'It dissolves in water and moves through groundwater from industrial discharge sites or natural mineral deposits.',
+        test: { txt: 'Our Heavy Metals Kit measures total chromium by ICP-MS. Note: measuring chromium-6 specifically requires a separate speciated method (EPA 218.6).', kit: 'kit-heavy-metals' },
+        ref: 'U.S. EPA; state agencies' },
+      manganese: { t: 'Manganese',
+        what: 'Manganese is a naturally occurring metal and an essential nutrient at low levels, but it can be a nuisance and a health consideration at higher concentrations in water.',
+        src: 'Natural — it dissolves from soil and rock into groundwater, and is common in well water.',
+        why: 'High manganese can stain fixtures and laundry and give water a metallic taste. The EPA has both a health advisory and a secondary (aesthetic) level, and infants may be more sensitive to very high levels.',
+        path: 'Manganese leaches naturally from bedrock into groundwater, so well water is the usual source.',
+        test: { txt: 'Our Heavy Metals Kit measures manganese and 12 other metals by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
+        ref: 'U.S. EPA' }
+    };
+    // Concern name (as stored) -> educational key.
+    var EDU_KEY = {
+      'PFAS': 'pfas',
+      'Industrial VOCs': 'voc', 'Chlorinated Solvents': 'voc', 'TCP': 'voc', '1,4-Dioxane': 'dioxane',
+      'Nitrate': 'nitrate', 'Atrazine + Nitrate': 'nitrate',
+      'Lead': 'lead', 'Arsenic': 'arsenic', 'Radon': 'radon', 'Chromium-6': 'chromium6', 'Manganese': 'manganese'
+    };
+
+    function eduSec(h, b) { return '<div class="edu-sec"><h4>' + esc(h) + '</h4><p>' + b + '</p></div>'; }
+    function eduHtml(k) {
+      var d = EDU[k]; if (!d) return '';
+      var test = d.test || {};
+      var cta = test.kit ? '<a class="btn btn-primary edu-cta" href="/' + esc(test.kit) + '">View testing options <span class="arrow">&rarr;</span></a>' : '';
+      return '<div class="edu-head"><span class="edu-eyebrow">Environmental concern</span><h3 id="eduTitle">' + esc(d.t) + '</h3></div>' +
+        eduSec('What is it?', d.what) +
+        eduSec('Where does it come from?', d.src) +
+        eduSec('Why does it matter?', d.why) +
+        eduSec('How can it get into drinking water?', d.path) +
+        '<div class="edu-sec"><h4>How can I test for it?</h4><p>' + (test.txt || '') + '</p>' + cta + '</div>' +
+        (d.ref ? '<p class="edu-ref">Sources: ' + esc(d.ref) + '</p>' : '');
+    }
+    var eduEl = null;
+    function ensureModal() {
+      if (eduEl) return eduEl;
+      eduEl = document.createElement('div');
+      eduEl.className = 'edu-ov'; eduEl.hidden = true;
+      eduEl.setAttribute('role', 'dialog'); eduEl.setAttribute('aria-modal', 'true'); eduEl.setAttribute('aria-labelledby', 'eduTitle');
+      eduEl.innerHTML = '<div class="edu-card"><button type="button" class="edu-close" aria-label="Close">&times;</button><div class="edu-body"></div></div>';
+      document.body.appendChild(eduEl);
+      function close() { eduEl.hidden = true; document.body.style.overflow = ''; }
+      eduEl.addEventListener('click', function (e) { if (e.target === eduEl || e.target.closest('.edu-close')) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !eduEl.hidden) close(); });
+      return eduEl;
+    }
+    function openEdu(k) {
+      if (!EDU[k]) return;
+      var el = ensureModal();
+      el.querySelector('.edu-body').innerHTML = eduHtml(k);
+      el.hidden = false; document.body.style.overflow = 'hidden';
+      var c = el.querySelector('.edu-close'); if (c) c.focus();
+      if (window.gtag) window.gtag('event', 'edu_open', { contaminant: k });
+    }
+    // One delegated handler for every contaminant tag / heading (results is reused).
+    results.addEventListener('click', function (e) {
+      var el = e.target.closest('[data-edu]');
+      if (el) { e.preventDefault(); openEdu(el.getAttribute('data-edu')); }
+    });
+
     function render(zip, rec) {
       var place = [rec.c, rec.s].filter(Boolean).join(', ');
       var headline = (META && META.headlines && META.headlines[rec.h]) || 'Environmental screening for your ZIP.';
+      var primary = choosePrimary(rec);
       results.innerHTML =
         '<div class="zip-card reveal in">' +
           '<div class="zip-card-head">' +
@@ -817,13 +1031,15 @@
 
           '<div class="zip-primary">' +
             '<span class="zip-primary-tag">Primary concern' + (rec.pce ? ' &middot; ' + esc(rec.pce) : '') + '</span>' +
-            '<div class="zip-primary-name">' + esc(rec.pc || 'General screening') + '</div>' +
-            (rec.ab ? '<p class="zip-primary-detail">' + esc(rec.ab) + '</p>' : '') +
+            ((primary.edu && EDU[primary.edu])
+              ? '<button type="button" class="zip-primary-name zip-primary-btn" data-edu="' + esc(primary.edu) + '">' + esc(primary.label || rec.pc || 'General screening') + ' <span class="zip-i" aria-hidden="true">&#9432;</span></button>'
+              : '<div class="zip-primary-name">' + esc(primary.label || rec.pc || 'General screening') + '</div>') +
+            '<p class="zip-primary-detail">' + primaryDetail(primary, rec) + '</p>' +
           '</div>' +
 
           statRow(rec) +
 
-          (rec.ac ? '<div class="zip-fact"><h4>Concerns flagged in the area</h4><div class="zip-chips">' + chips(rec.ac) + '</div></div>' : '') +
+          (function () { var ch = conceptChips(rec); return ch ? '<div class="zip-fact"><h4>Environmental concerns identified nearby</h4><div class="zip-chips">' + ch + '</div></div>' : ''; })() +
           nearestCard(rec) +
 
           '<div class="zip-source-toggle">' +
@@ -835,7 +1051,7 @@
             '<p class="zip-source-note" id="zipSrcNote"></p>' +
           '</div>' +
 
-          kitCard(rec) +
+          kitBlock(primary, rec) +
 
           ((META && META.universal) ? '<div class="zip-fact"><h4>Worth testing almost anywhere</h4><p class="zip-muted">' + esc(META.universal) + '</p></div>' : '') +
           '<p class="zip-disc">' + esc((META && META.disclaimer) || 'Screening uses public environmental records; it does not confirm what is in your home. Only a laboratory test of a sample from your property can do that.') + '</p>' +

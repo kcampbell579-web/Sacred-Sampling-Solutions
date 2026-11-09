@@ -930,3 +930,30 @@ footer .brand img{height:48px}
 
 /* Partner-lab attribution under the homepage stats (audit #07) */
 .labs-note{text-align:center;max-width:72ch;margin:16px auto 0;font-size:.82rem;color:#64758b;line-height:1.5}
+
+/* ZIP lookup — clickable contaminant tags + educational modal */
+.zip-chip-btn{cursor:pointer;border:1px solid rgba(16,113,239,.28);background:rgba(16,113,239,.07);color:inherit;font:inherit;display:inline-flex;align-items:center;gap:.35em;transition:background .15s,border-color .15s,transform .05s}
+.zip-chip-btn:hover{background:rgba(16,113,239,.14);border-color:rgba(16,113,239,.5)}
+.zip-chip-btn:active{transform:translateY(1px)}
+.zip-i{color:#1071ef;font-weight:700;line-height:1}
+.zip-primary-btn{cursor:pointer;background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;display:inline-flex;align-items:center;gap:.3em}
+.zip-primary-btn .zip-i{font-size:.62em;vertical-align:middle;opacity:.9}
+.zip-primary-btn:hover{opacity:.82}
+.zip-primary-btn:focus-visible,.zip-chip-btn:focus-visible,.edu-close:focus-visible,.edu-cta:focus-visible{outline:2px solid #1071ef;outline-offset:2px}
+.zip-kit-neutral p{margin:6px 0 0}
+
+/* Educational modal (light panel, brand blue accents, works over dark site theme) */
+.edu-ov{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(10,18,32,.55);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.edu-ov[hidden]{display:none}
+.edu-card{position:relative;width:100%;max-width:560px;max-height:88vh;overflow:auto;background:#fff;color:#13203a;border:1px solid #e6eaf1;border-radius:16px;box-shadow:0 24px 60px rgba(10,18,32,.3);padding:26px 26px 22px;font-family:var(--sans,Arial,Helvetica,sans-serif);-webkit-overflow-scrolling:touch}
+.edu-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border:0;border-radius:9px;background:#f1f4f9;color:#51607a;font-size:22px;line-height:1;cursor:pointer}
+.edu-close:hover{background:#e6ebf3;color:#13203a}
+.edu-head{margin:0 34px 6px 0}
+.edu-eyebrow{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:.68rem;font-weight:700;color:#1071ef;margin-bottom:4px}
+.edu-card h3{margin:0 0 10px;font-size:1.35rem;color:#0f1b31;line-height:1.2}
+.edu-sec{margin:14px 0 0}
+.edu-sec h4{margin:0 0 3px;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:#1071ef}
+.edu-sec p{margin:0;font-size:.95rem;line-height:1.55;color:#28344c}
+.edu-cta{margin-top:12px}
+.edu-ref{margin:16px 0 0;font-size:.74rem;color:#8a94a6}
+@media (max-width:560px){.edu-card{padding:22px 18px 18px;border-radius:14px;max-height:92vh}.edu-card h3{font-size:1.2rem}}
