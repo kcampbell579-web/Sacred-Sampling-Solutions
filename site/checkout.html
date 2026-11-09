@@ -95,6 +95,50 @@
   function read() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
   function money(c) { return '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: (c % 100 ? 2 : 0), maximumFractionDigits: 2 }); }
 
+  // Google Merchant Center checkout link: /checkout?add={id}[&qty=N] puts that
+  // kit in the cart. The id is the kit slug (kit-pfas); the "kit-" prefix is
+  // optional. Mirrors api/checkout.js CATALOG; prices here are display-only and
+  // /api/checkout re-prices every line from its own catalog before charging.
+  var BUY = {
+    'kit-ammonia': ['Ammonia Monitor', 12500],
+    'kit-asbestos-advanced': ['Asbestos Advanced Kit', 24900],
+    'kit-asbestos-core': ['Asbestos Core Kit', 9900],
+    'kit-asbestos-standard': ['Asbestos Standard Kit', 14900],
+    'kit-comprehensive': ['Comprehensive Kit', 27500],
+    'kit-cosmetic-identification': ['Cosmetic Identification Panel', 59900],
+    'kit-cosmetic-screening': ['Cosmetic Screening Panel', 24900],
+    'kit-essentials': ['Essentials Kit', 19900],
+    'kit-fentanyl-surface': ['Fentanyl Surface Residue Kit', 29900],
+    'kit-household-dust': ['Household Dust Composition Kit', 14900],
+    'kit-lead-dust-wipe': ['Lead Dust Wipe Kit', 24900],
+    'kit-lead-metals-dust': ['Lead & Metals Dust Wipe Kit', 24900],
+    'kit-formaldehyde': ['Aldehyde & Formaldehyde Monitor', 14900],
+    'kit-heavy-metals': ['Heavy Metals Kit', 17400],
+    'kit-iaq-comprehensive': ['Complete Air Quality Kit', 52500],
+    'kit-no2': ['NO₂ Monitor', 14900],
+    'kit-metals-minerals': ['Metals & Minerals Kit', 24900],
+    'kit-pfas': ['PFAS Kit', 32900],
+    'kit-professional': ['Complete Home Inspection Water Kit', 80000],
+    'kit-voc-air': ['VOC Monitor', 19900]
+  };
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var id = (q.get('add') || q.get('id') || '').trim().toLowerCase();
+    if (!id) return;
+    if (id.indexOf('kit-') !== 0) id = 'kit-' + id;
+    var p = BUY[id];
+    if (p) {
+      var qty = Math.max(1, Math.min(10, parseInt(q.get('qty'), 10) || 1));
+      var cart = read().filter(function (i) { return i.slug !== id; });
+      cart.push({ slug: id, name: p[0], price: p[1], qty: qty });
+      try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {}
+    }
+    // Drop the parameters so a refresh doesn't re-add; keep utm_* etc.
+    q.delete('add'); q.delete('id'); q.delete('qty');
+    var rest = q.toString();
+    history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
+  })();
+
   var items = read();
   var grid = document.getElementById('coGrid');
   var empty = document.getElementById('coEmpty');
