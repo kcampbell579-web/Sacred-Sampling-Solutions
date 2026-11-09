@@ -4,6 +4,12 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "sacred-sampling-solutions.vercel.app" }],
+      "destination": "https://www.sacredsamplingsolutions.com/:path*",
+      "statusCode": 301
+    },
+    {
       "source": "/order",
       "destination": "/orders",
       "statusCode": 301
