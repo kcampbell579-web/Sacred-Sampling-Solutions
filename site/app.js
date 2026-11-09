@@ -803,7 +803,7 @@
       if (vocs.length) {
         var coverable = vocs.some(function (c) { return VOC_SET[c.name]; });
         return { key: 'voc', label: 'Volatile Organic Compounds (VOCs)', edu: (coverable ? 'voc' : 'dioxane'),
-          near: nearestOf(vocs), kit: (coverable ? 'kit-comprehensive' : null) };
+          near: nearestOf(vocs), kit: 'kit-comprehensive' }; // VOC panel includes 1,4-dioxane
       }
       var ndist = (rec.nd && (rec.nd.d || rec.nd.d === 0)) ? { scope: '', dist: rec.nd.d } : null;
       return { key: 'other', label: rec.pc, edu: EDU_KEY[rec.pc] || null, near: ndist,
@@ -910,14 +910,14 @@
         src: 'Dry cleaners, metal degreasing and manufacturing, gas stations and underground fuel tanks, and historic industrial waste disposal.',
         why: 'Several VOCs — including benzene, vinyl chloride and TCE — are regulated by the EPA in drinking water because of health concerns from elevated, long-term exposure. Because they evaporate, VOCs in water can also enter indoor air during showering.',
         path: 'VOCs leak from spills, underground tanks and industrial sites into soil and groundwater, where they can migrate toward wells and water-supply sources.',
-        test: { txt: 'Our Comprehensive Kit analyzes drinking water for VOCs by GC-MS (EPA Method 524.2), including benzene, vinyl chloride, TCE, PCE and MTBE — alongside metals, chloride and fluoride.', kit: 'kit-comprehensive' },
+        test: { txt: 'Our Comprehensive Kit analyzes drinking water for VOCs by GC-MS (EPA Method 524.2), including benzene, vinyl chloride, TCE, PCE, MTBE and 1,4-dioxane — alongside metals, chloride and fluoride.', kit: 'kit-comprehensive' },
         ref: 'U.S. EPA; CDC/ATSDR' },
       dioxane: { t: 'VOCs & Related Chemicals (1,4-Dioxane)',
         what: '1,4-Dioxane is a synthetic industrial chemical. Although technically a volatile organic compound, it behaves very differently from typical VOCs — it dissolves completely in water and does not cling to soil.',
         src: 'Historically used as a stabilizer for chlorinated solvents and as a trace byproduct in some detergents, cosmetics and manufacturing. It is often found alongside older solvent plumes.',
         why: '1,4-Dioxane is an emerging drinking-water concern. The U.S. EPA classifies it as a likely human carcinogen at elevated, long-term exposure, several states have set their own guidance levels, and it is difficult to remove with conventional water treatment.',
         path: 'Because it mixes fully with water and resists breakdown, 1,4-dioxane can travel long distances in groundwater — often farther than the solvent plumes it accompanies.',
-        test: { txt: '1,4-Dioxane requires a specialized laboratory method (EPA Method 522) and is NOT captured by a standard VOC drinking-water panel. Sacred Sampling Solutions does not currently offer a dedicated 1,4-dioxane kit — email info@sacredsamplingsolutions.com if you need this specific analyte.', kit: null },
+        test: { txt: 'Our Comprehensive Kit includes 1,4-dioxane in its VOC drinking-water panel, alongside benzene, vinyl chloride, TCE, PCE, MTBE, metals, chloride and fluoride.', kit: 'kit-comprehensive' },
         ref: 'U.S. EPA; state environmental agencies' },
       nitrate: { t: 'Nitrate',
         what: 'Nitrate is a nitrogen compound present naturally at low levels, but it reaches drinking water mainly through human activity.',
