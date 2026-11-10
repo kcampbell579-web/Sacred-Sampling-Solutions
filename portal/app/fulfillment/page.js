@@ -1,6 +1,8 @@
 import { sql } from "@/lib/db";
 import { fulfillConfigured, fulfillAuthed } from "@/lib/fulfillauth";
-import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab, fulfillAttachResult, buyOutboundLabel } from "@/app/actions/fulfill";
+import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab, fulfillAttachResult, buyOutboundLabel, refreshTracking } from "@/app/actions/fulfill";
+import { getTrackingMany, cleanTracking, carrierFor } from "@/lib/tracking";
+import { buildJourney } from "@/lib/journey";
 import { parseShipAddress } from "@/lib/address";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
@@ -47,6 +49,21 @@ function TrackLink({ number }) {
       <span className="tk-num mono">{number}</span>
       <span className="tk-ups">Track on UPS →</span>
     </a>
+  );
+}
+
+// Six-step order journey: kit out to the customer, sample back to the lab.
+function JourneyBar({ journey }) {
+  return (
+    <ol className="jbar" aria-label="Order progress">
+      {journey.steps.map((s) => (
+        <li key={s.key} className={`jstep${s.done ? " done" : ""}${s.current ? " current" : ""}${s.error ? " error" : ""}`}>
+          <span className="jdot" aria-hidden="true">{s.error ? "!" : s.done ? "✓" : ""}</span>
+          <span className="jlbl">{s.label}</span>
+          {s.note && <span className="jnote">{s.note}</span>}
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -170,6 +187,25 @@ async function OrdersView({ ok, error }) {
   const counts = { new: 0, shipped: 0, fulfilled: 0 };
   for (const o of orders) counts[o.status] = (counts[o.status] || 0) + 1;
 
+  // Live UPS status for both legs (cached; delivered packages never re-checked).
+  const returnRegFor = (o) => {
+    const regs = regsByEmail.get(normEmail(o.email)) || [];
+    return regs.find((r) => r.tracking_number) || regs[0] || null;
+  };
+  const live = await getTrackingMany(
+    orders.flatMap((o) => [o.tracking_number, returnRegFor(o)?.tracking_number]).filter(Boolean)
+  );
+  const journeys = orders.map((o) => {
+    const reg = returnRegFor(o);
+    return buildJourney({
+      order: o,
+      out: o.tracking_number ? live.get(cleanTracking(o.tracking_number)) || null : null,
+      reg,
+      back: reg?.tracking_number ? live.get(cleanTracking(reg.tracking_number)) || null : null,
+    });
+  });
+  const deliveredCount = journeys.filter((j) => j.delivered).length;
+
   return (
     <>
       {ok && <div className="alert alert-ok">{ok}</div>}
@@ -177,6 +213,7 @@ async function OrdersView({ ok, error }) {
       <div className="ord-summary">
         <div className="os-card"><div className="os-n">{counts.new}</div><div className="os-l">New — to ship</div></div>
         <div className="os-card"><div className="os-n">{counts.shipped}</div><div className="os-l">Shipped</div></div>
+        <div className="os-card"><div className="os-n">{deliveredCount}</div><div className="os-l">Delivered</div></div>
         <div className="os-card"><div className="os-n">{counts.fulfilled}</div><div className="os-l">Fulfilled</div></div>
         <div className="os-card"><div className="os-n">{orders.length}</div><div className="os-l">Total orders</div></div>
       </div>
@@ -186,7 +223,6 @@ async function OrdersView({ ok, error }) {
       ) : (
         <div className="ord-list">
           {orders.map((o, i) => {
-            const stage = STAGES.indexOf(o.status);
             const regs = regsByEmail.get(normEmail(o.email)) || [];
             const returnReg = regs.find((r) => r.tracking_number) || regs[0] || null;
             const returnTracking = returnReg?.tracking_number || "";
@@ -204,6 +240,8 @@ async function OrdersView({ ok, error }) {
                     <span className="ocard-amt">{money(o.amount_total, o.currency)}</span>
                   </div>
                 </div>
+
+                <JourneyBar journey={journeys[i]} />
 
                 {/* Body grid */}
                 <div className="ocard-grid">
@@ -327,11 +365,13 @@ async function OrdersView({ ok, error }) {
 
                 {/* Actions */}
                 <div className="ocard-actions">
-                  <div className="ostep" title={STAGE_LABEL[o.status]}>
-                    {["Ordered", "Shipped", "Fulfilled"].map((lbl, k) => (
-                      <span key={lbl} className={`os-dot${k <= stage ? " done" : ""}`} title={lbl} />
-                    ))}
-                  </div>
+                  {(carrierFor(o.tracking_number) || carrierFor(returnTracking)) ? (
+                    <form action={refreshTracking} className="inlineform" title="Ask UPS for the latest status now">
+                      {carrierFor(o.tracking_number) && <input type="hidden" name="number" value={o.tracking_number} />}
+                      {carrierFor(returnTracking) && <input type="hidden" name="number" value={returnTracking} />}
+                      <button className="linkbtn" type="submit">↻ Check UPS now</button>
+                    </form>
+                  ) : <span />}
                   <div className="btnrow">
                     {o.status === "new" && (
                       <form action={setOrderStatus} className="ship-form">
