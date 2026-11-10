@@ -332,7 +332,7 @@ p{margin:0}
 .dash-foot a:hover{text-decoration:underline}
 
 /* ── Fulfillment portal ─────────────────────────────────────────────────── */
-.ord-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.ord-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
 @media(max-width:640px){.ord-summary{grid-template-columns:repeat(2,1fr)}}
 .os-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
 .os-card .os-n{font-size:1.5rem;font-weight:700;color:var(--ink)}
@@ -446,3 +446,27 @@ p{margin:0}
 /* Return block: "or mark received by lab" affordance */
 .ot-or{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-3);margin:8px 0 6px}
 .ot-received{display:inline-block;font-size:.85rem;font-weight:800;color:var(--good);padding:6px 10px;border:1px solid color-mix(in srgb,var(--good) 35%,transparent);border-radius:999px;background:color-mix(in srgb,var(--good) 14%,transparent)}
+
+/* Order journey bar (fulfillment → Orders) */
+.jbar{list-style:none;margin:0;padding:16px 16px 14px;display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--line);background:var(--panel)}
+.jstep{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:0 4px}
+.jstep::before{content:"";position:absolute;top:11px;left:calc(-50% + 12px);right:calc(50% + 12px);height:3px;border-radius:3px;background:var(--line-strong)}
+.jstep:first-child::before{display:none}
+.jstep.done::before,.jstep.current::before,.jstep.error::before{background:var(--brand)}
+.jdot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:800;color:#fff;background:var(--panel);border:2px solid var(--line-strong);position:relative;z-index:1}
+.jstep.done .jdot{background:var(--brand);border-color:var(--brand)}
+.jstep.done:nth-child(3) .jdot{background:var(--good);border-color:var(--good)}
+.jstep.current .jdot{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-wash)}
+.jstep.error .jdot{background:var(--crimson);border-color:var(--crimson)}
+.jlbl{font-size:.74rem;font-weight:700;color:var(--ink-3);line-height:1.2}
+.jstep.done .jlbl,.jstep.current .jlbl{color:var(--ink)}
+.jstep.error .jlbl{color:var(--crimson)}
+.jnote{font-size:.7rem;color:var(--ink-3);line-height:1.25}
+.jstep.done:nth-child(3) .jnote{color:var(--good);font-weight:700}
+.jstep.error .jnote{color:var(--crimson);font-weight:700}
+@media (max-width:640px){
+  .jbar{grid-template-columns:1fr;gap:10px;padding:14px 16px}
+  .jstep{flex-direction:row;text-align:left;align-items:center;gap:10px}
+  .jstep::before{display:none}
+  .jlbl{min-width:120px}
+}

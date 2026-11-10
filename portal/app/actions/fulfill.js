@@ -4,6 +4,7 @@ import { sql } from "@/lib/db";
 import { verifyPin, setFulfillCookie, clearFulfillCookie, fulfillAuthed } from "@/lib/fulfillauth";
 import { sendOrderShippedEmail } from "@/lib/email/orderShipped";
 import { createOutboundLabel } from "@/lib/shipping";
+import { forgetTracking } from "@/lib/tracking";
 import { redirect } from "next/navigation";
 
 const STATUSES = ["new", "shipped", "fulfilled"];
@@ -76,6 +77,13 @@ export async function saveOutboundTracking(formData) {
     redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Could not save tracking — run migrate-orders-tracking.sql in Neon first.")}`);
   }
   redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent(tracking ? "Tracking saved" : "Tracking cleared")}`);
+}
+
+// Force a fresh UPS status lookup for one order's packages (outbound + return).
+export async function refreshTracking(formData) {
+  if (!fulfillAuthed()) redirect("/fulfillment");
+  for (const n of formData.getAll("number")) await forgetTracking(String(n));
+  redirect(`/fulfillment?tab=orders&ok=${encodeURIComponent("Checked UPS for the latest status.")}`);
 }
 
 // Buy a prepaid outbound (warehouse -> customer) UPS label via Shippo, straight
