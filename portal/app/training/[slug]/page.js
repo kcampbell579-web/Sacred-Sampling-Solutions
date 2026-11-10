@@ -43,7 +43,8 @@ export default async function TrainingPage({ params, searchParams }) {
   const inside = parseLines(kit.whats_inside);
   const steps = parseLines(kit.steps);
   const facts = [
-    ["Tests", kit.tests],
+    // Older rows in the database say "13 metals"; show the current wording.
+    ["Tests", String(kit.tests || "").replace(/\b13 (heavy )?metals\b/gi, "Heavy metals")],
     ["Methods", kit.methods],
     ["Sensitivity", kit.sensitivity],
     ["Containers", kit.containers],

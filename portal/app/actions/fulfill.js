@@ -5,6 +5,7 @@ import { verifyPin, setFulfillCookie, clearFulfillCookie, fulfillAuthed } from "
 import { sendOrderShippedEmail } from "@/lib/email/orderShipped";
 import { createOutboundLabel } from "@/lib/shipping";
 import { forgetTracking } from "@/lib/tracking";
+import { registerTracking } from "@/lib/deliveries";
 import { redirect } from "next/navigation";
 
 const STATUSES = ["new", "shipped", "fulfilled"];
@@ -42,6 +43,7 @@ export async function setOrderStatus(formData) {
     if (tracking) {
       try {
         await sql`update orders set tracking_number=${tracking} where id=${id}`;
+        await registerTracking(tracking);
       } catch {
         redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Order marked shipped, but tracking could not be saved — run migrate-orders-tracking.sql in Neon first.")}`);
       }
@@ -73,6 +75,7 @@ export async function saveOutboundTracking(formData) {
   if (!id) redirect("/fulfillment");
   try {
     await sql`update orders set tracking_number=${tracking || null} where id=${id}`;
+    if (tracking) await registerTracking(tracking);
   } catch {
     redirect(`/fulfillment?tab=orders&error=${encodeURIComponent("Could not save tracking — run migrate-orders-tracking.sql in Neon first.")}`);
   }
