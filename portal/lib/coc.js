@@ -23,7 +23,7 @@ export const RELINQUISHER = "Kelly McClure";
 
 // The four named analysis columns on the LIAL form.
 export const ANALYSIS_COLUMNS = [
-  { label: "13 Heavy Metals", key: "metals" },
+  { label: "Heavy Metals", key: "metals" },
   { label: "Nitrate", key: "nitrate" },
   { label: "VOCs", key: "vocs" },
   { label: "40 PFCs (PFAS/PFOA)", key: "pfas" },

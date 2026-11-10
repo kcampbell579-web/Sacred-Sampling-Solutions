@@ -23,7 +23,7 @@ insert into kit_types (code, title, slug, matrix, intro, tests, methods, sensiti
  'bacteria,nitrate,ph,hardness'),
 ('COM','Comprehensive Water Kit','comprehensive-water','water',
  'Our most complete water panel — heavy metals, volatile organics, and the chloride & fluoride minerals, in one kit.',
- '13 metals · VOCs · Chloride · Fluoride','ICP-MS 200.8 · GC-MS 524.2 · IC 300.0','Parts per billion (µg/L)','Metals HDPE bottle + 2 × 40 mL VOC vials + minerals bottle',
+ 'Heavy metals · VOCs · Chloride · Fluoride','ICP-MS 200.8 · GC-MS 524.2 · IC 300.0','Parts per billion (µg/L)','Metals HDPE bottle + 2 × 40 mL VOC vials + minerals bottle',
  E'Metals HDPE bottle | Pre-preserved — do not rinse.\nVOC glass vials | Teflon-lined caps for zero-headspace fill.\nMinerals bottle | For chloride and fluoride.\nCooling gel pack | Freeze solid before you collect.\nInsulated mailer + prepaid label | Same-day cold-ship.\nInstructions + COC card | Scan the QR to register and track.',
  E'Fill the VOC vials first | Cold tap, no aerator, gentle stream. Fill to a positive meniscus, cap with no air — any bubble means refill.\nMetals bottle — do NOT rinse | Fill the pre-preserved HDPE bottle to the shoulder without touching the faucet, then cap.\nMinerals bottle (chloride & fluoride) | Fill the minerals bottle to the shoulder from the same faucet and cap.\nChill immediately | All containers on the gel pack.\nRecord & register | Write the date and time, scan the QR to complete your chain of custody, ship same day.',
  'metals,vocs,chloride,fluoride'),
@@ -35,7 +35,7 @@ insert into kit_types (code, title, slug, matrix, intro, tests, methods, sensiti
  'pfas'),
 ('PRO','Complete Home Inspection Water Kit','professional','water',
  'Everything we offer in one kit — metals, VOCs, PFAS, nitrate, and bacteria. The complete picture of your water.',
- '13 metals · VOCs · PFAS · Nitrate · Bacteria','ICP-MS · GC-MS · LC-MS/MS · Colorimetric · Membrane filtration','ppb–ppt across panels','Metals + VOC vials + PFAS + nitrate + sterile bacteria bottle',
+ 'Heavy metals · VOCs · PFAS · Nitrate · Bacteria','ICP-MS · GC-MS · LC-MS/MS · Colorimetric · Membrane filtration','ppb–ppt across panels','Metals + VOC vials + PFAS + nitrate + sterile bacteria bottle',
  E'HDPE metals bottle | Pre-preserved — do not rinse.\nVOC glass vials | Teflon-lined caps, zero headspace.\nPFAS-free bottle | Certified clean — do not rinse.\nNitrate bottle | For nitrate as N.\nSterile bacteria bottle | Open only at the faucet, and do not rinse.\nGel pack + insulated mailer + COC | Same-day cold-ship, scan the QR.',
  E'Fill the VOC vials first | Cold tap, no aerator, gentle stream. Positive meniscus, zero headspace — any bubble means refill.\nPFAS bottle — ultra-clean | Plain-soap hands, no lotion. Open at the faucet, fill to the line, cap. Do not rinse.\nBacteria bottle — sterile | Open only at the faucet, do not touch the inside, do not rinse, then fill and cap.\nMetals bottle — do NOT rinse | Fill to the shoulder and cap.\nNitrate bottle | Same faucet, fill to the shoulder and cap.\nChill, record & register | Everything on the gel pack, write the date and time, scan the QR, ship same day.',
  'metals,vocs,pfas,nitrate,bacteria')

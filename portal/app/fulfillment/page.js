@@ -3,6 +3,9 @@ import { fulfillConfigured, fulfillAuthed } from "@/lib/fulfillauth";
 import { fulfillLogin, fulfillLogout, setOrderStatus, saveOutboundTracking, saveReturnTracking, markReceivedByLab, fulfillAttachResult, buyOutboundLabel, refreshTracking } from "@/app/actions/fulfill";
 import { getTrackingMany, cleanTracking, carrierFor } from "@/lib/tracking";
 import { buildJourney } from "@/lib/journey";
+import { processDeliveries } from "@/lib/deliveries";
+import { createSocialCodesAction } from "@/app/actions/campaigns";
+import { SOCIAL_CODES } from "@/lib/socialCodes";
 import { parseShipAddress } from "@/lib/address";
 import { orderNumber } from "@/lib/stripe";
 import { kvGet } from "@/lib/kv";
@@ -141,6 +144,8 @@ async function OrdersView({ ok, error }) {
     await sql`alter table orders add column if not exists tracking_number text`;
     await sql`alter table orders add column if not exists outbound_label_url text`;
   } catch {}
+  // Newly delivered kits: mark them and send the "your kit arrived" email (once).
+  await processDeliveries();
 
   let orders;
   try {
@@ -595,6 +600,15 @@ async function CampaignsView({ ok, error }) {
     <>
       {ok && <div className="alert alert-ok">{ok}</div>}
       {error && <div className="alert alert-error">{error}</div>}
+      <div className="card" style={{ marginBottom: 16, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: "1.05rem" }}>Social post codes</h2>
+          <p className="muted" style={{ margin: "4px 0 0", fontSize: ".85rem" }}>
+            Creates the {SOCIAL_CODES.length} codes from your social plan in Stripe ($15 off, first order only). Codes that already exist are skipped, so it&rsquo;s safe to click again.
+          </p>
+        </div>
+        <form action={createSocialCodesAction}><button className="btn btn-primary btn-sm" type="submit">Create social codes</button></form>
+      </div>
       <div className="ord-summary">
         <div className="os-card"><div className="os-n">{rows.length}</div><div className="os-l">Codes used</div></div>
         <div className="os-card"><div className="os-n">{totalOrders}</div><div className="os-l">Orders with a code</div></div>
