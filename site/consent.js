@@ -9,7 +9,7 @@
 (function () {
   var GA_ID = "G-KDPVGW9JPK";
   var GADS_ID = "AW-18399559838"; // Google Ads (conversion tracking / remarketing)
-  var CLARITY_ID = "y22uptqeoi";   // Microsoft Clarity project ID
+  var CLARITY_ID = "zb0q3fdtza";   // Microsoft Clarity project ID (linked to Bing Webmaster Tools)
   var META_PIXEL_ID = "3647281315287094"; // Facebook / Meta Pixel
   var KEY = "sss_consent"; // stored value: "granted" | "denied"
 
@@ -83,7 +83,7 @@
     if (!CLARITY_ID || window.__clarityLoaded) return; window.__clarityLoaded = true;
     (function (c, l, a, r, i, t, y) {
       c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
-      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i + "?ref=bwt";
       y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
     })(window, document, "clarity", "script", CLARITY_ID);
   }

@@ -884,15 +884,35 @@
         '</div>' +
       '</div>';
     }
-    function kitBlock(primary, rec) {
+    // Contaminants none of our kits analyze: offer a special order instead of a
+    // kit that doesn't actually test for them.
+    var SPECIAL = {
+      'Atrazine': 1, 'Chromium-6': 1, 'Radionuclides': 1, 'Perchlorate': 1, 'Cyanotoxins': 1,
+      'Cyanotoxins + Red Tide': 1, '6PPD-quinone': 1, 'Dioxin legacy': 1, 'Legacy Pesticides': 1,
+      'Agricultural Pesticides': 1, 'PCBs': 1, 'Creosote + PAHs': 1
+    };
+    var SUPPORT = 'support@sacredsamplingsolutions.com';
+    function specialOrderHref(concern, zip) {
+      var body = 'Hi Sacred Sampling team,\n\nI\'d like to request a special test' + (concern ? ' for: ' + concern : '.') + '\n' +
+        (zip ? 'ZIP code: ' + zip + '\n' : '') +
+        'Sample type (drinking water / well water / air / surface / material): \nAnything else we should know: \n\nName: \nPhone: \n';
+      return 'mailto:' + SUPPORT + '?subject=' + encodeURIComponent('Special order request' + (concern ? ' \u2014 ' + concern : '')) +
+        '&body=' + encodeURIComponent(body);
+    }
+    function specialOrderCard(concern, zip) {
+      return '<div class="zip-kit zip-kit-neutral">' +
+        '<div class="zip-kit-tag">Special order</div>' +
+        '<p class="zip-muted">None of our standard kits analyze ' + esc(concern) + '. We can often arrange the right laboratory test as a special order &mdash; send us a quick note and we&rsquo;ll reply with options and pricing.</p>' +
+        '<a class="btn btn-gold" href="' + specialOrderHref(concern, zip) + '">Request a special order <span class="arrow">&rarr;</span></a>' +
+        '<p class="zip-muted" style="margin-top:8px;font-size:.8rem">Or email <a href="mailto:' + SUPPORT + '">' + SUPPORT + '</a></p>' +
+      '</div>';
+    }
+    function kitBlock(primary, rec, zip) {
+      if (primary.key === 'other' && SPECIAL[rec.pc]) return specialOrderCard(rec.pc, zip);
       var slug = (primary.key === 'other') ? (/Nitrate/i.test(rec.pc || '') ? 'kit-essentials' : rec.kit) : primary.kit;
-      if (!slug) {
-        return '<div class="zip-kit zip-kit-neutral">' +
-          '<div class="zip-kit-tag">About testing for this</div>' +
-          '<p class="zip-muted">1,4-Dioxane requires a specialized laboratory method (EPA Method 522) and is not covered by a standard VOC drinking-water panel. We don&rsquo;t currently offer a dedicated 1,4-dioxane kit &mdash; tap the concern above to learn more, or email info@sacredsamplingsolutions.com.</p>' +
-        '</div>';
-      }
-      return kitCardFor(slug);
+      if (!slug) return specialOrderCard(primary.label || rec.pc, zip);
+      return kitCardFor(slug) +
+        '<p class="zip-special">Testing for something we don&rsquo;t list? <a href="' + specialOrderHref('', zip) + '">Request a special order</a></p>';
     }
 
     // Educational content (customer-facing). Sources: U.S. EPA, CDC/ATSDR and
@@ -932,14 +952,14 @@
         src: 'Lead service lines, older lead solder, and some brass fixtures. Corrosive water can dissolve lead from these materials.',
         why: 'There is no known safe level of lead exposure for children, and it can affect development. The EPA action level is 15 µg/L and the health goal is zero. Because lead comes from your own plumbing, only a test at your tap can tell you your level.',
         path: 'Lead enters water as it sits in and passes through lead-containing pipes, solder and fixtures — so levels vary from tap to tap and with how long water has been standing.',
-        test: { txt: 'Our Heavy Metals Kit measures lead and 12 other metals in drinking water by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
+        test: { txt: 'Our Heavy Metals Kit measures lead along with arsenic, copper, mercury and other heavy metals in drinking water by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
         ref: 'U.S. EPA; CDC' },
       arsenic: { t: 'Arsenic',
         what: 'Arsenic is a naturally occurring element found in rocks and soil. In many regions it dissolves into groundwater with no industrial source at all.',
         src: 'Mostly natural bedrock geology — notably parts of New England, the Upper Midwest and the Southwest. It can also come from legacy pesticides and some industrial activity.',
         why: 'Long-term exposure to elevated arsenic is associated with health risks, which is why the EPA sets a drinking-water limit of 10 µg/L. Private wells in arsenic-prone geology are a common source of elevated levels.',
         path: 'Arsenic leaches naturally from bedrock into groundwater, so levels depend heavily on local geology and well depth.',
-        test: { txt: 'Our Heavy Metals Kit measures arsenic and 12 other metals in drinking water by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
+        test: { txt: 'Our Heavy Metals Kit measures arsenic along with lead, copper, mercury and other heavy metals in drinking water by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
         ref: 'U.S. EPA; CDC/ATSDR' },
       radon: { t: 'Radon',
         what: 'Radon is a naturally occurring radioactive gas with no color or odor, produced by the breakdown of uranium in soil and rock.',
@@ -960,7 +980,7 @@
         src: 'Natural — it dissolves from soil and rock into groundwater, and is common in well water.',
         why: 'High manganese can stain fixtures and laundry and give water a metallic taste. The EPA has both a health advisory and a secondary (aesthetic) level, and infants may be more sensitive to very high levels.',
         path: 'Manganese leaches naturally from bedrock into groundwater, so well water is the usual source.',
-        test: { txt: 'Our Heavy Metals Kit measures manganese and 12 other metals by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
+        test: { txt: 'Our Heavy Metals Kit measures manganese along with other heavy metals by ICP-MS (EPA Method 200.8).', kit: 'kit-heavy-metals' },
         ref: 'U.S. EPA' }
     };
     // Concern name (as stored) -> educational key.
@@ -981,7 +1001,8 @@
         eduSec('Where does it come from?', d.src) +
         eduSec('Why does it matter?', d.why) +
         eduSec('How can it get into drinking water?', d.path) +
-        '<div class="edu-sec"><h4>How can I test for it?</h4><p>' + (test.txt || '') + '</p>' + cta + '</div>' +
+        '<div class="edu-sec"><h4>How can I test for it?</h4><p>' + (test.txt || '') + '</p>' + cta +
+          '<p class="edu-special">Need a test we don&rsquo;t list? <a href="' + specialOrderHref(d.t, '') + '">Request a special order</a></p></div>' +
         (d.ref ? '<p class="edu-ref">Sources: ' + esc(d.ref) + '</p>' : '');
     }
     var eduEl = null;
@@ -1052,7 +1073,7 @@
             '<p class="zip-source-note" id="zipSrcNote"></p>' +
           '</div>' +
 
-          kitBlock(primary, rec) +
+          kitBlock(primary, rec, zip) +
 
           ((META && META.universal) ? '<div class="zip-fact"><h4>Worth testing almost anywhere</h4><p class="zip-muted">' + esc(META.universal) + '</p></div>' : '') +
           '<p class="zip-disc">' + esc((META && META.disclaimer) || 'Screening uses public environmental records; it does not confirm what is in your home. Only a laboratory test of a sample from your property can do that.') + '</p>' +

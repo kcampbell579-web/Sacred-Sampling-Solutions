@@ -957,3 +957,10 @@ footer .brand img{height:48px}
 .edu-cta{margin-top:12px}
 .edu-ref{margin:16px 0 0;font-size:.74rem;color:#8a94a6}
 @media (max-width:560px){.edu-card{padding:22px 18px 18px;border-radius:14px;max-height:92vh}.edu-card h3{font-size:1.2rem}}
+
+/* Special-order links (ZIP lookup results + education panel) */
+.zip-special{margin:10px 0 0;font-size:.85rem;color:var(--muted,#5b6675)}
+.zip-special a,.edu-special a{font-weight:600}
+.zip-kit-neutral .btn{margin-top:12px}
+.edu-special{margin:10px 0 0;font-size:.85rem;color:#51607a}
+.edu-special a{color:#1071ef}
