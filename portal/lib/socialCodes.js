@@ -1,4 +1,5 @@
-// Coupon codes for the 6-week social post plan (one per post + TAPWATER).
+// Coupon codes for social posts: the 6-week plan (one per post) plus one-off
+// posts (TAPWATER, PFAINTEL).
 // Created in Stripe from Fulfillment → Campaigns with the portal's own key.
 import { stripeRequest } from "./stripe";
 
@@ -8,7 +9,7 @@ export const SOCIAL_CODES = [
   "WELCOME01", "KELLY02", "EDUCATE03", "BLOOPER04", "TESTALL05", "UNBOX06", "SHOP07", "OWNER08",
   "FAMILY09", "PURPOSE10", "RELIABLE11", "EVERYONE12", "ITSTIME13", "ANSWERS14", "DONTWAIT15", "DMME16",
   "COMMUNITY17", "ONTHEGO18", "REMINDER19", "KNOWLEDGE20", "PROTECT21", "CHANGE22", "NOWTIME23", "FALL24",
-  "TAPWATER",
+  "TAPWATER", "PFAINTEL",
 ];
 
 const msg = (r) => (r && r.data && r.data.error && r.data.error.message) || `Stripe error ${r ? r.status : ""}`;
