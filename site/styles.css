@@ -1194,3 +1194,22 @@ ol.steps{list-style:none;padding:0;margin:0}
   .concern-card{flex-direction:row;align-items:center;gap:12px;min-height:56px;padding:10px 14px}
 }
 @media (max-width:900px){#sample-results .srep-wrap{padding:0 20px}}
+.capture-msg{min-height:0;margin:8px 0 0;font-size:.88rem;color:var(--ink-2)}
+.capture-msg.err{color:#b42318;font-weight:600}
+.capture-msg:empty{display:none}
+.capture-done{max-width:520px;margin:18px auto 0}
+.capture-done p{color:var(--ink-2)}
+.capture-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px}
+@media (max-width:480px){.capture-links .btn{width:100%}}
+
+/* Homepage hero: coordinated button pair */
+.hero .hero-cta{gap:14px;align-items:center}
+.hero .hero-btn{min-height:52px;padding:0 26px;border-radius:11px;font-size:1.02rem;font-weight:600;line-height:1.2;text-decoration:none;box-sizing:border-box}
+.hero .hero-btn-secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.45);box-shadow:none}
+.hero .hero-btn-secondary:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.8);color:#fff}
+.hero .hero-btn:focus-visible{outline:3px solid #8fc4ff;outline-offset:3px}
+@media (max-width:520px){
+  .hero .hero-cta{flex-direction:column;align-items:stretch}
+  .hero .hero-btn{width:100%}
+}
+.capture-msg.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

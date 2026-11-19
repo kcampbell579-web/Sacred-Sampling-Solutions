@@ -14,6 +14,44 @@
     } catch (e) {}
   })();
 
+  // ── Free guide signup (homepage "Not Ready to Test Yet?") ──────────────────
+  // Same flow as the welcome popup: add to the Mailjet list, alert info@, log the
+  // lead in the portal, then hand over the guide + checklist right away.
+  (function () {
+    var MJ = 'https://15q4o.mjt.lu/wgt/15q4o/0yyg/subscribe?c=603a85a3';
+    var GUIDE = '/assets/home-environmental-testing-guide.pdf';
+    var CHECK = '/assets/whole-home-safety-check.pdf';
+    function ok(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    [].forEach.call(document.querySelectorAll('form[data-guide-form]'), function (f) {
+      var msg = f.parentNode.querySelector('.capture-msg');
+      f.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var input = f.querySelector('input[type=email]');
+        var email = (input.value || '').trim();
+        if (!ok(email)) {
+          if (msg) { msg.className = 'capture-msg err'; msg.textContent = 'Please enter a valid email address.'; }
+          input.focus(); return;
+        }
+        try { localStorage.setItem('sss_lead', email); } catch (x) {}
+        try { fetch(MJ, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ Email: email, Fields: [] }) }).catch(function () {}); } catch (x) {}
+        try {
+          fetch('https://formsubmit.co/ajax/info@sacredsamplingsolutions.com', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ _subject: 'New guide signup — ' + email, event: 'Homepage guide signup', email: email, page: location.href })
+          }).catch(function () {});
+        } catch (x) {}
+        try { if (window.ssLead) window.ssLead({ type: 'welcome', email: email, message: 'Homepage free guide signup' }); } catch (x) {}
+        if (window.gtag) window.gtag('event', 'generate_lead', { event_label: 'homepage_guide' });
+        if (window.fbq) window.fbq('track', 'Lead');
+        f.outerHTML = '<div class="capture-done">' +
+          '<p><b>You\'re in.</b> Your guide and checklist are ready to download.</p>' +
+          '<div class="capture-links"><a class="btn btn-primary" href="' + GUIDE + '" target="_blank" rel="noopener">Download the Guide (PDF)</a>' +
+          '<a class="btn btn-ghost" href="' + CHECK + '" target="_blank" rel="noopener">Download the Checklist (PDF)</a></div></div>';
+        if (msg) { msg.className = 'capture-msg sr'; msg.textContent = 'Thanks — your guide is ready to download.'; }
+      });
+    });
+  })();
+
   // ── Lead capture ──────────────────────────────────────────────────────────
   // Mirror every site form signup into the portal's Leads dashboard (in addition
   // to the FormSubmit email). Non-blocking: uses sendBeacon so it survives the

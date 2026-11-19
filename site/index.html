@@ -59,8 +59,8 @@
       <h1>Mail-In Water and Environmental Testing</h1>
       <p class="lead">Collect your sample with a Sacred Sampling kit and return it for analysis by an accredited partner laboratory. View your results in a digital report.</p>
       <div class="hero-cta">
-        <a href="/kits" class="btn btn-primary btn-lg">Browse Test Kits <span class="arrow">→</span></a>
-        <a href="/sample-report#sample-results" class="hero-link">View Sample Results &rarr;</a>
+        <a href="/kits" class="btn btn-primary btn-lg hero-btn">Browse Test Kits</a>
+        <a href="/sample-report#sample-results" class="btn btn-lg hero-btn hero-btn-secondary">View Sample Results</a>
       </div>
       <div class="hero-trust">
         <span class="ht"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Analyzed by an Accredited Partner Lab</span>
@@ -408,13 +408,14 @@
   <div class="wrap">
     <div class="final reveal">
       <span class="eyebrow">Start with Knowledge</span>
-      <h2 style="margin-top:12px">Not ready to test yet?</h2>
+      <h2 style="margin-top:12px">Not Ready to Test Yet?</h2>
       <p>Get our free guide — <b>"What's Really in Your Tap Water"</b> — plus a checklist to spot the biggest risks in your home. No spam, unsubscribe anytime.</p>
-      <form class="capture" onsubmit="return false">
-        <input type="email" placeholder="you@email.com" aria-label="Email address" required>
+      <form class="capture" data-guide-form novalidate>
+        <input type="email" name="email" placeholder="you@email.com" aria-label="Email address" autocomplete="email" required>
         <button class="btn btn-primary" type="submit">Send Me the Guide</button>
       </form>
-      <p class="fineprint">Prefer to just get started? <a href="/kits">Shop test kits →</a></p>
+      <p class="capture-msg" role="status" aria-live="polite"></p>
+      <p class="fineprint">Prefer to just get started? <a href="/kits">Shop Test Kits →</a></p>
     </div>
   </div>
 </section>
