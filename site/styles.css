@@ -1043,3 +1043,26 @@ footer .brand img{height:48px}
 /* Sample report page: shared example label */
 .srep-illus{display:inline-block;margin:0 0 12px;font-family:var(--sans);font-weight:600;font-size:.85rem;color:#155ec2;background:#eaf3ff;border:1px solid #cfe2fb;border-radius:999px;padding:4px 12px}
 #sample-results{scroll-margin-top:84px}
+
+/* ---- Homepage: Test Strips vs. Mail-In Laboratory Testing ---- */
+.cmpt-sec{background:#fff;color:#0d2b52}
+.cmpt-title{font-family:var(--sans);font-weight:600;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.2;color:#0d2b52;margin:0 0 24px;letter-spacing:-.01em}
+.cmpt{width:100%;min-width:0;border-collapse:collapse;table-layout:fixed;font-family:var(--sans);color:#0d2b52}
+.cmpt th,.cmpt td{text-align:left;vertical-align:top;padding:16px 18px;border-bottom:1px solid #dde5f0;font-size:1rem;line-height:1.5;overflow-wrap:break-word}
+.cmpt thead th{background:#f1f5fb;font-family:var(--sans);font-weight:600;font-size:.98rem;letter-spacing:normal;text-transform:none;white-space:normal;color:#0d2b52;border-bottom:1px solid #d3dcea}
+.cmpt thead th.cmpt-crit{width:24%}
+.cmpt tbody th{font-weight:600}
+.cmpt tbody td{font-weight:400;color:#33415c}
+@media (max-width:640px){
+  .cmpt-sec .wrap{padding-left:20px;padding-right:20px}
+  .cmpt,.cmpt thead,.cmpt tbody{display:block}
+  .cmpt tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .cmpt thead th.cmpt-crit{position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .cmpt thead th{padding:12px}
+  .cmpt thead th+th{border-left:1px solid #dde5f0}
+  .cmpt tbody th{grid-column:1 / -1;padding:14px 12px 4px;border-bottom:none;font-size:.98rem}
+  .cmpt tbody td{padding:4px 12px 14px;font-size:16px}
+  .cmpt tbody td+td{border-left:1px solid #dde5f0}
+}
+.cmpt tbody tr:last-child td,.cmpt tbody tr:last-child th{border-bottom:1px solid #dde5f0}
+@media (max-width:640px){.cmpt tbody tr:last-child th{border-bottom:none}}
