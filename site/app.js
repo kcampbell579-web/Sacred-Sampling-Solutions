@@ -137,10 +137,10 @@
   // accordion (mobile). Injected here so every page shares one nav source.
   if (navLinks) {
     var MENU = [
-      ['Shop Tests', [['All Tests', '/kits'], ['Water', '/kits#filter=water'], ['Indoor Air', '/kits#filter=air'], ['Asbestos', '/kits#filter=asbestos'], ['Surface & Dust', '/kits#filter=surface'], ['Cosmetics', '/kits#filter=cosmetic']]],
-      ['What Should I Test?', [['Find My Test — 60-sec quiz', '/quiz'], ['ZIP Code Lookup — What\'s near you?', '/zip-lookup'], ['Private Well', '/well-water'], ['Older Home / Plumbing', '/older-home'], ['Buying a Home', '/buying-a-home'], ['Near Landfill / Airport / Industry', '/near-industry'], ['Renovating', '/renovating'], ['New Furniture / Chemical Odor', '/chemical-odor']]],
+      ['Shop Tests', [['All Tests', '/kits'], ['Drinking Water', '/kits#kits'], ['Indoor Air', '/kits#air'], ['Asbestos', '/kits#asbestos'], ['Surface Residue', '/kits#surface-residue'], ['Cosmetics', '/kits#cosmetics'], ['Lead & Dust', '/kits#lead-dust']]],
+      ['What Should I Test?', [['Find My Test — 60-Second Quiz', '/quiz'], ['ZIP Code Lookup — What\'s Near You?', '/zip-lookup'], ['Private Well', '/well-water'], ['Older Home / Plumbing', '/older-home'], ['Buying a Home', '/buying-a-home'], ['Near Landfill / Airport / Industry', '/near-industry'], ['Renovating', '/renovating'], ['New Furniture / Chemical Odor', '/chemical-odor']]],
       ['How It Works', [['How It Works', '/#how'], ['Sample Reports', '/sample-report'], ['Laboratory & Methods', '/laboratory'], ['Shipping & Turnaround', '/shipping']]],
-      ['Learn', [['Education Center', '/learn'], ['Water', '/learn#water'], ['Indoor Air', '/learn#air'], ['Asbestos', '/learn#asbestos'], ['News / Sacred Intel', '/learn']]],
+      ['Learn', [['Education Center', '/learn'], ['Water', '/learn-testing-home-water'], ['Indoor Air', '/learn-vocs'], ['Asbestos', '/learn-asbestos'], ['Test Strips vs. Lab Testing', '/learn/test-strips-vs-lab-testing'], ['News / Sacred Intel', '/learn']]],
       ['About', [['About Sacred', '/about'], ['Our Laboratory', '/laboratory'], ['For Professionals', '/professionals'], ['Contact', '/contact']]]
     ];
     var chev = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
@@ -200,11 +200,11 @@
       var activate = document.createElement('a');
       activate.className = 'btn btn-ghost btn-sm hide-sm';
       activate.href = 'https://app.sacredsamplingsolutions.com/sampleregistration';
-      activate.textContent = 'Activate kit';
+      activate.textContent = 'Activate Kit';
       var shop = document.createElement('a');
       shop.className = 'btn btn-primary btn-sm';
       shop.href = '/kits';
-      shop.textContent = 'Shop tests';
+      shop.textContent = 'Shop Tests';
       headerCta.insertBefore(activate, headerCta.firstChild);
       headerCta.insertBefore(shop, headerCta.firstChild);
     }
@@ -1128,7 +1128,7 @@
             if (j && j.ok) {
               try { localStorage.setItem('sss_lead', em); } catch (x) {}
               if (window.gtag) window.gtag('event', 'generate_lead', { currency: 'USD', value: 0 });
-              rform.innerHTML = '<div class="zip-report-done">✓ On its way — check your inbox (and spam, just in case). Ready to test? <a href="/kits#kits">Shop kits →</a></div>';
+              rform.innerHTML = '<div class="zip-report-done">✓ On its way — check your inbox (and spam, just in case). Ready to test? <a href="/kits#kits">Shop Kits →</a></div>';
             } else {
               if (btn) { btn.disabled = false; btn.textContent = 'Email my profile'; }
               msg.hidden = false; msg.textContent = 'Sorry — that didn’t go through. Please try again or email info@sacredsamplingsolutions.com.';
