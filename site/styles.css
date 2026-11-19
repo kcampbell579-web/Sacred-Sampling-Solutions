@@ -990,3 +990,21 @@ footer .brand img{height:48px}
 .zip-kit-neutral .btn{margin-top:12px}
 .edu-special{margin:10px 0 0;font-size:.85rem;color:#51607a}
 .edu-special a{color:#1071ef}
+
+/* ---- Asbestos: Lab Method & Turnaround ---- */
+.labm-grid{display:grid;gap:10px}
+.labm-row{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--panel)}
+.labm-row.labm-cur{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset}
+.labm-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700;color:var(--ink);font-size:1rem;margin-bottom:8px}
+.labm-badge{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-ink);background:var(--brand-wash);border-radius:999px;padding:3px 8px}
+.labm-row dl{display:grid;grid-template-columns:84px 1fr;gap:4px 12px;margin:0}
+.labm-row dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-top:3px}
+.labm-row dd{margin:0;color:var(--ink-2);font-size:.92rem;line-height:1.5}
+.labm-all{margin-top:12px;padding:14px 16px;border-radius:12px;background:var(--brand-wash);color:var(--ink-2);font-size:.92rem;line-height:1.55}
+.labm-all p{margin:0}
+.labm-all p+p{margin-top:8px}
+.labm-all a{color:var(--brand-ink);font-weight:600;overflow-wrap:anywhere}
+.labm-shop{margin-top:22px}
+.labm-shop .eyebrow{display:block;margin-bottom:10px}
+@media (min-width:900px){.labm-shop .labm-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:480px){.labm-row dl{grid-template-columns:1fr;gap:2px}.labm-row dd{margin-bottom:6px}}
