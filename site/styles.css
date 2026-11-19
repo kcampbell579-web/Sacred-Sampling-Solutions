@@ -1112,7 +1112,6 @@ thead th{font-size:.8rem;font-weight:600}
 .kitsec,#asbestos,#surface-residue,#cosmetics,#lead-dust{scroll-margin-top:150px}
 
 /* Homepage: concern cards are one label + arrow; whole card is the link */
-.concern-card .concern-arrow{margin-top:auto;color:var(--brand-ink);font-weight:700}
 /* Homepage: steps note */
 .steps-note{margin-top:22px;color:var(--ink-2);font-size:.95rem;line-height:1.55;max-width:820px}
 .steps-note b{color:var(--ink)}
@@ -1152,8 +1151,7 @@ ol.steps{list-style:none;padding:0;margin:0}
   .concern-grid{grid-template-columns:1fr;gap:8px;margin-top:18px}
   .concern-card{flex-direction:row;align-items:center;gap:12px;min-height:56px;padding:10px 14px}
   .concern-card .concern-ic{width:34px;height:34px}
-  .concern-card b{font-size:.98rem;flex:1}
-  .concern-card .concern-arrow{margin:0 0 0 auto}
+  .concern-card b{font-size:.98rem;flex:1;min-width:0}
   /* steps → compact numbered list */
   .steps{grid-template-columns:1fr;gap:0;counter-reset:none}
   .step{display:grid;grid-template-columns:34px 1fr;column-gap:12px;background:none;border:none;box-shadow:none;border-radius:0;
@@ -1179,3 +1177,20 @@ ol.steps{list-style:none;padding:0;margin:0}
 @media (max-width:640px){.guide-links{flex-direction:column;align-items:stretch}.guide-links .btn{width:100%}.guide-link{align-self:flex-start}}
 .legal a.btn-primary,.legal a.btn-gold{color:#fff}
 .foot-bottom .mono{font-family:var(--sans)}
+
+/* Sample report image (responsive, never cropped) */
+.srep-figure{margin:0}
+.srep-figure picture,.srep-figure img{display:block;width:100%;height:auto}
+.srep-figure img{border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:0 1px 3px rgba(13,43,82,.08)}
+.srep-figure a:focus-visible{outline:3px solid #2C94FC;outline-offset:3px;border-radius:14px}
+.srep-figure figcaption{margin-top:12px;text-align:center}
+
+/* Concern cards: one link each, icon above title (desktop), compact */
+.concern-card{min-height:0;padding:16px 16px 18px;gap:10px;background:#fff;border:1px solid var(--line);color:#0d2b52}
+.concern-card b{color:#0d2b52;font-weight:600;overflow-wrap:break-word}
+.concern-card:hover{border-color:#8fc4ff;transform:none;box-shadow:0 2px 8px rgba(13,43,82,.08)}
+.concern-card:focus-visible{outline:3px solid #2C94FC;outline-offset:2px}
+@media (max-width:640px){
+  .concern-card{flex-direction:row;align-items:center;gap:12px;min-height:56px;padding:10px 14px}
+}
+@media (max-width:900px){#sample-results .srep-wrap{padding:0 20px}}
