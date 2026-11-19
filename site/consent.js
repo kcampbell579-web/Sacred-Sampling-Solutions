@@ -126,7 +126,7 @@
     d.setAttribute("aria-label", "Cookie consent");
     d.innerHTML =
       '<div class="cookie-inner">' +
-      '<p>We use cookies for analytics to understand how our site is used. See our <a href="privacy">Privacy Policy</a>.</p>' +
+      '<p>We use cookies for analytics to understand how our site is used. See our <a href="/privacy">Privacy Policy</a>.</p>' +
       '<div class="cookie-actions">' +
       '<button type="button" class="ck-decline">Decline</button>' +
       '<button type="button" class="ck-accept">Accept</button>' +

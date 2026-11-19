@@ -36,8 +36,8 @@
       <a href="https://app.sacredsamplingsolutions.com/login">Sign In</a>
     </nav>
     <div class="nav-cta">
-      <a href="https://app.sacredsamplingsolutions.com/sampleregistration" class="btn btn-ghost btn-sm hide-sm">Activate kit</a>
-      <a href="/kits" class="btn btn-primary btn-sm">Shop kits</a>
+      <a href="https://app.sacredsamplingsolutions.com/sampleregistration" class="btn btn-ghost btn-sm hide-sm">Activate Kit</a>
+      <a href="/kits" class="btn btn-primary btn-sm">Shop Kits</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -47,188 +47,253 @@
 
 <section class="page-hero on-dark">
   <div class="wrap">
-    <span class="eyebrow">Drinking water test kits</span>
-    <h1>Lab-backed testing, one box away.</h1>
+    <h1>Environmental Test Kits</h1>
     <p>Choose a kit below, or let the 60-second quiz match you to the right one. Every kit is mail-in with a prepaid pouch, gloves, ice pack, and a QR collection guide — results come as an easy-to-read report.</p>
     <div class="hero-cta" style="justify-content:center;margin-top:26px">
-      <a href="/quiz" class="btn btn-gold btn-lg">Find my kit in 60 sec <span class="arrow">→</span></a>
-      <a href="#compare" class="btn btn-ghost btn-lg">Compare all kits</a>
+      <a href="/quiz" class="btn btn-gold btn-lg">Find My Kit in 60 Seconds <span class="arrow">→</span></a>
+      <a href="#compare" class="btn btn-ghost btn-lg">Compare Water Kits</a>
     </div>
   </div>
 </section>
 
-<!-- KIT FILTER BAR -->
-<div class="kitfilter" id="kitFilter">
+<!-- KIT CATEGORY LINKS -->
+<nav class="kitfilter" aria-label="Test kit categories">
   <div class="wrap kitfilter-inner">
-    <span class="kitfilter-label">Filter:</span>
-    <div class="kitfilter-chips" role="tablist" aria-label="Filter test kits">
-      <button class="chip active" data-cat="all" type="button">All kits</button>
-      <button class="chip" data-cat="water" type="button">Water</button>
-      <button class="chip" data-cat="air" type="button">Air &amp; IAQ</button>
-      <button class="chip" data-cat="asbestos" type="button">Asbestos</button>
-      <button class="chip" data-cat="cosmetic" type="button">Cosmetic</button>
-      <button class="chip" data-cat="surface" type="button">Surface residue</button>
-      <button class="chip" data-cat="dust" type="button">Lead &amp; dust</button>
-      <button class="chip" data-cat="soon" type="button">Coming soon</button>
+    <span class="kitfilter-label">Categories</span>
+    <div class="catlinks">
+      <a href="#kits">Drinking Water</a>
+      <a href="#air">Indoor Air</a>
+      <a href="#asbestos">Asbestos</a>
+      <a href="#surface-residue">Surface Residue</a>
+      <a href="#cosmetics">Cosmetics</a>
     </div>
   </div>
-</div>
+</nav>
 
-<!-- WATER KITS -->
 <section id="kits" class="kitsec" data-cat="water">
   <div class="wrap">
     <div class="section-head center reveal">
-      <span class="eyebrow">Drinking water · six kits</span>
-      <h2>Choose your kit.</h2>
+      <h2>Drinking Water Test Kits</h2>
       <p>Lab-backed, mail-in testing for your drinking water. Collect at home, mail it back in the prepaid pouch, and get an easy-to-read report.</p>
     </div>
     <div class="kits">
       <div class="kit reveal">
         <a class="cardlink" href="/kit-heavy-metals" aria-label="View Heavy Metals Kit"></a>
-        <div class="kname">Kit 01 · Metals</div>
         <h3>Heavy Metals Kit</h3>
         <div class="price"><span class="amt">$174</span><span class="per">/ kit</span></div>
-        <div class="blurb">A focused, affordable first look at the metals in your tap or well water.</div>
+        <p class="ksample"><b>Sample Type</b>Drinking / well water (single 250 mL bottle)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Heavy metals — lead, arsenic, copper, mercury +</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>One 250 mL sample bottle</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> a focused, affordable first look at metals.</div>
-        <a href="/kit-heavy-metals" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-heavy-metals" class="btn btn-primary">View Kit</a>
       </div>
 
       <div class="kit reveal">
         <a class="cardlink" href="/kit-metals-minerals" aria-label="View Metals &amp; Minerals Kit"></a>
-        <div class="kname">Kit 02 · Metals + Minerals</div>
         <h3>Metals &amp; Minerals Kit</h3>
         <div class="price"><span class="amt">$249</span><span class="per">/ kit</span></div>
-        <div class="blurb">Metals plus chloride and fluoride — a fuller picture from a single sample.</div>
+        <p class="ksample"><b>Sample Type</b>Drinking / well water (single bottle)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Heavy metals</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Chloride &amp; fluoride</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> metals plus key minerals in one test.</div>
-        <a href="/kit-metals-minerals" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-metals-minerals" class="btn btn-primary">View Kit</a>
       </div>
 
-      <div class="kit pop reveal">
+      <div class="kit reveal">
         <a class="cardlink" href="/kit-essentials" aria-label="View Essentials Kit"></a>
-        <span class="tag">Most popular</span>
-        <div class="kname">Kit 03 · Everyday</div>
         <h3>Essentials Kit</h3>
         <div class="price"><span class="amt">$199</span><span class="per">/ kit</span></div>
-        <div class="blurb">The everyday peace-of-mind test. If you run one water test this year, make it this one.</div>
+        <p class="ksample"><b>Sample Type</b>Drinking / well water (sterile bacteria bottle + chemistry bottle)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Bacteria (total coliform) &amp; E. coli</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Nitrates · pH · hardness</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> your once-a-year check, a new home, or a private well you've never tested — the everyday basics in one kit.</div>
-        <a href="/kit-essentials" class="btn btn-primary">View kit &rarr;</a>
+        <a href="/kit-essentials" class="btn btn-primary">View Kit</a>
       </div>
 
-      <div class="kit pop reveal">
+      <div class="kit reveal">
         <a class="cardlink" href="/kit-comprehensive" aria-label="View Comprehensive Kit"></a>
-        <span class="tag">Best value</span>
-        <div class="kname">Kit 04 · Broadest chemistry</div>
         <h3>Comprehensive Kit</h3>
         <div class="price"><span class="amt">$275</span><span class="per">/ kit</span></div>
-        <div class="blurb">Our broadest chemistry panel — VOCs, metals, and minerals for the full story.</div>
+        <p class="ksample"><b>Sample Type</b>Well / drinking water (VOC glass vials + metals/minerals bottle)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>VOCs (volatile organic compounds)</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Heavy metals · chloride · fluoride</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> well owners and older homes that want metals, minerals and VOCs together — the fullest chemistry short of PFAS. (Does not include bacteria or PFAS.)</div>
-        <a href="/kit-comprehensive" class="btn btn-primary">View kit &rarr;</a>
+        <a href="/kit-comprehensive" class="btn btn-primary">View Kit</a>
       </div>
 
       <div class="kit reveal">
         <a class="cardlink" href="/kit-pfas" aria-label="View PFAS Kit"></a>
-        <div class="kname">Kit 05 · Forever chemicals</div>
         <h3>PFAS Kit</h3>
         <div class="price"><span class="amt">$329</span><span class="per">/ kit</span></div>
-        <div class="blurb">Test for "forever chemicals" by the EPA 533 drinking-water method — lab-grade, mailed to your door.</div>
+        <p class="ksample"><b>Sample Type</b>Drinking / well water (PFAS-free tube)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>25-compound PFAS panel (LC-MS/MS)</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>PFOA, PFOS, PFHxS, PFBS, GenX</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> private wells and homes near industry, airfields or landfills — anywhere PFAS is a known local concern, or you've seen it in the water news.</div>
-        <a href="/kit-pfas" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-pfas" class="btn btn-primary">View Kit</a>
       </div>
 
-      <div class="kit flag reveal">
+      <div class="kit reveal">
         <a class="cardlink" href="/kit-professional" aria-label="View Complete Home Inspection Water Kit"></a>
-        <span class="tag flagship">Most complete</span>
-        <div class="kname">Kit 06 · Everything</div>
         <h3>Complete Home Inspection Water Kit</h3>
         <div class="price"><span class="amt">$800</span><span class="per">/ kit</span></div>
-        <div class="blurb">The all-in-one — every analyte we offer, from bacteria to PFAS, in a single thorough test.</div>
+        <p class="ksample"><b>Sample Type</b>Well / drinking water (full multi-container collection set)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>All 10 analytes — bacteria, E. coli, nitrates, pH, hardness</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Heavy metals · chloride · fluoride · VOCs · PFAS</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> testing everything once — the most thorough analysis.</div>
-        <a href="/kit-professional" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-professional" class="btn btn-primary">View Kit</a>
       </div>
     </div>
-    <p class="kits-note">Not sure which fits your home? <a href="/quiz">Take the 60-second quiz →</a></p>
+    <p class="kits-note">Not sure which fits your home? <a href="/quiz">Take the 60-Second Quiz →</a></p>
   </div>
 </section>
 
+
+<!-- AIR KITS (live) -->
+<section id="air" class="kitsec" data-cat="air">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <h2>Indoor Air Quality Testing</h2>
+      <p>Passive badges you expose for a day (or up to a week), then mail back for accredited-lab analysis. Each compound named and quantified — no pump, no power, no meaningless index number.</p>
+    </div>
+
+    <div class="section-head reveal" style="margin-top:26px;text-align:left">
+      <h3 style="font-size:1.25rem">Single-Analyte Monitors</h3>
+      <p>One badge, one question — the fastest way to answer a specific concern.</p>
+    </div>
+    <div class="kits">
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-formaldehyde" aria-label="View Aldehyde &amp; Formaldehyde Monitor"></a>
+        <h3>Aldehyde &amp; Formaldehyde Monitor</h3>
+        <div class="price"><span class="amt">$149</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Indoor air (passive badge)</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Formaldehyde, as a time-weighted average concentration</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Acetaldehyde, reported separately</li>
+        </ul>
+        <a href="/kit-formaldehyde" class="btn btn-primary">View Kit</a>
+      </div>
+
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-voc-air" aria-label="View VOC Monitor"></a>
+        <h3>VOC Monitor</h3>
+        <div class="price"><span class="amt">$199</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Indoor air (passive badge)</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Benzene</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Toluene, ethylbenzene and xylenes</li>
+        </ul>
+        <a href="/kit-voc-air" class="btn btn-primary">View Kit</a>
+      </div>
+
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-ammonia" aria-label="View Ammonia Monitor"></a>
+        <h3>Ammonia Monitor</h3>
+        <div class="price"><span class="amt">$125</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Indoor air (passive badge)</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Ammonia (NH₃), as a time-weighted average concentration</li>
+        </ul>
+        <a href="/kit-ammonia" class="btn btn-primary">View Kit</a>
+      </div>
+
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-no2" aria-label="View NO₂ Monitor"></a>
+        <h3>NO₂ Monitor</h3>
+        <div class="price"><span class="amt">$149</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Indoor air (passive badge)</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Nitrogen dioxide (NO₂), as a time-weighted average concentration</li>
+        </ul>
+        <a href="/kit-no2" class="btn btn-primary">View Kit</a>
+      </div>
+    </div>
+
+    <div class="section-head reveal" style="margin-top:34px;text-align:left">
+      <h3 style="font-size:1.25rem">Complete Air Quality</h3>
+      <p>All four air chemistries in one deployment — or add any single monitor above.</p>
+    </div>
+    <div class="kits">
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-iaq-comprehensive" aria-label="View Complete Air Quality Kit"></a>
+        <h3>Complete Air Quality Kit</h3>
+        <div class="price"><span class="amt">$525</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Indoor air · one room (4 badges)</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>The full 25-compound solvent panel + formaldehyde &amp; carbonyls</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Ammonia (NH₃) and nitrogen dioxide (NO₂)</li>
+        </ul>
+        <a href="/kit-iaq-comprehensive" class="btn btn-primary">View Kit</a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- SPECIALTY / MATERIAL & SAFETY KITS (live) -->
 <section id="specialty" class="tint kitsec" data-cat="asbestos cosmetic surface dust">
   <div class="wrap">
     <div class="section-head center reveal">
-      <span class="eyebrow">Home &amp; property safety · now available</span>
-      <h2>Beyond water — material &amp; safety testing.</h2>
+      <h2>Asbestos, Surface Residue and Cosmetic Testing</h2>
       <p>Lab-backed, mail-in analysis for the things a home inspection can&rsquo;t see. Same accredited-lab model, same documented chain of custody.</p>
     </div>
 
-    <div class="section-head reveal" style="margin-top:26px;text-align:left" data-sub="asbestos">
-      <h3 style="font-size:1.25rem">Asbestos material testing</h3>
-      <p>Know before you sand, drill or demo. Three tiers — match the method to your material.</p>
+    <div class="section-head reveal" style="margin-top:26px;text-align:left" data-sub="asbestos" id="asbestos">
+      <h3 style="font-size:1.25rem">Asbestos Material Testing</h3>
+      <p><b>Laboratory Analysis for Suspect Building Materials.</b> Three tiers — match the method to your material. Planning work that may disturb a suspect material? Have a trained, accredited asbestos professional collect the sample.</p>
     </div>
     <div class="kits" data-sub="asbestos">
       <div class="kit reveal">
         <a class="cardlink" href="/kit-asbestos-core" aria-label="View Asbestos Core Kit"></a>
-        <div class="kname">Asbestos · Core</div>
         <h3>Asbestos Core Kit</h3>
         <div class="price"><span class="amt">$99</span><span class="per">/ kit</span></div>
-        <div class="blurb">Laboratory analysis of suspect friable building materials.</div>
+        <p class="ksample"><b>Sample Type</b>Bulk building material (friable)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Presence or absence of asbestos in the material you submit</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>The asbestos type(s) identified — chrysotile, amosite, crocidolite and the other regulated minerals</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> joint compound, plaster, pipe &amp; thermal insulation, textured/sprayed coatings, troweled surfacing.</div>
-        <a href="/kit-asbestos-core" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-asbestos-core" class="btn btn-primary">View Kit</a>
       </div>
 
       <div class="kit reveal">
         <a class="cardlink" href="/kit-asbestos-standard" aria-label="View Asbestos Standard Kit"></a>
-        <div class="kname">Asbestos · Standard</div>
         <h3>Asbestos Standard Kit</h3>
         <div class="price"><span class="amt">$149</span><span class="per">/ kit</span></div>
-        <div class="blurb">Non-friable material analysis with gravimetric reduction &amp; point count.</div>
+        <p class="ksample"><b>Sample Type</b>Non-friable bulk material (NOB)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Presence or absence of asbestos in the material you submit</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>The asbestos type(s) identified</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> vinyl floor tile &amp; backing, black mastic and adhesives, roofing &amp; asphalt products, window glazing, resilient flooring.</div>
-        <a href="/kit-asbestos-standard" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-asbestos-standard" class="btn btn-primary">View Kit</a>
       </div>
 
       <div class="kit reveal">
         <a class="cardlink" href="/kit-asbestos-advanced" aria-label="View Asbestos Advanced Kit"></a>
-        <div class="kname">Asbestos · Advanced</div>
         <h3>Asbestos Advanced Kit</h3>
         <div class="price"><span class="amt">$249</span><span class="per">/ kit</span></div>
-        <div class="blurb">Transmission electron microscopy — for results that must hold up.</div>
+        <p class="ksample"><b>Sample Type</b>Non-friable / confirmatory bulk material</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Asbestos identification by transmission electron microscopy (TEM)</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Fibre characterisation, including crystal-structure and elemental information</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> borderline PLM results, results near the 1% threshold, low-level or complex matrices, and any finding likely to be challenged.</div>
-        <a href="/kit-asbestos-advanced" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-asbestos-advanced" class="btn btn-primary">View Kit</a>
       </div>
     </div>
 
@@ -238,208 +303,111 @@
       <div class="labm-all"><p><b>All asbestos kits:</b> Analyzed by NYS ELAP-certified laboratories. Reports list asbestos type and percentage, measured against the 1% regulatory threshold.</p><p><b>Turnaround:</b> reports are typically issued within 5&ndash;7 business days of the lab receiving your sample, plus return shipping time. Working against a deadline? Email <a href="mailto:support@sacredsamplingsolutions.com?subject=Asbestos%20results%20deadline">support@sacredsamplingsolutions.com</a> with your date.</p></div>
     </div>
 
-    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="cosmetic">
-      <h3 style="font-size:1.25rem">Cosmetic microbiology</h3>
-      <p>Is anything growing in the makeup you actually use? An accredited-lab count — and, if you need it, the name.</p>
-    </div>
-    <div class="kits" data-sub="cosmetic">
-      <div class="kit reveal">
-        <a class="cardlink" href="/kit-cosmetic-screening" aria-label="View Cosmetic Screening Panel"></a>
-        <div class="kname">Cosmetic · Screening</div>
-        <h3>Cosmetic Screening Panel</h3>
-        <div class="price"><span class="amt">$249</span><span class="per">/ kit</span></div>
-        <div class="blurb">Two microbial counts on the makeup you actually use.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Total Aerobic Microbial Count — the overall bacterial load, in colony-forming units</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Yeast &amp; Mold Count — reported separately, as its own number</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> creams, lotions, foundations, serums, lipstick, gloss, mascara, pressed powder, eyeshadow and blush.</div>
-        <a href="/kit-cosmetic-screening" class="btn btn-ghost">View kit &rarr;</a>
-      </div>
-
-      <div class="kit reveal">
-        <a class="cardlink" href="/kit-cosmetic-identification" aria-label="View Cosmetic Identification Panel"></a>
-        <div class="kname">Cosmetic · Identification</div>
-        <h3>Cosmetic Identification Panel</h3>
-        <div class="price"><span class="amt">$599</span><span class="per">/ kit</span></div>
-        <div class="blurb">The counts, plus the two organisms that matter most — named.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Total Aerobic Microbial Count and a separate Yeast &amp; Mold Count</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Staphylococcus aureus — present or absent, by name</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> anything used on or near the eye, a product that caused a reaction, or a high Screening-Panel count you want named.</div>
-        <a href="/kit-cosmetic-identification" class="btn btn-ghost">View kit &rarr;</a>
-      </div>
-    </div>
-
-    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="surface">
-      <h3 style="font-size:1.25rem">Surface residue</h3>
+    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="surface" id="surface-residue">
+      <h3 style="font-size:1.25rem">Surface Residue Testing</h3>
       <p>A documented, dated measurement for turnover, fleets, remediation clearance and property transactions.</p>
     </div>
     <div class="kits" data-sub="surface">
       <div class="kit reveal">
         <a class="cardlink" href="/kit-fentanyl-surface" aria-label="View Fentanyl Surface Residue Kit"></a>
-        <div class="kname">Surface residue</div>
         <h3>Fentanyl Surface Residue Kit</h3>
         <div class="price"><span class="amt">$299</span><span class="per">/ kit</span></div>
-        <div class="blurb">A measured area, an accredited lab, a number and a date.</div>
+        <p class="ksample"><b>Sample Type</b>Surface wipe, 100 cm² (supplied template)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Fentanyl, quantified down to 0.1 micrograms on the sampled area</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Reported as micrograms per wipe, and per 100 cm² where a full template area was sampled</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> property managers, short-term rental &amp; hotel operators, vehicle fleets, remediation contractors, buyers in due diligence, attorneys and insurers.</div>
-        <a href="/kit-fentanyl-surface" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-fentanyl-surface" class="btn btn-primary">View Kit</a>
       </div>
     </div>
 
-    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="dust">
-      <h3 style="font-size:1.25rem">Lead &amp; household dust</h3>
+    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="cosmetic" id="cosmetics">
+      <h3 style="font-size:1.25rem">Cosmetic Microbiology Testing</h3>
+      <p>Is anything growing in the makeup you actually use? An accredited-lab count — and, if you need it, the name.</p>
+    </div>
+    <div class="kits" data-sub="cosmetic">
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-cosmetic-screening" aria-label="View Cosmetic Screening Panel"></a>
+        <h3>Cosmetic Screening Panel</h3>
+        <div class="price"><span class="amt">$249</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Cosmetic / personal-care product</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Total Aerobic Microbial Count — the overall bacterial load, in colony-forming units</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Yeast &amp; Mold Count — reported separately, as its own number</li>
+        </ul>
+        <a href="/kit-cosmetic-screening" class="btn btn-primary">View Kit</a>
+      </div>
+
+      <div class="kit reveal">
+        <a class="cardlink" href="/kit-cosmetic-identification" aria-label="View Cosmetic Identification Panel"></a>
+        <h3>Cosmetic Identification Panel</h3>
+        <div class="price"><span class="amt">$599</span><span class="per">/ kit</span></div>
+        <p class="ksample"><b>Sample Type</b>Cosmetic / personal-care product</p>
+        <p class="kmeas-h">What It Measures</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Total Aerobic Microbial Count and a separate Yeast &amp; Mold Count</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Staphylococcus aureus — present or absent, by name</li>
+        </ul>
+        <a href="/kit-cosmetic-identification" class="btn btn-primary">View Kit</a>
+      </div>
+    </div>
+
+    <div class="section-head reveal" style="margin-top:34px;text-align:left" data-sub="dust" id="lead-dust">
+      <h3 style="font-size:1.25rem">Lead and Household Dust Testing</h3>
       <p>Lead travels through dust, not paint chips. Mail-in wipe analysis for settled dust on the surfaces you actually live with.</p>
     </div>
     <div class="kits" data-sub="dust">
       <div class="kit reveal">
         <a class="cardlink" href="/kit-lead-dust-wipe" aria-label="View Lead Dust Wipe Kit"></a>
-        <div class="kname">Lead &middot; dust wipe</div>
         <h3>Lead Dust Wipe Kit</h3>
         <div class="price"><span class="amt">$249</span><span class="per">/ kit</span></div>
-        <div class="blurb">Three surfaces, in micrograms per square foot, against published federal clearance levels.</div>
+        <p class="ksample"><b>Sample Type</b>3 wipes &mdash; floor, window sill, one of your choosing</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Settled lead dust on a floor, a window sill and one surface of your choosing</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Each result shown against the published federal clearance levels (5, 40 and 100 &micro;g/ft&sup2;)</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> pre-1978 homes, households with young children or anyone pregnant, after renovation or window work, and post-abatement verification.</div>
-        <a href="/kit-lead-dust-wipe" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-lead-dust-wipe" class="btn btn-primary">View Kit</a>
       </div>
 
       <div class="kit reveal">
         <a class="cardlink" href="/kit-lead-metals-dust" aria-label="View Lead &amp; Metals Dust Wipe Kit"></a>
-        <div class="kname">Lead &amp; metals &middot; dust wipe</div>
         <h3>Lead &amp; Metals Dust Wipe Kit</h3>
         <div class="price"><span class="amt">$249</span><span class="per">/ kit</span></div>
-        <div class="blurb">Four elements from one wiped surface &mdash; lead, cadmium, chromium and arsenic &mdash; by ICP.</div>
+        <p class="ksample"><b>Sample Type</b>1 wipe, one measured surface</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Lead, cadmium, chromium and arsenic measured together under EPA 6010D</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>The lead result shown against its published clearance level; additional elements on request</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> older homes with a general concern, properties near historical industry or treated timber, workshops and garages, and renters or buyers.</div>
-        <a href="/kit-lead-metals-dust" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-lead-metals-dust" class="btn btn-primary">View Kit</a>
       </div>
 
       <div class="kit reveal">
         <a class="cardlink" href="/kit-household-dust" aria-label="View Household Dust Composition Kit"></a>
-        <div class="kname">Household dust &middot; composition</div>
         <h3>Household Dust Composition Kit</h3>
         <div class="price"><span class="amt">$149</span><span class="per">/ kit</span></div>
-        <div class="blurb">What is your house actually made of? A microscopy breakdown of your dust, by particle type.</div>
+        <p class="ksample"><b>Sample Type</b>1 surface wipe (measured area)</p>
+        <p class="kmeas-h">What It Measures</p>
         <ul>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Relative composition &mdash; fibres, skin cells, soot, minerals, insect fragments and pollen</li>
           <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Reported as proportions of the sample, with a plain-language explanation of each component</li>
         </ul>
-        <div class="kbest"><b>Best for:</b> anyone who has ever wondered, people who have just moved in, the shoes-off debate &mdash; and as a genuinely good gift.</div>
-        <a href="/kit-household-dust" class="btn btn-ghost">View kit &rarr;</a>
+        <a href="/kit-household-dust" class="btn btn-primary">View Kit</a>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- AIR KITS (live) -->
-<section id="air" class="tint kitsec" data-cat="air">
-  <div class="wrap">
-    <div class="section-head center reveal">
-      <span class="eyebrow">Air &amp; indoor air quality · now available</span>
-      <h2>Lab-analyzed air, not a dashboard score.</h2>
-      <p>Passive badges you expose for a day (or up to a week), then mail back for accredited-lab analysis. Each compound named and quantified — no pump, no power, no meaningless index number.</p>
-    </div>
-
-    <div class="section-head reveal" style="margin-top:26px;text-align:left">
-      <h3 style="font-size:1.25rem">Single-analyte monitors</h3>
-      <p>One badge, one question — the fastest way to answer a specific concern.</p>
-    </div>
-    <div class="kits">
-      <div class="kit reveal">
-        <a class="cardlink" href="/kit-formaldehyde" aria-label="View Aldehyde &amp; Formaldehyde Monitor"></a>
-        <div class="kname">Air · formaldehyde</div>
-        <h3>Aldehyde &amp; Formaldehyde Monitor</h3>
-        <div class="price"><span class="amt">$149</span><span class="per">/ kit</span></div>
-        <div class="blurb">Formaldehyde &amp; carbonyls in indoor air, over a full day to a full week.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Formaldehyde, as a time-weighted average concentration</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Acetaldehyde, reported separately</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> new builds, manufactured homes, new cabinetry/laminate/pressed-wood, nurseries, and anyone who gets headaches or burning eyes in one room.</div>
-        <a href="/kit-formaldehyde" class="btn btn-ghost">View kit &rarr;</a>
-      </div>
-
-      <div class="kit reveal">
-        <a class="cardlink" href="/kit-voc-air" aria-label="View VOC Monitor"></a>
-        <div class="kname">Air · VOCs</div>
-        <h3>VOC Monitor</h3>
-        <div class="price"><span class="amt">$199</span><span class="per">/ kit</span></div>
-        <div class="blurb">Twenty-five named solvents, each measured individually — not one TVOC index.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Benzene</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Toluene, ethylbenzene and xylenes</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> new flooring/cabinetry/paint, a room that smells of something nobody can place, attached garages, basement workshops, nurseries and home offices.</div>
-        <a href="/kit-voc-air" class="btn btn-ghost">View kit &rarr;</a>
-      </div>
-
-      <div class="kit reveal">
-        <a class="cardlink" href="/kit-ammonia" aria-label="View Ammonia Monitor"></a>
-        <div class="kname">Air · ammonia</div>
-        <h3>Ammonia Monitor</h3>
-        <div class="price"><span class="amt">$125</span><span class="per">/ kit</span></div>
-        <div class="blurb">Ammonia in indoor air — because harmful exposure occurs below the smell threshold.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Ammonia (NH₃), as a time-weighted average concentration</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> laundries &amp; utility rooms, refrigeration spaces, homes with litter trays or multiple pets, cleaning-product storage, growing spaces, and tenancy/workplace complaints.</div>
-        <a href="/kit-ammonia" class="btn btn-ghost">View kit &rarr;</a>
-      </div>
-
-      <div class="kit reveal">
-        <a class="cardlink" href="/kit-no2" aria-label="View NO₂ Monitor"></a>
-        <div class="kname">Air · nitrogen dioxide</div>
-        <h3>NO₂ Monitor</h3>
-        <div class="price"><span class="amt">$149</span><span class="per">/ kit</span></div>
-        <div class="blurb">Nitrogen dioxide — the marker of indoor combustion from gas cooking and unvented heat.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Nitrogen dioxide (NO₂), as a time-weighted average concentration</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> kitchens with gas cooking, homes with unvented gas or kerosene heaters, and rooms sharing a wall with an attached garage.</div>
-        <a href="/kit-no2" class="btn btn-ghost">View kit &rarr;</a>
-      </div>
-    </div>
-
-    <div class="section-head reveal" style="margin-top:34px;text-align:left">
-      <h3 style="font-size:1.25rem">Complete air quality</h3>
-      <p>All four air chemistries in one deployment — or add any single monitor above.</p>
-    </div>
-    <div class="kits">
-      <div class="kit pop reveal">
-        <a class="cardlink" href="/kit-iaq-comprehensive" aria-label="View Complete Air Quality Kit"></a>
-        <span class="tag">Best value · save ~$70</span>
-        <div class="kname">Air · complete profile</div>
-        <h3>Complete Air Quality Kit</h3>
-        <div class="price"><span class="amt">$525</span><span class="per">/ kit</span></div>
-        <div class="blurb">Four badges, four chemistries — solvents, formaldehyde, ammonia and nitrogen dioxide, in one room.</div>
-        <ul>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>The full 25-compound solvent panel + formaldehyde &amp; carbonyls</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Ammonia (NH₃) and nitrogen dioxide (NO₂)</li>
-        </ul>
-        <div class="kbest"><b>Best for:</b> the fullest passive air picture — homes with gas cooking or unvented heating, attached garages, and anyone who wants all four chemistries in one deployment for less than buying them separately.</div>
-        <a href="/kit-iaq-comprehensive" class="btn btn-primary">View kit &rarr;</a>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- COMING SOON — full line -->
 <section id="soon" class="kitsec" data-cat="soon">
   <div class="wrap">
     <div class="section-head center reveal">
-      <span class="eyebrow">The full Sacred Sampling line</span>
-      <h2>More kits, coming soon.</h2>
+      <h2>More Kits Coming Soon</h2>
       <p>Beyond drinking water and air, we&rsquo;re rolling out lab-backed panels for materials, dust, mold, ticks, radon and more — same mail-in model, same accredited-lab analysis and chain of custody.</p>
     </div>
     <div class="minikits soongrid reveal">
@@ -580,15 +548,14 @@
 <section id="compare" class="tint kitsec" data-cat="water">
   <div class="wrap">
     <div class="section-head center reveal">
-      <span class="eyebrow">Compare kits</span>
-      <h2>What each kit tests for.</h2>
+      <h2>Compare Drinking Water Kits</h2>
     </div>
     <div class="tablecard reveal">
       <div class="tablescroll">
         <table class="matrix" style="min-width:1000px">
           <thead>
             <tr>
-              <th>What we test</th>
+              <th>What We Test</th>
               <th>Heavy Metals<span class="sub">$174</span></th>
               <th>Metals &amp; Minerals<span class="sub">$249</span></th>
               <th class="colhi">Essentials<span class="sub">$199</span></th>
@@ -613,20 +580,30 @@
   </div>
 </section>
 
-<!-- GUARANTEE -->
-<section>
+<!-- LABORATORY ANALYSIS & REPORTING -->
+<section id="lab-reporting" class="labrep" aria-labelledby="labrep-h">
   <div class="wrap">
-    <div class="band reveal">
-      <div>
-        <span class="eyebrow">The Sacred Sampling standard</span>
-        <h2 style="margin-top:12px">Laboratory data — not estimates.</h2>
-        <p>We're independently operated with no ties to filter companies or remediation firms. Every sample is analyzed by an accredited partner laboratory, and your data is yours.</p>
+    <div class="labrep-head">
+      <h2 id="labrep-h">Laboratory Analysis &amp; Reporting</h2>
+      <p>Sacred Sampling Solutions provides mail-in collection kits for water, indoor air, and other environmental samples. Accredited partner laboratories perform the analysis, and your digital report explains the findings in plain language.</p>
+    </div>
+    <div class="labrep-cols">
+      <div class="labrep-col">
+        <h3>Accredited Partner Laboratories</h3>
+        <p>Your sample is sent to a partner laboratory selected for the type of sample and the analysis required.</p>
       </div>
-      <div class="guarantees">
-        <div class="g"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg><div><b>Accredited-lab analysis</b><span>EPA-referenced methods on real instruments — ICP-MS, GC-MS, LC-MS/MS.</span></div></div>
-        <div class="g"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M7 4h10a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><div><b>Chain-of-custody on every kit</b><span>Documented traceability from the moment you cap the bottle.</span></div></div>
-        <div class="g"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 1 8 8"/><path d="M4 12v5h5"/></svg><div><b>Independent by design</b><span>We sell tests, not filters — so there's no incentive to over-report.</span></div></div>
+      <div class="labrep-col">
+        <h3>Methods Matched to Your Test</h3>
+        <p>Each kit page lists what the test measures and how the laboratory analyzes the sample. Drinking-water methods include ICP-MS for metals, GC-MS for volatile organic compounds, and LC-MS/MS for PFAS.</p>
       </div>
+      <div class="labrep-col">
+        <h3>Clear, Documented Results</h3>
+        <p>Your digital report includes a plain-language summary and detailed laboratory results. Where a published reference value applies, the report identifies it so you can see how your result compares.</p>
+      </div>
+    </div>
+    <div class="labrep-links">
+      <a class="labrep-btn" href="/sample-report#sample-results">View Sample Results</a>
+      <a class="labrep-link" href="/laboratory">Explore Laboratory Methods <span aria-hidden="true">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -635,8 +612,7 @@
 <section class="tint">
   <div class="wrap">
     <div class="section-head center reveal">
-      <span class="eyebrow">Questions, answered</span>
-      <h2>Everything you need to know.</h2>
+      <h2>Frequently Asked Questions</h2>
     </div>
     <div class="faq reveal">
       <details><summary>How is this different from a hardware-store test strip?</summary><p>Strips give you an approximate color read for one or two parameters. Your sample is analyzed by an accredited partner laboratory on real instruments (ICP-MS, GC-MS, LC-MS/MS) that quantify exact concentrations — for PFAS, down to parts-per-trillion — then compare each result against EPA limits. It's the difference between a guess and a measurement.</p></details>
@@ -655,12 +631,11 @@
 <section style="padding-top:20px">
   <div class="wrap">
     <div class="final reveal">
-      <span class="eyebrow">Ready when you are</span>
-      <h2 style="margin-top:12px">Know what's really in your home.</h2>
+      <h2>Know What&rsquo;s in Your Home</h2>
       <p>Pick a panel above, or let the quiz match you in about a minute.</p>
       <div class="hero-cta" style="justify-content:center">
-        <a href="/quiz" class="btn btn-primary btn-lg">Find my kit <span class="arrow">→</span></a>
-        <a href="#kits" class="btn btn-ghost btn-lg">Shop all kits</a>
+        <a href="/quiz" class="btn btn-primary btn-lg">Find My Kit <span class="arrow">→</span></a>
+        <a href="#kits" class="btn btn-ghost btn-lg">Shop All Kits</a>
       </div>
       <p style="margin-top:14px;font-size:.92rem">Need a test we don&rsquo;t list? <a href="mailto:support@sacredsamplingsolutions.com?subject=Special%20order%20request&amp;body=Hi%20Sacred%20Sampling%20team%2C%0A%0AI%27d%20like%20to%20request%20a%20special%20test%20for%3A%20%0ASample%20type%20%28drinking%20water%20/%20well%20water%20/%20air%20/%20surface%20/%20material%29%3A%20%0AZIP%20code%3A%20%0AAnything%20else%20we%20should%20know%3A%20%0A%0AName%3A%20%0APhone%3A%20%0A" style="font-weight:600">Request a special order &rarr;</a></p>
     </div>
@@ -679,15 +654,15 @@
         <a href="/kits#kits">Heavy Metals &middot; Metals &amp; Minerals</a>
         <a href="/kits#kits">Essentials</a>
         <a href="/kits#kits">Comprehensive &middot; PFAS</a>
-        <a href="/kits#kits">Complete Home Inspection (all-in-one)</a>
+        <a href="/kits#kits">Complete Home Inspection (All-in-One)</a>
       </div>
       <div>
         <h4>Company</h4>
-        <a href="/#how">How it works</a>
-        <a href="/#contaminants">What we test</a>
-        <a href="/learn">Learn &amp; guides</a>
-        <a href="/quiz">Find my kit</a>
-        <a href="https://app.sacredsamplingsolutions.com/sampleregistration">Activate a kit</a>
+        <a href="/#how">How It Works</a>
+        <a href="/#contaminants">What We Test</a>
+        <a href="/learn">Learn &amp; Guides</a>
+        <a href="/quiz">Find My Kit</a>
+        <a href="https://app.sacredsamplingsolutions.com/sampleregistration">Activate a Kit</a>
         <a href="/contact">Contact</a>
       </div>
       <div>
@@ -710,33 +685,15 @@
 <script defer src="/_vercel/insights/script.js"></script>
 <script src="/consent.js"></script>
 <script>
+/* Old filter links (kits#filter=air etc.) land on the matching section. */
 (function () {
-  var bar = document.getElementById('kitFilter');
-  if (!bar) return;
-  var chips = bar.querySelectorAll('.chip');
-  function apply(cat) {
-    document.querySelectorAll('.kitsec').forEach(function (sec) {
-      var cats = (sec.getAttribute('data-cat') || '').split(' ');
-      sec.hidden = !(cat === 'all' || cats.indexOf(cat) !== -1);
-    });
-    document.querySelectorAll('[data-sub]').forEach(function (el) {
-      el.hidden = !(cat === 'all' || el.getAttribute('data-sub') === cat);
-    });
-    chips.forEach(function (c) { c.classList.toggle('active', c.getAttribute('data-cat') === cat); });
+  var map = { water: 'kits', air: 'air', asbestos: 'asbestos', surface: 'surface-residue', cosmetic: 'cosmetics', dust: 'lead-dust', soon: 'soon' };
+  function go() {
+    var m = (location.hash || '').match(/^#filter=([a-z]+)/); if (!m) return;
+    var el = document.getElementById(map[m[1]] || ''); if (!el) return;
+    history.replaceState(null, '', '#' + el.id); el.scrollIntoView();
   }
-  chips.forEach(function (c) {
-    c.addEventListener('click', function () {
-      var cat = c.getAttribute('data-cat');
-      apply(cat);
-      if (cat !== 'all' && history.replaceState) history.replaceState(null, '', '#filter=' + cat);
-      else if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
-    });
-  });
-  // Deep-link support: kits.html#filter=air  OR an existing section anchor (#air, #specialty…)
-  var m = (location.hash || '').match(/#filter=([a-z]+)/);
-  if (m) apply(m[1]);
-  else if (/^#(kits)$/.test(location.hash)) apply('water');
-  else if (/^#(air)$/.test(location.hash)) apply('air');
+  go(); window.addEventListener('hashchange', go);
 })();
 </script>
 </body>
